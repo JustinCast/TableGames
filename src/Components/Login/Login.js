@@ -20,9 +20,6 @@ firebase.initializeApp(CONFIG);
 
 export default class Login extends Component{
 
-  constructor(){
-    this.authFirebase();
-  }
   // Initialization State
   state = {
     isSignIn: false,
@@ -45,7 +42,7 @@ export default class Login extends Component{
     }
   }
 
-  authFirebase = () =>{
+  componentDidMount = () =>{
 
     firebase.auth().onAuthStateChanged( user => {
       this.setState({
