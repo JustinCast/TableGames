@@ -7,17 +7,13 @@ import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 // Css
 import '../../Style/login.scss';
 
-const CONFIG = {
-    apiKey: "AIzaSyBUDHajC_WsEn0u3skyDuQ_XPehC61o-lY",
-    authDomain: "fir-auth-react-64f8d.firebaseapp.com",
-    databaseURL: "https://fir-auth-react-64f8d.firebaseio.com",
-    projectId: "fir-auth-react-64f8d",
-    storageBucket: "fir-auth-react-64f8d.appspot.com",
-    messagingSenderId: "460343751130"
-  };
+// Configuration Firebase
+import {CONFIG} from '../Services/FirebaseConfig';
 
+// Inicial firebase
 firebase.initializeApp(CONFIG);
-
+// Configuration of provider firebase
+ 
 export default class Login extends Component{
 
   // Initialization State
@@ -30,6 +26,7 @@ export default class Login extends Component{
     }
   }
 
+  // Interface configuration (providers)
   uiConfig = {
     signInFlow: "popup",
     signInOptions: [
@@ -42,15 +39,20 @@ export default class Login extends Component{
     }
   }
 
+  
   componentDidMount = () =>{
+    this.authStateChange(); 
+  }
 
+  // Handle auth change of firebase
+  authStateChange = () => {
     firebase.auth().onAuthStateChanged( user => {
       this.setState({
-        isSignIn: !!user,
+        isSignIn: !!user, // Change state sign in
       })
       if(this.state.isSignIn){
         this.setState({
-          user: {
+          user: { // Set actual user
             name: user.displayName,
             email: user.email,
             uid: user.uid
@@ -59,6 +61,7 @@ export default class Login extends Component{
       }
     })
   }
+
   render(){
     return(
       <React.Fragment>
