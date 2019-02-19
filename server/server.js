@@ -32,10 +32,6 @@ SubscriptionServer.create({
 }, );
 
 
-
-console.log('Hello Node.js project.');
-
-console.log(process.env.MY_SECRET);
 app.listen(port, () => {
   console.log(`Running server on ${port}`);
 });
