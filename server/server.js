@@ -6,6 +6,7 @@ const expressGraphQL = require("express-graphql");
 import 'dotenv/config';
 const port = process.env.port || 3000;
 // TODO: importar aqui el o los schemas
+import { Session } from "./models/session";
 
 const app = express();
 
@@ -15,7 +16,7 @@ const app = express();
 // app.use(
 //   "/api/ql",
 //   expressGraphQL({
-//     schema: "", // TODO: importar el schema
+//     schema: session, // TODO: importar el schema
 //     graphiql: true
 //   })
 // );
