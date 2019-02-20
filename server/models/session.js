@@ -3,7 +3,8 @@ const {
   GraphQLObjectType,
   GraphQLInt,
   GraphQLString,
-  GraphQLNonNull
+  GraphQLNonNull,
+  GraphQLSchema
 } = require("graphql");
 import player from "./player";
 
@@ -47,7 +48,7 @@ const mutation = new GraphQLObjectType({
     saveSession: {
       type: session,
       args: {
-        users: { type: new GraphQLNonNull(GraphQLList(player)) },
+        users: { type: GraphQLList },
         index: { type: new GraphQLNonNull(GraphQLInt) },
         uid: { type: new GraphQLNonNull(GraphQLString) }
       },
