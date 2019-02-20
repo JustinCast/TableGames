@@ -8,7 +8,7 @@ import GraphHTTP from 'express-graphql';
 import 'dotenv/config';
 const port = process.env.port || 3000;
 // TODO: importar aqui el o los schemas
-import { Session } from "./models/session";
+import Session from "./models/session";
 
 const app = express();
 const server = Server(app);
@@ -19,7 +19,7 @@ const server = Server(app);
 app.use(
   "/root",
   expressGraphQL({
-    schema: Session, // TODO: importar el schema
+    schema: Session,
     graphiql: true
   })
 );

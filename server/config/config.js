@@ -11,4 +11,4 @@ var config = {
 };
 firebase.initializeApp(config);
 
-module.exports = firebase;
+module.exports = firebase.firestore();

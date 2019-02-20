@@ -7,7 +7,8 @@ const {
   GraphQLSchema
 } = require("graphql");
 import player from "./player";
-
+import axios from "axios";
+import db from "../config/config";
 const session = new GraphQLObjectType({
   name: "session",
   fields: () => ({
@@ -25,7 +26,16 @@ const RootQuery = new GraphQLObjectType({
       /**
        * TODO: implementar
        */
-      resolve() {}
+      resolve() {
+        return db
+          .collection("session")
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach(element => {
+              console.log(element);
+            });
+          });
+      }
     },
     session: {
       type: session,
@@ -54,8 +64,8 @@ const mutation = new GraphQLObjectType({
       },
       /**
        * TODO: implementar
-       * @param {*} parentValue 
-       * @param {*} args 
+       * @param {*} parentValue
+       * @param {*} args
        */
       resolve(parentValue, args) {}
     }
