@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import './Style/app.css';
-import Login from './Components/Login/Login';
-
-
+import Router from './Components/Services/Router';
 
 class App extends Component {
   render() {
     return (
       <React.Fragment>
-        <Login />
+        <Router />
       </React.Fragment>
     );
   }
