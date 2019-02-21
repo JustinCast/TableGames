@@ -4,7 +4,8 @@ import {
   GraphQLList,
   GraphQLString,
   GraphQLNonNull,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLSchema
 } from "graphql";
 
 // firestore instance
@@ -83,20 +84,20 @@ const mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
     saveSession: {
-      type: session,
+      type: Session,
       args: {
         users: { type: GraphQLList },
         index: { type: new GraphQLNonNull(GraphQLInt) },
         uid: { type: new GraphQLNonNull(GraphQLString) }
       },
-      /**
-       * TODO: implementar
-       * @param {*} parentValue
-       * @param {*} args
-       */
-      resolve(parentValue, args) {}
+      resolve: async (parentValue, input) => {
+        return db.collection("session").set(input);
+      }
     }
   }
 });
 
 // exporting RootQuery and mutations
+module.exports = new GraphQLSchema({
+  query: RootQuery
+});
