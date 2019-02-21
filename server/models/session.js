@@ -23,9 +23,6 @@ const RootQuery = new GraphQLObjectType({
   fields: {
     sessions: {
       type: new GraphQLList(session),
-      /**
-       * TODO: implementar
-       */
       resolve() {
         return db
           .collection("session")
@@ -40,7 +37,7 @@ const RootQuery = new GraphQLObjectType({
     session: {
       type: session,
       args: {
-        uid: GraphQLString
+        uid: {type: GraphQLString}
       },
       /**
        * TODO: implementar
