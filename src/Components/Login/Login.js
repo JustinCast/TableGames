@@ -5,7 +5,7 @@ import firebase from 'firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
 // Css
-import '../../Style/login.scss';
+import './login.scss';
 
 // Configuration Firebase
 import {CONFIG} from '../Services/FirebaseConfig';
