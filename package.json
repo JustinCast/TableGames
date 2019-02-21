@@ -11,11 +11,14 @@
     "firebase": "^5.8.3",
     "graphql": "^14.1.1",
     "nodemon": "^1.18.10",
+    "bootstrap": "^4.3.1",
+    "node-sass": "^4.11.0",
     "react": "^16.8.1",
     "react-apollo": "^2.4.1",
     "react-dom": "^16.8.1",
     "react-scripts": "2.1.5",
-    "subscriptions-transport-ws": "^0.9.15"
+    "subscriptions-transport-ws": "^0.9.15",
+    "react-firebaseui": "^3.1.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -36,6 +39,7 @@
   "devDependencies": {
     "@babel/core": "^7.3.3",
     "@babel/node": "^7.2.2",
-    "@babel/preset-env": "^7.3.1"
+    "@babel/preset-env": "^7.3.1",
+    "react-router-dom": "^4.3.1"
   }
 }
