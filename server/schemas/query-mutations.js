@@ -25,7 +25,7 @@ const RootQuery = new GraphQLObjectType({
           .get()
           .then(querySnapshot => {
             querySnapshot.forEach(element => {
-              console.log(element);
+              console.log(element.data());
             });
           });
       }
@@ -55,7 +55,7 @@ const RootQuery = new GraphQLObjectType({
           .get()
           .then(querySnapshot => {
             querySnapshot.forEach(element => {
-              console.log(element);
+              return element.data();
             });
           });
       }
