@@ -7,8 +7,10 @@ const expressGraphQL = require("express-graphql");
 import GraphHTTP from 'express-graphql';
 import 'dotenv/config';
 const port = process.env.port || 3000;
-// TODO: importar aqui el o los schemas
-import Session from "./models/session";
+
+
+
+import Schema from "./query-mutations";
 
 const app = express();
 const server = Server(app);
@@ -19,14 +21,14 @@ const server = Server(app);
 app.use(
   "/root",
   expressGraphQL({
-    schema: Session,
+    schema: Schema,
     graphiql: true
   })
 );
 
 /** GraphQL Websocket definition **/
 SubscriptionServer.create({
-  Session,
+  Schema,
   execute,
   subscribe,
 }, {

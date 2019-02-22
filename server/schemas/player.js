@@ -1,7 +1,14 @@
-import { GraphQLObjectType, GraphQLString, GraphQLInt } from "graphql";
+import {
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLInt,
+  GraphQLInputObjectType,
+  GraphQLNonNull
+} from "graphql";
 
-export default PlayerType = new GraphQLObjectType({
-  name: "Player",
+const PlayerType = new GraphQLObjectType({
+  name: "PlayerType",
+  description: "TableGames Player type definition",
   fields: () => ({
     name: { type: GraphQLString },
     email: { type: GraphQLString },
@@ -11,3 +18,33 @@ export default PlayerType = new GraphQLObjectType({
     uid: { type: GraphQLString }
   })
 });
+
+const PlayerInputType = new GraphQLInputObjectType({
+  name: "PlayerInputType",
+  description: "Player type input definition",
+  fields: () => ({
+    name: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    email: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    wonGames: {
+      type: new GraphQLNonNull(GraphQLInt)
+    },
+    lostGames: {
+      type: new GraphQLNonNull(GraphQLInt)
+    },
+    tiedGames: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    uid: {
+      type: new GraphQLNonNull(GraphQLString)
+    }
+  })
+});
+
+export {
+  PlayerType,
+  PlayerInputType
+}

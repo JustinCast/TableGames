@@ -11,14 +11,14 @@ import {
 // firestore instance
 import db from "./config/config";
 // import schemas
-import Session from "./schemas/session";
-import Player from "./schemas/player";
+import SessionType from "./schemas/session";
+import PlayerType from "./schemas/player";
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
   fields: {
     sessions: {
-      type: GraphQLList(Session),
+      type: new GraphQLList(SessionType),
       resolve() {
         return db
           .collection("session")
@@ -31,7 +31,7 @@ const RootQuery = new GraphQLObjectType({
       }
     },
     session: {
-      type: Session,
+      type: SessionType,
       args: {
         uid: { type: GraphQLString }
       },
@@ -48,7 +48,7 @@ const RootQuery = new GraphQLObjectType({
       }
     },
     players: {
-      type: GraphQLList(Player),
+      type: GraphQLList(PlayerType),
       resolve() {
         return db
           .collection("player")
@@ -61,7 +61,7 @@ const RootQuery = new GraphQLObjectType({
       }
     },
     player: {
-      type: Player,
+      type: PlayerType,
       args: {
         uid: { type: GraphQLString }
       },
@@ -84,9 +84,9 @@ const mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
     saveSession: {
-      type: Session,
+      type: SessionType,
       args: {
-        users: { type: GraphQLList },
+        users: {type: PlayerType},
         index: { type: new GraphQLNonNull(GraphQLInt) },
         uid: { type: new GraphQLNonNull(GraphQLString) }
       },
@@ -95,7 +95,7 @@ const mutation = new GraphQLObjectType({
       }
     },
     savePlayer: {
-      type: Player,
+      type: PlayerType,
       args: {
         name: { type: GraphQLString },
         email: { type: GraphQLString },
