@@ -3,6 +3,7 @@ import Navbar from '../Navbar/Navbar'
 import AllSessions from '../AllSessions/AllSessions'
 import './MainScreen.scss';
 
+
 class MainScreen extends Component {
     state = {  }
     render() { 

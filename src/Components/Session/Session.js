@@ -1,42 +1,44 @@
 import React, { Component } from 'react';
 import './Session.scss';
+import Button from '@material-ui/core/Button';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 
 class Session extends Component {
-    state = {  }
-    render() { 
+    render() {
         return (
-            <div className="shadow p-3 mb-5 bg-white rounded">
-                <div className="main-card">
-                    <section className="element">
-                        <p>
-                            <strong>
-                                Juego
-                            </strong>
-                        </p>
-                        <p>Damas</p>
-                    </section>
-                    <section className="element">
-                        <p>
-                            <strong>
-                                Creador
-                            </strong>
-                        </p>
-                        <p>Luis</p>
-                    </section>
-                    <section className="element">
-                        <p>
-                            <strong>
-                                Tamaño
-                            </strong>
-                        </p>
-                        <p>18</p>
-                    </section>
-                </div>
-                <button>Ir al juego</button>
+            <div className="container-card">
+                <ExpansionPanel>
+                    <ExpansionPanelSummary>
+                        <p className="title">Nombre de la sala</p>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+                        <div className="rounded main-card">
+                            <div className="second-card">
+                                <div className="element-opt">
+                                    <p className="title">Creador</p>
+                                    <p>Luis</p>
+                                </div>
+                                <div className="element-opt">
+                                    <p className="title">Creador</p>
+                                    <p>Pepe</p>
+                                </div>
+                                <div className="element-opt">
+                                    <p className="title">Tamaño</p>
+                                    <p>Pepe</p>
+                                </div>
+                            </div>
+                            <div>
+                                <Button>Ir al juego</Button>
+                            </div>
+
+                        </div>
+                    </ExpansionPanelDetails>
+                </ExpansionPanel>
             </div>
-            
         );
     }
 }
- 
+
 export default Session;

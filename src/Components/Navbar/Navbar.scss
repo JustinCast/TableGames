@@ -1,0 +1,27 @@
+.nav {
+    display: flex;
+    width: 95%;
+    justify-content:space-between;
+    border-radius: 25px;
+    margin: 1% auto 1% auto;;
+}
+
+.nav-element-left{
+    width: 60%;
+    margin: 1% auto 0% 2%;
+}
+
+.user-name{
+    font-size: 15px;
+}
+
+.nav-element-rigth{
+    width: 15%;
+    display: flex;
+    justify-content:space-between;
+    margin: 0.5% 2% 0.5% auto;
+}
+
+.button{
+    width: 50%;
+}

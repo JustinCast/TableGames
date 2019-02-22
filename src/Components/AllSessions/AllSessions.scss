@@ -1,11 +1,33 @@
 .main-card{
-    width: 50%;
+    width: 40%;
     background-color: white;
-    margin: 2% auto 2% auto;
+    margin: 2% 0.5% 2% auto;
     text-align: center; 
-    padding: 2%;
 }
+
 .card-title{
     font-size: 30px;
     margin: 4%;
 }
+
+.element{
+    float: right;
+    display: flex;
+    flex-direction: column;
+    width: 15%;
+}
+
+.button-elemnt{
+    margin:4% auto 4% auto;;
+}
+
+.icon{
+    font-size: 230%;
+    color: black;
+}
+
+.container{
+    display: flex;
+    flex-direction: row;
+}
+
