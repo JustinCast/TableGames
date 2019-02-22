@@ -64,7 +64,7 @@ export default class Login extends Component{
 
   render(){
     return(
-      <React.Fragment>
+      <div>
         {this.state.isSignIn ?(
           <span>
             <button className="button-primary" onClick={() => firebase.auth().signOut()}>Sign Out!</button>
@@ -72,8 +72,8 @@ export default class Login extends Component{
         )
         :
         (
-          <div className="main-container shadow">
-            <h1 className="text-center text-white"> Login </h1>
+          <div className="main shadow">
+            <h3 className="text-center text-white"> Login </h3>
             <hr/>
             <StyledFirebaseAuth 
               uiConfig={this.uiConfig}
@@ -83,7 +83,7 @@ export default class Login extends Component{
         
         )
         }
-      </React.Fragment>
+      </div>
     )
   }
 }

@@ -9,9 +9,9 @@ class Router extends Component {
         return ( 
             <BrowserRouter>
                 <Switch>
+                    <Route path="/login" component={Login} />
                     <Route path="/create-room" component={CreateRoom} />    
-                    <Route path="/" component={Login} />
-                    <Route component={Error} />
+                    <Route component={Error} />                    
 
                 </Switch>
             </BrowserRouter>
