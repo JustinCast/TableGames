@@ -11,8 +11,8 @@ import {
 // firestore instance
 import db from "../config/config";
 // import schemas
-import SessionType from "./session";
-import PlayerType, { PlayerInputType } from "./player";
+import { SessionType, SessionInputType } from "./session";
+import {PlayerType, PlayerInputType } from "./player";
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
@@ -80,7 +80,6 @@ const RootQuery = new GraphQLObjectType({
   }
 });
 
-
 // TODO: DEFINE THE PLAYER INPUT MODEL
 const mutation = new GraphQLObjectType({
   name: "Mutation",
@@ -89,7 +88,7 @@ const mutation = new GraphQLObjectType({
       type: SessionType,
       args: {
         input: {
-          type: Sess
+          type: new GraphQLNonNull(SessionInputType)
         }
       },
       resolve: async (_, input) => {
@@ -111,7 +110,4 @@ const mutation = new GraphQLObjectType({
 });
 
 // exporting RootQuery and mutations
-export {
-  RootQuery,
-  mutation,
-};
+export { RootQuery, mutation };

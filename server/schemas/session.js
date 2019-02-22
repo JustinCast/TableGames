@@ -3,7 +3,8 @@ const {
   GraphQLInt,
   GraphQLString,
   GraphQLList,
-  GraphQLNonNull
+  GraphQLNonNull,
+  GraphQLInputObjectType
 } = require("graphql");
 import { PlayerType, PlayerInputType } from "./player";
 
@@ -17,12 +18,12 @@ const SessionType = new GraphQLObjectType({
   })
 });
 
-const SessionInputType = new GraphQLObjectType({
+const SessionInputType = new GraphQLInputObjectType({
   name: "SessionInputType",
   description: "SessionInputType model",
   fields: () => ({
     users: {
-      type: new GraphQLNonNull(new GraphQLList(PlayerType))
+      type: new GraphQLNonNull(new GraphQLList(PlayerInputType))
     },
     index: {
       type: new GraphQLNonNull(GraphQLInt)
