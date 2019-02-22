@@ -13,16 +13,30 @@ class AllSessions extends Component {
                         <h5 className="card-title">Salas de juego</h5>
                         <Session />
                         <Session />
+                        <Session />
+                        <Session />
+                        <Session />
+                        <Session />
+                        <Session />
+                        <Session />
+                        <Session />
+                        <Session />
+                        <Session />
+                        <Session />
+                        <Session />
+                        <Session />
+                        <Session />
+                        <Session />
                     </div>
                 </div>
                 <div className="element">
                     <span className="button-elemnt">
-                        <Fab size="large">
+                        <Fab>
                             <i className="fas fa-robot icon"></i>
                         </Fab>
                     </span>
                     <span className="button-elemnt">
-                        <Fab size="large" >
+                        <Fab>
                             <i className="fas fa-plus icon"></i>
                         </Fab>
                     </span>

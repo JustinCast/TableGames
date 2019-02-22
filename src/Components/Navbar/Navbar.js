@@ -7,13 +7,13 @@ class Navbar extends Component {
         return (
             <div className="nav shadow-sm mb-5 bg-white">
                 <div className="nav-element-left">
-                    <p className="user-name">
+                    <div className="user-name">
                         Nombre de usuario
-                    </p>
+                    </div>
                 </div>
                 <div className="nav-element-rigth">
-                    <Button className="button">Ir al juego</Button>
-                    <Button className="button">Ir al juego</Button>
+                    <Button className="button">Estadisticas</Button>
+                    <Button className="button">Salir</Button>
                 </div>
             </div>
         );

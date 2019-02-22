@@ -1,29 +1,68 @@
-.main-card{
-    width: 40%;
-    background-color: white;
-    margin: 2% 0.5% 2% auto;
-    text-align: center; 
+@media screen and (min-width: 601px) {
+    .main-card{
+        width: 70%;
+        background-color: white;
+        margin: 2% 0.5% 2% auto;
+        text-align: center; 
+    }
 }
 
-.card-title{
-    font-size: 30px;
-    margin: 4%;
+@media screen and (max-width: 700px) {
+    .main-card{
+        width: 100%;
+        background-color: white;
+        margin: 2% auto 2% auto;
+        text-align: center; 
+    }
 }
 
-.element{
-    float: right;
-    display: flex;
-    flex-direction: column;
-    width: 15%;
+@media screen and (min-width: 601px) {
+    .button-elemnt{
+        margin:4% auto 4% auto;;
+    }
 }
 
-.button-elemnt{
-    margin:4% auto 4% auto;;
+@media screen and (max-width: 700px) {
+    .button-elemnt{
+        margin:10% auto 10% auto;
+    }
 }
+
+@media screen and (min-width: 601px) {
+    .card-title{
+        font-size: 30px;
+        margin: 4%;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .card-title{
+        font-size: 25px;
+        margin: 4%;
+    }
+}
+
+@media screen and (min-width: 601px) {
+    .element{
+        display: flex;
+        flex-direction: column;
+        width: 15%;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .element{
+        display: flex;
+        flex-direction: column;
+        width: 20%;
+    }
+}
+
 
 .icon{
     font-size: 230%;
     color: black;
+    width: 45%;
 }
 
 .container{

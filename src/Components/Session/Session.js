@@ -32,7 +32,6 @@ class Session extends Component {
                             <div>
                                 <Button>Ir al juego</Button>
                             </div>
-
                         </div>
                     </ExpansionPanelDetails>
                 </ExpansionPanel>
