@@ -10,7 +10,7 @@ const port = process.env.port || 3000;
 
 
 
-import Schema from "./query-mutations";
+import Schema from "./schemas/schema";
 
 const app = express();
 const server = Server(app);

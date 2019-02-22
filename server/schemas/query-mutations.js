@@ -9,10 +9,10 @@ import {
 } from "graphql";
 
 // firestore instance
-import db from "./config/config";
+import db from "../config/config";
 // import schemas
-import SessionType from "./schemas/session";
-import PlayerType from "./schemas/player";
+import SessionType from "./session";
+import PlayerType from "./player";
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
@@ -48,7 +48,7 @@ const RootQuery = new GraphQLObjectType({
       }
     },
     players: {
-      type: GraphQLList(PlayerType),
+      type: new GraphQLList(PlayerType),
       resolve() {
         return db
           .collection("player")
@@ -111,7 +111,7 @@ const mutation = new GraphQLObjectType({
 });
 
 // exporting RootQuery and mutations
-module.exports = new GraphQLSchema({
-  query: RootQuery,
-  mutation: mutation
-});
+export {
+  RootQuery,
+  mutation,
+};

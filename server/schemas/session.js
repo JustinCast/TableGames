@@ -2,16 +2,15 @@ const {
   GraphQLObjectType,
   GraphQLInt,
   GraphQLString,
-  GraphQLList,
-  GraphQLSchema
+  GraphQLList
 } = require("graphql");
-import Player from "./player";
+import {PlayerType, PlayerInputType} from "./player";
 
 // GraphQL schema
 const SessionType = new GraphQLObjectType({
   name: "SessionType",
   fields: () => ({
-    users: { type: new GraphQLList(Player) },
+    //users: { type: new GraphQLList(PlayerType) },
     index: { type: GraphQLInt },
     uid: { type: GraphQLString }
   })
