@@ -1,6 +1,6 @@
 import { GraphQLSchema, GraphQLObjectType } from "graphql";
 
-import { RootQuery, mutation } from "./session";
+import { RootQuery, mutation } from "./query-mutations";
 
 export default new GraphQLSchema({
   query: new GraphQLObjectType({
