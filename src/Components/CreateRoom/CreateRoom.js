@@ -16,7 +16,7 @@ class CreateRoom extends Component {
         game:'Damas',
         sizeGame:8,
         difficulty:1,
-        isMachine: false
+        isMachine: true
     }
 
    // Update Handle
@@ -68,7 +68,7 @@ class CreateRoom extends Component {
                         <MenuItem value={12}>12 X 12</MenuItem>
                     </Select>
                     </FormControl>
-
+                    {this.state.isMachine ?(
                     <FormControl className="col mt-4">
                     <InputLabel htmlFor="difficulty">Difficulty</InputLabel>  
                     <Select
@@ -82,6 +82,7 @@ class CreateRoom extends Component {
                         <MenuItem value={3}>Espartano</MenuItem>
                     </Select>
                     </FormControl>
+                    ): null}
                     <div className="col mt-4 btn">
                         <Button variant="contained" color="primary">
                             Create
