@@ -90,8 +90,21 @@ const mutation = new GraphQLObjectType({
         index: { type: new GraphQLNonNull(GraphQLInt) },
         uid: { type: new GraphQLNonNull(GraphQLString) }
       },
-      resolve: async (parentValue, input) => {
+      resolve: async (_, input) => {
         return db.collection("session").set(input);
+      }
+    },
+    savePlayer: {
+      type: Player,
+      args: {
+        name: { type: GraphQLString },
+        email: { type: GraphQLString },
+        wonGames: { type: GraphQLInt },
+        lostGames: { type: GraphQLInt },
+        uid: { type: GraphQLString }
+      },
+      resolve: async (_, input) => {
+        return db.collection("player").set(input);
       }
     }
   }
@@ -99,5 +112,6 @@ const mutation = new GraphQLObjectType({
 
 // exporting RootQuery and mutations
 module.exports = new GraphQLSchema({
-  query: RootQuery
+  query: RootQuery,
+  mutation: mutation
 });
