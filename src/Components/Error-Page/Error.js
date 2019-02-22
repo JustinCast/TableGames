@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import './Error.css';
+import './Error.scss';
 
 class Error extends Component {
     state = {  }
     render() { 
         return ( 
-            <div>
+            <div className="box-error">
                 <div className="wrapper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
                     <title>404</title>
                         <g id="Layer_12 yellow-back-fig" data-name="Layer 12">
