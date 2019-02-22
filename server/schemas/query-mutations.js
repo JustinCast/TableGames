@@ -12,7 +12,7 @@ import {
 import db from "../config/config";
 // import schemas
 import SessionType from "./session";
-import PlayerType from "./player";
+import PlayerType, { PlayerInputType } from "./player";
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
@@ -88,9 +88,9 @@ const mutation = new GraphQLObjectType({
     saveSession: {
       type: SessionType,
       args: {
-        users: {type: PlayerType},
-        index: { type: new GraphQLNonNull(GraphQLInt) },
-        uid: { type: new GraphQLNonNull(GraphQLString) }
+        input: {
+          type: Sess
+        }
       },
       resolve: async (_, input) => {
         return db.collection("session").set(input);
@@ -99,11 +99,9 @@ const mutation = new GraphQLObjectType({
     savePlayer: {
       type: PlayerType,
       args: {
-        name: { type: GraphQLString },
-        email: { type: GraphQLString },
-        wonGames: { type: GraphQLInt },
-        lostGames: { type: GraphQLInt },
-        uid: { type: GraphQLString }
+        input: {
+          type: new GraphQLNonNull(PlayerInputType)
+        }
       },
       resolve: async (_, input) => {
         return db.collection("player").set(input);
