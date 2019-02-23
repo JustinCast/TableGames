@@ -13,7 +13,7 @@ ReactDOM.render(<App />, document.getElementById('root'));
 serviceWorker.unregister();
 
 // Apollo config
-import ApolloClient from "apollo-boost";
-export default client = new ApolloClient({
-    uri: 'http://localhost:3000/root'
-});
+//import ApolloClient from "apollo-boost";
+//export default client = new ApolloClient({
+//   uri: 'http://localhost:3000/root'
+//});
