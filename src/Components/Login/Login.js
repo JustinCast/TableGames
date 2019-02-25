@@ -9,6 +9,7 @@ import './login.scss';
 
 // Configuration Firebase
 import {CONFIG} from '../Services/FirebaseConfig';
+import MainScreen from '../MainScreen/MainScreen';
 
 // Inicial firebase
 firebase.initializeApp(CONFIG);
@@ -35,10 +36,13 @@ export default class Login extends Component{
       firebase.auth.GithubAuthProvider.PROVIDER_ID
     ],
     callbacks: {
-      signInSuccess: () => false
+      signInSuccessWithAuthResult: () => false
     }
   }
-
+  
+  signOutAuth = () => {
+    firebase.auth().signOut();
+  }
   
   componentDidMount = () =>{
     this.authStateChange(); 
@@ -66,22 +70,20 @@ export default class Login extends Component{
     return(
       <div>
         {this.state.isSignIn ?(
-          <span>
-            <button className="button-primary" onClick={() => firebase.auth().signOut()}>Sign Out!</button>
-          </span>
-        )
-        :
-        (
-          <div className="main shadow">
-            <h3 className="text-center text-white"> Login </h3>
-            <hr/>
-            <StyledFirebaseAuth 
-              uiConfig={this.uiConfig}
-              firebaseAuth={firebase.auth()}
-            />
-          </div>
-        
-        )
+          <MainScreen signOut={this.signOutAuth}/>
+          )
+          :
+          (
+            <div className="main shadow">
+              <h3 className="text-center text-white"> Login </h3>
+              <hr/>
+              <StyledFirebaseAuth 
+                uiConfig={this.uiConfig}
+                firebaseAuth={firebase.auth()}
+              />
+            </div>
+          
+          )
         }
       </div>
     )

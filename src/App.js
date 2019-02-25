@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import './Style/app.css';
-import MainScreen from './Components/MainScreen/MainScreen'
+import Router from '../src/Components/Services/Router';
 class App extends Component {
   render() {
     return (
       <React.Fragment>
-        <MainScreen />
+        <Router />
       </React.Fragment>
     );
   }

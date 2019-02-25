@@ -9,7 +9,7 @@ class MainScreen extends Component {
     render() { 
         return (
             <div>
-                <Navbar/>
+                <Navbar signOut={this.props.signOut}/>
                 <AllSessions/>
             </div>
         );
