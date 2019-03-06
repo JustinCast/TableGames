@@ -15,18 +15,6 @@ class AllSessions extends Component {
                         <Session />
                         <Session />
                         <Session />
-                        <Session />
-                        <Session />
-                        <Session />
-                        <Session />
-                        <Session />
-                        <Session />
-                        <Session />
-                        <Session />
-                        <Session />
-                        <Session />
-                        <Session />
-                        <Session />
                     </div>
                 </div>
                 <div className="element">

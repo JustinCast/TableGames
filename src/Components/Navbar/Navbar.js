@@ -5,10 +5,10 @@ import Button from '@material-ui/core/Button';
 class Navbar extends Component {
     render() {
         return (
-            <div className="nav shadow-sm mb-5 bg-white">
+            <div className="nav shadow-sm mb-5 bg-whitek">
                 <div className="nav-element-left">
                     <div className="user-name">
-                        Nombre de usuario
+                        Luis carlos 
                     </div>
                 </div>
                 <div className="nav-element-rigth">
