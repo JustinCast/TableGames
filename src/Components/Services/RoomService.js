@@ -1,11 +1,12 @@
 import {Service} from 'react-services-injector';
  
 class RoomService extends Service {
-
-
+    
+    get userName(){
+        return 'Luis Carlos González Calderón';
+    }
 }
- 
-//"publicName" property is important if you use any kind of minimization on your JS
-Storage.publicName = 'RoomService';
+
+RoomService.publicName = 'RoomService';
  
 export default RoomService;
