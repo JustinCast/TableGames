@@ -12,8 +12,8 @@ class Navbar extends Component {
                     </div>
                 </div>
                 <div className="nav-element-rigth">
-                    <Button className="button">Estadisticas</Button>
-                    <Button className="button">Salir</Button>
+                    <Button className="button" >Estadisticas</Button>
+                    <Button className="button" onClick={()=> this.props.signOut()}>Salir</Button>
                 </div>
             </div>
         );
