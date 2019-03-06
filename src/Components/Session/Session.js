@@ -17,8 +17,8 @@ class Session extends Component {
                         <div className="rounded main-card">
                             <div className="second-card">
                                 <div className="element-opt">
-                                    <p className="title">Creador</p>
-                                    <p>Luis</p>
+                                    <p className="title">Juego</p>
+                                    <p>Damas</p>
                                 </div>
                                 <div className="element-opt">
                                     <p className="title">Creador</p>
@@ -26,7 +26,7 @@ class Session extends Component {
                                 </div>
                                 <div className="element-opt">
                                     <p className="title">Tamaño</p>
-                                    <p>Pepe</p>
+                                    <p>18*18</p>
                                 </div>
                             </div>
                             <div>
