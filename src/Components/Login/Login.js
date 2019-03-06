@@ -29,7 +29,7 @@ export default class Login extends Component{
   // Initialization State
   state = {
     isSignIn: false,
-    openSnack: true,
+    openSnack: false,
     user: {
       name: '',
       email: '',

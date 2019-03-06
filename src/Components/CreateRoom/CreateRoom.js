@@ -3,14 +3,13 @@ import './CreateRoom.scss';
 import {FormControl,Input,InputLabel,Select,MenuItem,Button } from '@material-ui/core';
   
 class CreateRoom extends Component {
-    
     // State
     state = {  
         name: '',
         game:'Damas',
         sizeGame:8,
         difficulty:1,
-        isMachine: true
+        isMachine: this.props.location.state.isMachine
     }
 
    // Update Handle
