@@ -3,12 +3,6 @@ import './CreateRoom.scss';
 import {FormControl,Input,InputLabel,Select,MenuItem,Button } from '@material-ui/core';
   
 class CreateRoom extends Component {
-   
-    // Create Ref's
-    nameRef = React.createRef();
-    gameRef = React.createRef();
-    sizeGameRef = React.createRef();
-    difficultyRef = React.createRef();
     
     // State
     state = {  
@@ -65,7 +59,9 @@ class CreateRoom extends Component {
                         id="sizeGame"
                     >
                         <MenuItem value={8}>8 X 8</MenuItem>
+                        <MenuItem value={10}>10 X 10</MenuItem>
                         <MenuItem value={12}>12 X 12</MenuItem>
+                        <MenuItem value={14}>14 X 14</MenuItem>
                     </Select>
                     </FormControl>
                     {this.state.isMachine ?(
@@ -77,9 +73,9 @@ class CreateRoom extends Component {
                         name="difficulty"
                         id="difficulty"
                     >
-                        <MenuItem value={1}>Principiante</MenuItem>
+                        <MenuItem value={1}>Fácil</MenuItem>
                         <MenuItem value={2}>Medio</MenuItem>
-                        <MenuItem value={3}>Espartano</MenuItem>
+                        <MenuItem value={3}>Difícil</MenuItem>
                     </Select>
                     </FormControl>
                     ): null}

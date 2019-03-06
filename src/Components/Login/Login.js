@@ -8,7 +8,7 @@ import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import './login.scss';
 
 // Configuration Firebase
-import {CONFIG} from '../Services/FirebaseConfig';
+//import {CONFIG} from '../Services/FirebaseConfig';
 import MainScreen from '../MainScreen/MainScreen';
 
 // Inicial firebase
