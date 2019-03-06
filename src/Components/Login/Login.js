@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-
+import Snackbar from '@material-ui/core/Snackbar';
 // Firebase
 import firebase from 'firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
@@ -29,6 +29,7 @@ export default class Login extends Component{
   // Initialization State
   state = {
     isSignIn: false,
+    openSnack: true,
     user: {
       name: '',
       email: '',
@@ -56,7 +57,15 @@ export default class Login extends Component{
   componentDidMount = () =>{
     this.authStateChange(); 
   }
+  // Close Snack Error
+  handleClose = () => {
+    this.setState({ openSnack: false });
+  };
 
+  // Open Snack Error
+  handleClose = () => {
+    this.setState({ openSnack: true });
+  };
   // Handle auth change of firebase
   authStateChange = () => {
     firebase.auth().onAuthStateChanged( user => {
@@ -76,6 +85,7 @@ export default class Login extends Component{
   }
 
   render(){
+    const { openSnack } = this.state;
     return(
       <div>
         {this.state.isSignIn ?(
@@ -94,6 +104,16 @@ export default class Login extends Component{
           
           )
         }
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal:'center' }}
+          open={openSnack}
+          onClose={this.handleClose}
+          ContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          autoHideDuration={4000}
+          message={<span id="message-id"><i class="fas fa-exclamation-triangle text-danger"></i> There was a problem logging in <i class="fas fa-exclamation-triangle text-danger"></i></span>}
+        />
       </div>
     )
   }
