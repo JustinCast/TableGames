@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './Style/app.css';
+import './styles.scss';
 import MainScreen from './Components/MainScreen/MainScreen'
 
 class App extends Component { 

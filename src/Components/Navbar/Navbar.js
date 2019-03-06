@@ -18,8 +18,12 @@ class Navbar extends Component {
                     </div>
                 </div>
                 <div className="nav-element-rigth">
-                    <Button className="button">Estadisticas</Button>
-                    <Button className="button">Salir</Button>
+                    <span className="span-name">
+                        Estadisticas
+                    </span>
+                    <span className="span-name">
+                        Salir
+                    </span>
                 </div>
             </div>
         );

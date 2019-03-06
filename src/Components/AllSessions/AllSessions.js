@@ -12,9 +12,6 @@ class AllSessions extends Component {
                     <div className="card-body">
                         <h5 className="card-title">Salas de juego</h5>
                         <Session />
-                        <Session />
-                        <Session />
-                        <Session />
                     </div>
                 </div>
                 <div className="element">
