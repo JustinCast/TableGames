@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import './CreateRoom.scss';
 import {FormControl,Input,InputLabel,Select,MenuItem,Button } from '@material-ui/core';
-  
+import Snackbar from '@material-ui/core/Snackbar';
 class CreateRoom extends Component {
     // State
-    state = {  
+    state = {
+        openSnack: false,  
         name: '',
         game:'Damas',
         sizeGame:8,
@@ -23,9 +24,22 @@ class CreateRoom extends Component {
         // get all values and pristineValues on form submission
     }
     
-    
+    handleForm = () =>{
+        if(this.state.name.length <= 0){
+            this.setState({
+                openSnack: true
+            })
+        }else{
+            //TODO: Goto game
+        }
+    }
 
-    render() { 
+    handleClose = () => {
+        this.setState({ openSnack: false });
+    };
+
+    render() {
+        const { openSnack } = this.state; 
         return ( 
             <div className="App container">
                 <div className="main-container shadow p-3 mb-5 rounded">
@@ -79,11 +93,21 @@ class CreateRoom extends Component {
                     </FormControl>
                     ): null}
                     <div className="col mt-4 btn">
-                        <Button variant="contained" color="primary">
+                        <Button variant="contained" color="primary" onClick={this.handleForm}>
                             Create
                         </Button>
                     </div>
                 </div>
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal:'center' }}
+                    open={openSnack}
+                    onClose={this.handleClose}
+                    ContentProps={{
+                        'aria-describedby': 'message-id',
+                    }}
+                    autoHideDuration={5000}
+                    message={<span id="message-id"><i class="fas fa-exclamation-triangle text-danger"></i> Name of session is empty <i class="fas fa-exclamation-triangle text-danger"></i></span>}
+                    />
             </div>
         );
     }

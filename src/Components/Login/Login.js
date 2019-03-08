@@ -63,7 +63,7 @@ export default class Login extends Component{
   };
 
   // Open Snack Error
-  handleClose = () => {
+  handleOpen = () => {
     this.setState({ openSnack: true });
   };
   // Handle auth change of firebase
