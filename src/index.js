@@ -4,7 +4,7 @@ import "./styles.scss";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.css";
-import { ws_uri, http_uri } from "./environments/env";
+import { ws_uri } from "./environments/env";
 
 import ApolloClient from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";

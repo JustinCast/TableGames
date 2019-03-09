@@ -1,5 +1,4 @@
-import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import React, { Component } from 'react';
 
 // Firebase
 import firebase from 'firebase';
@@ -17,7 +16,7 @@ import { Query } from 'react-apollo';
 firebase.initializeApp(CONFIG);
 
 
-export const GET_POSTS = gql`
+export const GET_PLAYERS = gql`
   query getPlayers {
     players {
       name
@@ -76,7 +75,7 @@ export default class Login extends Component{
 
   render(){
     return(
-      <Query query={GET_POSTS}>
+      <Query query={GET_PLAYERS}>
     {({ loading, data }) => !loading && (
       <React.Fragment>
         {this.state.isSignIn ?(
