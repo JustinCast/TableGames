@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { graphql } from 'react-apollo';
 
 // Firebase
 import firebase from 'firebase';
@@ -9,11 +10,22 @@ import './login.scss';
 
 // Configuration Firebase
 import {CONFIG} from '../Services/FirebaseConfig';
+import gql from 'graphql-tag';
+import { Query } from 'react-apollo';
 
 // Inicial firebase
 firebase.initializeApp(CONFIG);
-// Configuration of provider firebase
- 
+
+
+export const GET_POSTS = gql`
+  query getPlayers {
+    players {
+      name
+      email
+    }
+  }
+`;
+
 export default class Login extends Component{
 
   // Initialization State
@@ -64,10 +76,20 @@ export default class Login extends Component{
 
   render(){
     return(
+      <Query query={GET_POSTS}>
+    {({ loading, data }) => !loading && (
       <React.Fragment>
         {this.state.isSignIn ?(
           <span>
+            <div>
             <button className="button-primary" onClick={() => firebase.auth().signOut()}>Sign Out!</button>
+            {data.players.map(p => (
+              <ul>
+                <li>{p.name}</li>
+                <li>{p.email}</li>
+              </ul>
+          ))}
+          </div>
           </span>
         )
         :
@@ -84,6 +106,8 @@ export default class Login extends Component{
         )
         }
       </React.Fragment>
+    )}
+  </Query>
     )
   }
 }

@@ -14,9 +14,9 @@ import { ApolloProvider } from "react-apollo";
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: http://bit.ly/CRA-PWA
-serviceWorker.unregister();
+serviceWorker.register();
 
-export default (client = new ApolloClient(http_uri));
+//export default (client = new ApolloClient(http_uri));
 
 // Create WebSocket client
 const WSClient = new SubscriptionClient(ws_uri, {
@@ -38,5 +38,3 @@ ReactDOM.render(
   </ApolloProvider>,
   document.getElementById("root")
 );
-
-registerServiceWorker();

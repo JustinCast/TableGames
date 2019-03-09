@@ -50,12 +50,11 @@ const RootQuery = new GraphQLObjectType({
     players: {
       type: new GraphQLList(PlayerType),
       resolve() {
-        db
+        return db
           .collection("player")
           .get()
-          .then(d => {     
-            console.log(d.docs);
-            return d.docs.map(doc => doc.data());
+          .then(elements => {
+            return elements.docs.map(doc => doc.data());
           })
         }
     },
@@ -69,10 +68,8 @@ const RootQuery = new GraphQLObjectType({
           .collection("player")
           .where("uid", "==", args.uid)
           .get()
-          .then(querySnapshot => {
-            querySnapshot.forEach(element => {
-              console.log(element);
-            });
+          .then(elements => {
+            
           });
       }
     }
