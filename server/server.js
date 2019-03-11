@@ -1,19 +1,33 @@
 'use strict'
 import { SubscriptionServer } from 'subscriptions-transport-ws';
-import { Server } from 'http';
+//import { Server } from 'http';
+const cors = require('cors')
+import { createServer } from 'http';
 import { execute, subscribe } from 'graphql';
 const express = require("express");
 const expressGraphQL = require("express-graphql");
-import GraphHTTP from 'express-graphql';
+// import GraphHTTP from 'express-graphql';
 import 'dotenv/config';
-const port = process.env.port || 4000;
+const port = 4000;
 
 
 
 import Schema from "./schemas/schema";
 
 const app = express();
-const server = Server(app);
+app.use(cors());
+//const server = Server(app);
+// Create WebSocket listener server
+const websocketServer = createServer((request, response) => {
+  response.writeHead(404);
+  response.end();
+});
+
+// Bind it to port and start listening
+// websocketServer.listen(WS_PORT, () => console.log(
+//   `Websocket Server is now running on http://localhost:${WS_PORT}`
+// ));
+
 
 /** 
  * Http graphql definition
@@ -32,7 +46,7 @@ SubscriptionServer.create({
   execute,
   subscribe,
 }, {
-  server: server,
+  server: websocketServer,
   path: '/root',
 }, );
 

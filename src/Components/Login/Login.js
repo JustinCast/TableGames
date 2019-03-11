@@ -75,38 +75,58 @@ export default class Login extends Component{
 
   render(){
     return(
-      <Query query={GET_PLAYERS}>
-    {({ loading, data }) => !loading && (
-      <React.Fragment>
-        {this.state.isSignIn ?(
-          <span>
-            <div>
-            <button className="button-primary" onClick={() => firebase.auth().signOut()}>Sign Out!</button>
-            {data.players.map(p => (
-              <ul>
-                <li>{p.name}</li>
-                <li>{p.email}</li>
-              </ul>
-          ))}
-          </div>
-          </span>
-        )
-        :
-        (
-          <div className="main-container shadow">
-            <h1 className="text-center text-white"> Login </h1>
-            <hr/>
-            <StyledFirebaseAuth 
-              uiConfig={this.uiConfig}
-              firebaseAuth={firebase.auth()}
-            />
-          </div>
-        
-        )
+      <Query
+    query={gql`
+      {
+        players {
+          name
         }
-      </React.Fragment>
-    )}
+      }
+    `}
+  >
+    {({ loading, error, data }) => {
+      if (loading) return <p>Loading...</p>;
+      if (error) console.log(error);
+
+      return data.players.map(({ name }) => (
+        <div>
+          <p>{`${name}`}</p>
+        </div>
+      ));
+    }}
   </Query>
+  //     <Query query={GET_PLAYERS}>
+  //   {({ loading, data }) => !loading && (
+  //     <React.Fragment>
+  //       {this.state.isSignIn ?(
+  //         <span>
+  //           <div>
+  //           <button className="button-primary" onClick={() => firebase.auth().signOut()}>Sign Out!</button>
+  //           {data.players.map(p => (
+  //             <ul>
+  //               <li>{p.name}</li>
+  //               <li>{p.email}</li>
+  //             </ul>
+  //         ))}
+  //         </div>
+  //         </span>
+  //       )
+  //       :
+  //       (
+  //         <div className="main-container shadow">
+  //           <h1 className="text-center text-white"> Login </h1>
+  //           <hr/>
+  //           <StyledFirebaseAuth 
+  //             uiConfig={this.uiConfig}
+  //             firebaseAuth={firebase.auth()}
+  //           />
+  //         </div>
+        
+  //       )
+  //       }
+  //     </React.Fragment>
+  //   )}
+  // </Query>
     )
   }
 }

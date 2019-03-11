@@ -69,7 +69,7 @@ const RootQuery = new GraphQLObjectType({
           .where("uid", "==", args.uid)
           .get()
           .then(elements => {
-            
+            console.log(elements);
           });
       }
     }
