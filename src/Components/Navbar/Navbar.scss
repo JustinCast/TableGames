@@ -2,10 +2,10 @@
     .nav {
         display: flex;
         width: 95%;
-        justify-content:space-between;
         border-radius: 25px;
+        justify-content:space-between;
         margin: auto;
-        padding: 0.5%;
+        background-color: white;
     }
 }
 
@@ -17,6 +17,7 @@
         border-radius: 25px;
         margin: 3% auto 1% auto;
         padding: 1%;
+        background-color: white;
     }
 }
 

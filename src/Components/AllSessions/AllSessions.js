@@ -3,6 +3,7 @@ import './AllSessions.scss';
 import Session from '../Session/Session';
 import Fab from '@material-ui/core/Fab';
 
+
 class AllSessions extends Component {
     state = {}
     render() {
@@ -30,7 +31,5 @@ class AllSessions extends Component {
         );
     }
 }
-
-
 
 export default AllSessions;
