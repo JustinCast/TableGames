@@ -6,7 +6,7 @@ class Navbar extends Component {
     render() {
         const {RoomService,LoginService}= this.services;
         return (
-            <div className="nav shadow-sm mb-5 bg-whitek">
+            <div className="nav shadow-sm">
                 <div className="nav-element-left">
                     <div className="user-name">
                         {LoginService.userName} 
