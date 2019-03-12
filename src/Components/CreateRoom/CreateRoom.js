@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import './CreateRoom.scss';
 import {FormControl,Input,InputLabel,Select,MenuItem,Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
+
+import {injector} from 'react-services-injector';
+
+
 class CreateRoom extends Component {
     // State
     state = {
@@ -39,11 +43,12 @@ class CreateRoom extends Component {
     };
 
     render() {
+        const {RoomService}= this.services;
         const { openSnack } = this.state; 
         return ( 
             <div className="App container">
                 <div className="main-container shadow p-3 mb-5 rounded">
-                    <h2 className="text-center text-white"> Create Room</h2>
+                    <h2 className="text-center text-white"> Create Room {RoomService.userName}</h2>
                     <hr/>
                     <FormControl className="col mt-2"> 
                         <InputLabel htmlFor="name">Name</InputLabel>
@@ -112,5 +117,4 @@ class CreateRoom extends Component {
         );
     }
 }
- 
-export default CreateRoom;
+export default injector.connect(CreateRoom, {toRender: ['RoomService']});

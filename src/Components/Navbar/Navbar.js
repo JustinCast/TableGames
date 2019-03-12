@@ -1,20 +1,15 @@
 import React, { Component } from 'react'
 import './Navbar.scss'
 import Button from '@material-ui/core/Button';
-
 import {injector} from 'react-services-injector';
-import services from '../Services/RoomService';
-
-injector.register(services);
-
 class Navbar extends Component {
     render() {
-        const {RoomService}= this.services;
+        const {RoomService,LoginService}= this.services;
         return (
             <div className="nav shadow-sm mb-5 bg-whitek">
                 <div className="nav-element-left">
                     <div className="user-name">
-                        {RoomService.userName} 
+                        {LoginService.userName} 
                     </div>
                 </div>
                 <div className="nav-element-rigth">
@@ -26,4 +21,4 @@ class Navbar extends Component {
     }
 }
 
-export default injector.connect(Navbar, {toRender: ['RoomService']});
+export default injector.connect(Navbar, {toRender: ['RoomService','LoginService']});
