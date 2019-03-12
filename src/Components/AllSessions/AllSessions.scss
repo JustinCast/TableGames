@@ -2,7 +2,7 @@
     .main-card{
         width: 70%;
         background-color: white;
-        margin: 20% auto 2% auto;
+        margin: 2% auto 2% auto;
         text-align: center; 
     }
 }
@@ -18,7 +18,7 @@
 
 @media screen and (min-width: 601px) {
     .button-elemnt{
-        margin:4% auto 4% auto;;
+        margin:10% auto 10% auto;;
     }
 }
 
@@ -37,8 +37,7 @@
 
 @media screen and (max-width: 700px) {
     .card-title{
-        font-size: 20px;
-        margin: 4%;
+        font-size: 18px;
     }
 }
 
@@ -46,8 +45,6 @@
     .element{
         display: flex;
         flex-direction: column;
-        width: 15%;
-        right: 2%;
         top: 15%;
     }
 }
@@ -56,13 +53,10 @@
     .element{
         display: flex;
         flex-direction: column;
-        width: 20%;
-        margin-left: 2%;
-        right: 2%;
-        top: 20%;
+        top: 15%;
+        margin-left: 4%;
     }
 }
-
 
 .icon{
     color: black;
@@ -72,6 +66,6 @@
 .container{
     display: flex;
     flex-direction: row;
-    margin-top: 7%;
+    margin-top: 2%;
 }
 

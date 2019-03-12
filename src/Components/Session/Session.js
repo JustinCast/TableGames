@@ -11,7 +11,7 @@ class Session extends Component {
             <div className="container-card">
                 <ExpansionPanel>
                     <ExpansionPanelSummary>
-                        <p className="title">Nombre de la sala</p>
+                      <p className="title">Nombre de la sala</p>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                         <div className="rounded main-card">
@@ -29,7 +29,7 @@ class Session extends Component {
                                     <p>18*18</p>
                                 </div>
                             </div>
-                            <div>
+                            <div className="button">
                                 <Button>Ir al juego</Button>
                             </div>
                         </div>
