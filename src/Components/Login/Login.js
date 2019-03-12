@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import React, { Component } from 'react'
 import Snackbar from '@material-ui/core/Snackbar';
+=======
+import React, { Component } from 'react';
+
+>>>>>>> master
 // Firebase
 import firebase from 'firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
@@ -8,6 +13,7 @@ import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import './login.scss';
 
 // Configuration Firebase
+<<<<<<< HEAD
 //import {CONFIG} from '../Services/FirebaseConfig';
 import MainScreen from '../MainScreen/MainScreen';
 
@@ -19,11 +25,25 @@ const CONFIG = {
   storageBucket: "fir-auth-react-64f8d.appspot.com",
   messagingSenderId: "460343751130"
 };
+=======
+import {CONFIG} from '../Services/FirebaseConfig';
+import gql from 'graphql-tag';
+import { Query } from 'react-apollo';
+>>>>>>> master
 
 // Inicial firebase
 firebase.initializeApp(CONFIG);
-// Configuration of provider firebase
- 
+
+
+export const GET_PLAYERS = gql`
+  query getPlayers {
+    players {
+      name
+      email
+    }
+  }
+`;
+
 export default class Login extends Component{
 
   // Initialization State
@@ -87,6 +107,7 @@ export default class Login extends Component{
   render(){
     const { openSnack } = this.state;
     return(
+<<<<<<< HEAD
       <div>
         {this.state.isSignIn ?(
           <MainScreen signOut={this.signOutAuth}/>
@@ -115,6 +136,60 @@ export default class Login extends Component{
           message={<span id="message-id"><i class="fas fa-exclamation-triangle text-danger"></i> There was a problem logging in <i class="fas fa-exclamation-triangle text-danger"></i></span>}
         />
       </div>
+=======
+      <Query
+    query={gql`
+      {
+        players {
+          name
+        }
+      }
+    `}
+  >
+    {({ loading, error, data }) => {
+      if (loading) return <p>Loading...</p>;
+      if (error) console.log(error);
+
+      return data.players.map(({ name }) => (
+        <div>
+          <p>{`${name}`}</p>
+        </div>
+      ));
+    }}
+  </Query>
+  //     <Query query={GET_PLAYERS}>
+  //   {({ loading, data }) => !loading && (
+  //     <React.Fragment>
+  //       {this.state.isSignIn ?(
+  //         <span>
+  //           <div>
+  //           <button className="button-primary" onClick={() => firebase.auth().signOut()}>Sign Out!</button>
+  //           {data.players.map(p => (
+  //             <ul>
+  //               <li>{p.name}</li>
+  //               <li>{p.email}</li>
+  //             </ul>
+  //         ))}
+  //         </div>
+  //         </span>
+  //       )
+  //       :
+  //       (
+  //         <div className="main-container shadow">
+  //           <h1 className="text-center text-white"> Login </h1>
+  //           <hr/>
+  //           <StyledFirebaseAuth 
+  //             uiConfig={this.uiConfig}
+  //             firebaseAuth={firebase.auth()}
+  //           />
+  //         </div>
+        
+  //       )
+  //       }
+  //     </React.Fragment>
+  //   )}
+  // </Query>
+>>>>>>> master
     )
   }
 }

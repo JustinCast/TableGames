@@ -53,12 +53,10 @@ const RootQuery = new GraphQLObjectType({
         return db
           .collection("player")
           .get()
-          .then(querySnapshot => {
-            querySnapshot.forEach(element => {
-              return element.data();
-            });
-          });
-      }
+          .then(elements => {
+            return elements.docs.map(doc => doc.data());
+          })
+        }
     },
     player: {
       type: PlayerType,
@@ -70,10 +68,8 @@ const RootQuery = new GraphQLObjectType({
           .collection("player")
           .where("uid", "==", args.uid)
           .get()
-          .then(querySnapshot => {
-            querySnapshot.forEach(element => {
-              console.log(element);
-            });
+          .then(elements => {
+            console.log(elements);
           });
       }
     }
