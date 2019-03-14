@@ -14,7 +14,7 @@ class AllSessions extends Component {
                         <Session />
                     </div>
                 </div>
-                <div className="element">6
+                <div className="element">
                     <Link to={{ pathname: '/create-room', state: { isMachine: true} }}>
                         <span className="button-elemnt">
                             <Fab>
