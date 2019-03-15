@@ -53,11 +53,9 @@ const RootQuery = new GraphQLObjectType({
         return db
           .collection("player")
           .get()
-          .then(querySnapshot => {
-            querySnapshot.forEach(element => {
-              return element.data();
-            });
-          });
+          .then(elements => {
+            return elements.docs.map(doc => doc.data());
+          })
       }
     },
     player: {
