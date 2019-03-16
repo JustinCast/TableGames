@@ -100,8 +100,19 @@ const mutation = new GraphQLObjectType({
           type: new GraphQLNonNull(PlayerInputType)
         }
       },
-      resolve: async (_, input) => {
-        return db.collection("player").set(input);
+      resolve: async (_, data) => {
+        console.log(data.input.uid);
+        var docRef = db.collection('player').doc(data.input.uid);
+
+        if(!db.collection('player').where("uid", "==", data.input.uid))
+          return docRef.set({
+            name: data.input.name,
+            email: data.input.email,
+            wonGames: data.input.wonGames,
+            lostGames: data.input.lostGames,
+            tiedGames: data.input.tiedGames,
+            uid: data.input.uid
+          });
       }
     }
   }

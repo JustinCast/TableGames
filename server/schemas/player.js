@@ -36,7 +36,7 @@ const PlayerInputType = new GraphQLInputObjectType({
       type: new GraphQLNonNull(GraphQLInt)
     },
     tiedGames: {
-      type: new GraphQLNonNull(GraphQLString)
+      type: new GraphQLNonNull(GraphQLInt)
     },
     uid: {
       type: new GraphQLNonNull(GraphQLString)
