@@ -12,7 +12,7 @@ import {
 import db from "../config/config";
 // import schemas
 import { SessionType, SessionInputType } from "./session";
-import {PlayerType, PlayerInputType } from "./player";
+import { PlayerType, PlayerInputType } from "./player";
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
@@ -55,7 +55,7 @@ const RootQuery = new GraphQLObjectType({
           .get()
           .then(elements => {
             return elements.docs.map(doc => doc.data());
-          })
+          });
       }
     },
     player: {
@@ -102,10 +102,10 @@ const mutation = new GraphQLObjectType({
       },
       resolve: async (_, data) => {
         console.log(data.input.uid);
-        var docRef = db.collection('player').doc(data.input.uid);
+        var docRef = db.collection("player").doc(data.input.uid);
 
-        if(!db.collection('player').where("uid", "==", data.input.uid))
-          return docRef.set({
+        if (!db.collection("player").where("uid", "==", data.input.uid)){
+          docRef.set({
             name: data.input.name,
             email: data.input.email,
             wonGames: data.input.wonGames,
@@ -113,6 +113,9 @@ const mutation = new GraphQLObjectType({
             tiedGames: data.input.tiedGames,
             uid: data.input.uid
           });
+          return data.input;
+        }
+        return null;
       }
     }
   }
