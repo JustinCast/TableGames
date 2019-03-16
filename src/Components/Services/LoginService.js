@@ -16,7 +16,6 @@ class LoginService extends Service {
   }
 
   sentUser(user) {
-    //console.log(user);
     GraphQLClient.mutate({
       variables: { 
         input: {
@@ -24,7 +23,7 @@ class LoginService extends Service {
         email: user.email,
         wonGames: 0,
         lostGames: 0,
-        tiedGames: 3,
+        tiedGames: 0,
         uid: user.uid
       }
       },
