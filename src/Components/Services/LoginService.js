@@ -2,19 +2,9 @@ import { Service } from "react-services-injector";
 import { GraphQLClient } from "../../index";
 import gql from "graphql-tag";
 class LoginService extends Service {
-  get userName() {
-    GraphQLClient.query({
-      query: gql`
-        {
-          players {
-            name
-          }
-        }
-      `
-    }).then(data => console.log(data.data));
-    return "José Pablo Brenes Alfaro";
-  }
 
+
+  // Sent User for after login
   sentUser(user) {
     GraphQLClient.mutate({
       variables: { 
@@ -30,18 +20,23 @@ class LoginService extends Service {
       mutation: gql`
         mutation savePlayer($input: PlayerInputType!) {
           savePlayer(input: $input) {
-            name
+            name,
+            email,
+            uid,
+            wonGames,
+            lostGames,
+            tiedGames
           }
         }
       `
-    })
-      .then(result => {
-        console.log(result);
-      })
-      .catch(error => {
+    }).then(data =>{
+      if( data!= null ){
+        console.log(data);
+        //localStorage.setItem('actualUser',JSON.stringify())
+      }
+    }).catch(error => {
         console.log(error);
       });
-    console.log(user);
   }
 }
 

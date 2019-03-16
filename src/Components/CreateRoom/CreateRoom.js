@@ -35,6 +35,14 @@ class CreateRoom extends Component {
             })
         }else{
             //TODO: Goto game
+            let session = {
+                name: this.state.name,
+                game: this.state.game,
+                sizeGame: this.state.sizeGame,
+                difficulty: this.state.difficulty,
+                isMachine: this.state.isMachine
+            }
+            this.services.SessionService.createSession(session)
         }
     }
 
@@ -43,12 +51,11 @@ class CreateRoom extends Component {
     };
 
     render() {
-        const {RoomService}= this.services;
         const { openSnack } = this.state; 
         return ( 
             <div className="App container">
                 <div className="main-container shadow p-3 mb-5 rounded">
-                    <h2 className="text-center text-white"> Create Room {RoomService.userName}</h2>
+                    <h2 className="text-center text-white"> Create Room</h2>
                     <hr/>
                     <FormControl className="col mt-2"> 
                         <InputLabel htmlFor="name">Name</InputLabel>
@@ -111,10 +118,10 @@ class CreateRoom extends Component {
                         'aria-describedby': 'message-id',
                     }}
                     autoHideDuration={5000}
-                    message={<span id="message-id"><i class="fas fa-exclamation-triangle text-danger"></i> Name of session is empty <i class="fas fa-exclamation-triangle text-danger"></i></span>}
+                    message={<span id="message-id"><i className="fas fa-exclamation-triangle text-danger"></i> Name of session is empty <i className="fas fa-exclamation-triangle text-danger"></i></span>}
                     />
             </div>
         );
     }
 }
-export default injector.connect(CreateRoom, {toRender: ['RoomService']});
+export default injector.connect(CreateRoom, {toRender: ['SessionService']});
