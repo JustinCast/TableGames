@@ -20,12 +20,7 @@ class LoginService extends Service {
       mutation: gql`
         mutation savePlayer($input: PlayerInputType!) {
           savePlayer(input: $input) {
-            name,
-            email,
-            uid,
-            wonGames,
-            lostGames,
-            tiedGames
+            name
           }
         }
       `

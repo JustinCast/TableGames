@@ -101,10 +101,10 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, data) => {
-        console.log(data.input.uid);
-        var docRef = db.collection("player").doc(data.input.uid);
+        //console.log(data);
+        var docRef = db.collection("player").doc(data.input.email);
 
-        if (!db.collection("player").where("uid", "==", data.input.uid))
+        if (!db.collection("player").where("email", "==", data.input.email))
           docRef.set({
             name: data.input.name,
             email: data.input.email,
@@ -113,7 +113,14 @@ const mutation = new GraphQLObjectType({
             tiedGames: data.input.tiedGames,
             uid: data.input.uid
           });
-        return db.collection("player").where("uid", "==", data.input.uid);
+        return db
+        .collection("player")
+        .doc(data.input.email)
+        .get()
+        .then(docs => {
+          console.log(docs.data());
+          return docs.data();
+        });
       }
     }
   }
