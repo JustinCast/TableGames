@@ -36,6 +36,21 @@ const SessionInputType = new GraphQLInputObjectType({
     },
     uid: {
       type: new GraphQLNonNull(GraphQLString)
+    },
+    game: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    difficulty: {
+      type: new GraphQLNonNull(GraphQLInt)
+    },
+    isMachine: {
+      type: new GraphQLNonNull(GraphQLBoolean)
+    },
+    name: {
+      type: new GraphQLNonNull(GraphQLString)
+    },
+    gameSize: {
+      type: new GraphQLNonNull(GraphQLInt)
     }
   })
 });
