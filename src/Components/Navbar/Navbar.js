@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import {injector} from 'react-services-injector';
 class Navbar extends Component {
     render() {
-        const {RoomService,LoginService}= this.services;
+        const {LoginService}= this.services;
         return (
             <div className="nav shadow-sm">
                 <div className="nav-element-left">
@@ -21,4 +21,4 @@ class Navbar extends Component {
     }
 }
 
-export default injector.connect(Navbar, {toRender: ['RoomService','LoginService']});
+export default injector.connect(Navbar, {toRender: ['LoginService']});
