@@ -4,7 +4,8 @@ const {
   GraphQLString,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLInputObjectType
+  GraphQLInputObjectType,
+  GraphQLBoolean
 } = require("graphql");
 import { PlayerType, PlayerInputType } from "./player";
 
@@ -14,7 +15,12 @@ const SessionType = new GraphQLObjectType({
   fields: () => ({
     users: { type: new GraphQLList(PlayerType) },
     index: { type: GraphQLInt },
-    uid: { type: GraphQLString }
+    uid: { type: GraphQLString },
+    game: { type: GraphQLString },
+    difficulty: { type: GraphQLInt },
+    isMachine: { type: GraphQLBoolean },
+    name: { type: GraphQLString },
+    gameSize: { type: GraphQLInt }
   })
 });
 
