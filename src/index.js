@@ -22,13 +22,13 @@ import gql from 'graphql-tag';
 //   }
 // });
 
-const GraphQLClient = new ApolloClient({
+export const GraphQLClient = new ApolloClient({
   link: new HttpLink({ uri: 'http://localhost:4000/root' }),
   cache: new InMemoryCache()
 });
 
 
-GraphQLClient.query({ query: gql`{ players { name } }` }).then(console.log);
+//GraphQLClient.query({ query: gql`{ players { name } }` }).then(console.log);
 ReactDOM.render(
   <ApolloProvider client={GraphQLClient}>
     <App />
