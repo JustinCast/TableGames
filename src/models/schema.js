@@ -6,7 +6,10 @@ export const typeDefs = `
     lostGames: Int!,
     tiedGames: Int!,
     uid: String!
-  },
+  }
+
+  
+
   type Query {
     players: [Player]
   }
