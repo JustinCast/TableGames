@@ -8,7 +8,16 @@ export const typeDefs = `
     uid: String!
   }
 
-  
+  type Session {
+    users: Player!,
+    index: Int!,
+    uid: String!,
+    game: String!,
+    difficulty: Int!,
+    isMachine: Boolean!,
+    name: String!,
+    gameSize: Int!
+  }
 
   type Query {
     players: [Player]

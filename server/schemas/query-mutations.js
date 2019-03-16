@@ -104,7 +104,7 @@ const mutation = new GraphQLObjectType({
         console.log(data.input.uid);
         var docRef = db.collection("player").doc(data.input.uid);
 
-        if (!db.collection("player").where("uid", "==", data.input.uid)){
+        if (!db.collection("player").where("uid", "==", data.input.uid))
           docRef.set({
             name: data.input.name,
             email: data.input.email,
@@ -113,9 +113,7 @@ const mutation = new GraphQLObjectType({
             tiedGames: data.input.tiedGames,
             uid: data.input.uid
           });
-          return data.input;
-        }
-        return null;
+        return db.collection("player").where("uid", "==", data.input.uid);
       }
     }
   }
