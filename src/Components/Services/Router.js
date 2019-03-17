@@ -3,10 +3,10 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import Login from '../Login/Login';
 import Error from '../Error-Page/Error';
 import CreateRoom from '../CreateRoom/CreateRoom';
-import Statistic from '../Statistic/Statistic';
 
 import {injector} from 'react-services-injector';
 import services from '../Services/index_services';
+import WindowGame from '../WindowGame/WindowGame'
 
 injector.register(services);
 
@@ -15,9 +15,9 @@ class Router extends Component {
         return ( 
             <BrowserRouter>
                 <Switch>
-                <Route exact path="/" component={Login}/>
+                <Route exact path="/" component={WindowGame}/>
                 <Route path="/create-room" component={CreateRoom} />   
-                <Route path="/statistic" component={Statistic} />  
+                <Route path="/statistic" component={WindowGame} />  
                 <Route component={Error} />                    
 
                 </Switch>
