@@ -9,21 +9,21 @@ export const typeDefs = `
   }
 
   type Session {
-    users: [Player]!,
+    users: [Player!]!,
     index: Int!,
     uid: Int!,
     game: String!,
     difficulty: Int!,
     isMachine: Boolean!,
     name: String!,
-    sizeGame: Int!
+    gameSize: Int!
   }
 
   type Query {
     players: [Player]
   }
   type Mutation {
-    savePlayer(input: PlayerInputType!): Player
+    savePlayer(input: PlayerInputType!): Player,
     saveSession(input: SessionInputType!): Session
   }
 

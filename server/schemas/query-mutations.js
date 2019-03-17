@@ -90,7 +90,8 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, input) => {
-        return db.collection("session").set(input);
+        db.collection("session").add(input);
+        return input
       }
     },
     savePlayer: {
@@ -101,21 +102,30 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, data) => {
-        console.log(data.input.uid);
-        var docRef = db.collection("player").doc(data.input.uid);
-
-        if (!db.collection("player").where("uid", "==", data.input.uid)){
-          docRef.set({
-            name: data.input.name,
-            email: data.input.email,
-            wonGames: data.input.wonGames,
-            lostGames: data.input.lostGames,
-            tiedGames: data.input.tiedGames,
-            uid: data.input.uid
-          });
-          return data.input;
-        }
-        return null;
+        console.log(data);
+        var docRef = db.collection("player").doc(data.input.email);
+        
+        db.collection("player").doc(data.input.email)
+        .get().then(docSnapshot => {
+          if (!docSnapshot.exists) {
+            docRef.set({
+              name: data.input.name,
+              email: data.input.email,
+              wonGames: data.input.wonGames,
+              lostGames: data.input.lostGames,
+              tiedGames: data.input.tiedGames,
+              uid: data.input.uid
+            });
+          }
+        });
+        return db
+        .collection("player")
+        .doc(data.input.email)
+        .get()
+        .then(docs => {
+        //  console.log(docs.data());
+          return docs.data();
+        });
       }
     }
   }
