@@ -12,7 +12,7 @@ class CreateRoom extends Component {
         openSnack: false,  
         name: '',
         game:'Damas',
-        sizeGame:8,
+        gameSize:8,
         difficulty:1,
         isMachine: this.props.location.state.isMachine
     }
@@ -38,7 +38,7 @@ class CreateRoom extends Component {
             let session = {
                 name: this.state.name,
                 game: this.state.game,
-                sizeGame: this.state.sizeGame,
+                gameSize: this.state.gameSize,
                 difficulty: this.state.difficulty,
                 isMachine: this.state.isMachine
             }
@@ -76,12 +76,12 @@ class CreateRoom extends Component {
                     </FormControl>
 
                     <FormControl className="col mt-4">
-                    <InputLabel htmlFor="sizeGame">Size Game</InputLabel> 
+                    <InputLabel htmlFor="gameSize">Size Game</InputLabel> 
                     <Select
-                        value={this.state.sizeGame}
+                        value={this.state.gameSize}
                         onChange={this.handleChange}
-                        name="sizeGame"
-                        id="sizeGame"
+                        name="gameSize"
+                        id="gameSize"
                     >
                         <MenuItem value={8}>8 X 8</MenuItem>
                         <MenuItem value={10}>10 X 10</MenuItem>

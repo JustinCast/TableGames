@@ -4,7 +4,38 @@ import gql from "graphql-tag";
 class SessionService extends Service {
     
     createSession(session){
-      console.log(session);
+      let actualUser = {
+        name: JSON.parse(localStorage.getItem('actualUser')).name,
+        email: JSON.parse(localStorage.getItem('actualUser')).email,
+        wonGames: JSON.parse(localStorage.getItem('actualUser')).wonGames,
+        lostGames: JSON.parse(localStorage.getItem('actualUser')).lostGames,
+        tiedGames: JSON.parse(localStorage.getItem('actualUser')).tiedGames,
+        uid: JSON.parse(localStorage.getItem('actualUser')).uid
+      }
+      GraphQLClient.mutate({
+        variables: { 
+          input: {
+            users: [actualUser], //TODO: get Actual Use,,
+            index: 0,
+            uid: actualUser.uid, // TODO: get uid of Actual User
+            game: session.game,
+            difficulty: session.difficulty,
+            isMachine: session.isMachine,
+            name: session.name,
+            gameSize: session.gameSize
+          }
+        },
+        mutation: gql`
+          mutation saveSession($input: SessionInputType!) {
+            saveSession(input: $input) {
+              name
+            }
+          }
+        `
+      })
+      .catch(error => {
+          console.log(error);
+        });
     }
 }
 

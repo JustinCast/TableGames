@@ -20,14 +20,19 @@ class LoginService extends Service {
       mutation: gql`
         mutation savePlayer($input: PlayerInputType!) {
           savePlayer(input: $input) {
-            name
+            email
+            name,
+            wonGames,
+            lostGames,
+            uid,
+            tiedGames
           }
         }
       `
     }).then(data =>{
       if( data!= null ){
-        console.log(data);
-        //localStorage.setItem('actualUser',JSON.stringify())
+        console.log(data.data.savePlayer);
+        localStorage.setItem('actualUser',JSON.stringify(data.data.savePlayer))
       }
     }).catch(error => {
         console.log(error);
