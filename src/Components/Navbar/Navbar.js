@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import './Navbar.scss'
+import { Link } from 'react-router-dom'
 import {injector} from 'react-services-injector';
+
 class Navbar extends Component {
     render() {
         const {RoomService}= this.services;
@@ -12,7 +14,9 @@ class Navbar extends Component {
                     </div>
                 </div>
                 <div className="nav-element-rigth">
+                    <Link  to={{ pathname: '/statistic'}}>
                     <span className="span-name" >Estadisticas</span>
+                    </Link>
                     <span className="span-name" onClick={()=> this.props.signOut()}>Salir</span>
                 </div>
             </div>

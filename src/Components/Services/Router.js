@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import Login from '../Login/Login';
 import Error from '../Error-Page/Error';
 import CreateRoom from '../CreateRoom/CreateRoom';
+import Statistic from '../Statistic/Statistic';
 
 import {injector} from 'react-services-injector';
 import services from '../Services/index_services';
@@ -15,7 +16,8 @@ class Router extends Component {
             <BrowserRouter>
                 <Switch>
                 <Route exact path="/" component={Login}/>
-                <Route path="/create-room" component={CreateRoom} />    
+                <Route path="/create-room" component={CreateRoom} />   
+                <Route path="/statistic" component={Statistic} />  
                 <Route component={Error} />                    
 
                 </Switch>
