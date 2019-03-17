@@ -118,7 +118,6 @@ const mutation = new GraphQLObjectType({
         .doc(data.input.email)
         .get()
         .then(docs => {
-          console.log(docs.data());
           return docs.data();
         });
       }
