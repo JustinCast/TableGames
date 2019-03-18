@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import Login from '../Login/Login';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Error from '../Error-Page/Error';
 import CreateRoom from '../CreateRoom/CreateRoom';
 

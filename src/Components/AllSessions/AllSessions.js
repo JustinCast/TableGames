@@ -9,7 +9,7 @@ import { injector } from 'react-services-injector';
 class AllSessions extends Component {
     state = {}
     render() {
-        const {RoomService}= this.services;
+        const { RoomService } = this.services;
         return (
             <div className="container">
                 <div className="card main-card">
@@ -21,15 +21,15 @@ class AllSessions extends Component {
                     </div>
                 </div>
                 <div className="element">
-                    <Link to={{ pathname: '/create-room', state: { isMachine: true } }}>
-                        <span className="button-elemnt">
+                    <Link className="button-elemnt" to={{ pathname: '/create-room', state: { isMachine: true } }}>
+                        <span>
                             <Fab>
                                 <i className="fas fa-robot icon"></i>
                             </Fab>
                         </span>
                     </Link>
-                    <Link to={{ pathname: '/create-room', state: { isMachine: false } }}>
-                        <span className="button-elemnt">
+                    <Link className="button-elemnt" to={{ pathname: '/create-room', state: { isMachine: false } }}>
+                        <span >
                             <Fab>
                                 <i className="fas fa-plus icon"></i>
                             </Fab>
