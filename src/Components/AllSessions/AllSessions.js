@@ -3,6 +3,9 @@ import './AllSessions.scss';
 import Session from '../Session/Session';
 import Fab from '@material-ui/core/Fab';
 import { Link } from 'react-router-dom'
+
+import { injector } from 'react-services-injector';
+
 class AllSessions extends Component {
     state = {}
     render() {
@@ -35,4 +38,4 @@ class AllSessions extends Component {
     }
 }
 
-export default AllSessions;
+export default injector.connect(AllSessions, { toRender: ['RoomService', 'LoginService'] });

@@ -6,6 +6,7 @@ import CreateRoom from '../CreateRoom/CreateRoom';
 
 import {injector} from 'react-services-injector';
 import services from '../Services/index_services';
+import WindowGame from '../WindowGame/WindowGame'
 
 injector.register(services);
 
@@ -14,8 +15,9 @@ class Router extends Component {
         return ( 
             <BrowserRouter>
                 <Switch>
-                <Route exact path="/" component={Login}/>
-                <Route path="/create-room" component={CreateRoom} />    
+                <Route exact path="/" component={WindowGame}/>
+                <Route path="/create-room" component={CreateRoom} />   
+                <Route path="/statistic" component={WindowGame} />  
                 <Route component={Error} />                    
 
                 </Switch>
