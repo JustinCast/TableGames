@@ -76,18 +76,30 @@ class CreateRoom extends Component {
                     </FormControl>
 
                     <FormControl className="col mt-4">
-                    <InputLabel htmlFor="gameSize">Size Game</InputLabel> 
-                    <Select
+                    <InputLabel htmlFor="gameSize">Size Game</InputLabel>
+                    {this.state.game === "Damas"?(
+                        <Select
                         value={this.state.gameSize}
                         onChange={this.handleChange}
                         name="gameSize"
                         id="gameSize"
-                    >
+                        >
                         <MenuItem value={8}>8 X 8</MenuItem>
                         <MenuItem value={10}>10 X 10</MenuItem>
                         <MenuItem value={12}>12 X 12</MenuItem>
                         <MenuItem value={14}>14 X 14</MenuItem>
-                    </Select>
+                        </Select>
+                    ):(
+                        <Select
+                        value={this.state.gameSize}
+                        onChange={this.handleChange}
+                        name="gameSize"
+                        id="gameSize"
+                        >
+                        <MenuItem value={8}>8 X 8</MenuItem>
+                        </Select>
+                    )} 
+                    
                     </FormControl>
                     {this.state.isMachine ?(
                     <FormControl className="col mt-4">

@@ -15,7 +15,7 @@ class Router extends Component {
         return ( 
             <BrowserRouter>
                 <Switch>
-                <Route exact path="/" component={WindowGame}/>
+                <Route exact path="/" component={Login}/>
                 <Route path="/create-room" component={CreateRoom} />   
                 <Route path="/statistic" component={WindowGame} />  
                 <Route component={Error} />                    
