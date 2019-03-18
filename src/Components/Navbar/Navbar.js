@@ -1,16 +1,14 @@
 import React, { Component } from 'react'
 import './Navbar.scss';
-import { Link } from 'react-router-dom'
-import { injector } from 'react-services-injector';
+import { Link } from 'react-router-dom';
 
 class Navbar extends Component {
   render() {
-    const {RoomService}= this.services;
     return (
       <div className="nav shadow-sm">
         <div className="nav-element-left">
           <div className="user-name">
-            {RoomService.userName} 
+          {JSON.parse(localStorage.getItem('actualUser')).name}
           </div>
         </div>
         <div className="nav-element-rigth">
@@ -26,4 +24,4 @@ class Navbar extends Component {
   }
 }
 
-export default injector.connect(Navbar, { toRender: ['RoomService'] });
+export default Navbar;
