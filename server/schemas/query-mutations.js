@@ -12,7 +12,7 @@ import {
 import db from "../config/config";
 // import schemas
 import { SessionType, SessionInputType } from "./session";
-import {PlayerType, PlayerInputType } from "./player";
+import { PlayerType, PlayerInputType } from "./player";
 
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
@@ -53,10 +53,8 @@ const RootQuery = new GraphQLObjectType({
         return db
           .collection("player")
           .get()
-          .then(querySnapshot => {
-            querySnapshot.forEach(element => {
-              return element.data();
-            });
+          .then(elements => {
+            return elements.docs.map(doc => doc.data());
           });
       }
     },
@@ -92,7 +90,8 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, input) => {
-        return db.collection("session").set(input);
+        db.collection("session").add(input);
+        return input
       }
     },
     savePlayer: {
@@ -102,8 +101,31 @@ const mutation = new GraphQLObjectType({
           type: new GraphQLNonNull(PlayerInputType)
         }
       },
-      resolve: async (_, input) => {
-        return db.collection("player").set(input);
+      resolve: async (_, data) => {
+        console.log(data);
+        var docRef = db.collection("player").doc(data.input.email);
+        
+        db.collection("player").doc(data.input.email)
+        .get().then(docSnapshot => {
+          if (!docSnapshot.exists) {
+            docRef.set({
+              name: data.input.name,
+              email: data.input.email,
+              wonGames: data.input.wonGames,
+              lostGames: data.input.lostGames,
+              tiedGames: data.input.tiedGames,
+              uid: data.input.uid
+            });
+          }
+        });
+        return db
+        .collection("player")
+        .doc(data.input.email)
+        .get()
+        .then(docs => {
+        //  console.log(docs.data());
+          return docs.data();
+        });
       }
     }
   }

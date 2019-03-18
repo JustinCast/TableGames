@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
 import './Navbar.scss'
-import { Link } from 'react-router-dom'
-import {injector} from 'react-services-injector';
-
 class Navbar extends Component {
   render() {
     const {RoomService}= this.services;
@@ -26,4 +23,4 @@ class Navbar extends Component {
   }
 }
 
-export default injector.connect(Navbar, {toRender: ['RoomService','LoginService']});
+export default Navbar;
