@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import './Navbar.scss'
-import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom'
 class Navbar extends Component {
     render() {
@@ -8,7 +7,7 @@ class Navbar extends Component {
             <div className="nav shadow-sm">
                 <div className="nav-element-left">
                     <div className="user-name">
-                        { JSON.parse(localStorage.getItem('actualUser')).name}
+                        luis
                     </div>
                 </div>
                 <div className="nav-element-rigth">
