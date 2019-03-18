@@ -33,7 +33,7 @@ class WindowGame extends Component {
           <div id="disabled-button"></div>
           <div></div>
 
-          <div></div>
+          <div>2</div>
           <div id="disabled-button"></div>
           <div></div>
           <div id="disabled-button"></div>
