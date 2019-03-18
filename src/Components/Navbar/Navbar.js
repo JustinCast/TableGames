@@ -1,24 +1,25 @@
 import React, { Component } from 'react'
 import './Navbar.scss'
 import Button from '@material-ui/core/Button';
-import {injector} from 'react-services-injector';
+import { Link } from 'react-router-dom'
 class Navbar extends Component {
     render() {
-        const {RoomService,LoginService}= this.services;
         return (
             <div className="nav shadow-sm">
                 <div className="nav-element-left">
                     <div className="user-name">
-                        {LoginService.userName} 
+                        { JSON.parse(localStorage.getItem('actualUser')).name}
                     </div>
                 </div>
                 <div className="nav-element-rigth">
-                    <Button className="button" >Estadisticas</Button>
-                    <Button className="button" onClick={()=> this.props.signOut()}>Salir</Button>
+                    <Link  to={{ pathname: '/statistic'}}>
+                    <span className="span-name" >Estadisticas</span>
+                    </Link>
+                    <span className="span-name" onClick={()=> this.props.signOut()}>Salir</span>
                 </div>
             </div>
         );
     }
 }
 
-export default injector.connect(Navbar, {toRender: ['RoomService','LoginService']});
+export default Navbar;

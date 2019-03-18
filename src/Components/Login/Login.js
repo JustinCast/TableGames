@@ -11,6 +11,8 @@ import './login.scss';
 //import {CONFIG} from '../Services/FirebaseConfig';
 import MainScreen from '../MainScreen/MainScreen';
 
+import {injector} from 'react-services-injector'
+
 const CONFIG = {
   apiKey: "AIzaSyBUDHajC_WsEn0u3skyDuQ_XPehC61o-lY",
   authDomain: "fir-auth-react-64f8d.firebaseapp.com",
@@ -24,8 +26,7 @@ const CONFIG = {
 firebase.initializeApp(CONFIG);
 // Configuration of provider firebase
  
-export default class Login extends Component{
-
+class Login extends Component{
   // Initialization State
   state = {
     isSignIn: false,
@@ -80,6 +81,7 @@ export default class Login extends Component{
             uid: user.uid
           }
         })
+        this.services.LoginService.sentUser(this.state.user);
       }
     })
   }
@@ -118,3 +120,5 @@ export default class Login extends Component{
     )
   }
 }
+
+export default injector.connect(Login, {toRender: ['LoginService']});
