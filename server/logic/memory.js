@@ -27,7 +27,6 @@ function extractImgs(data, size) {
     extractedImgs.push(img.src.tiny); //first img pair
     extractedImgs.push(img.src.tiny); //second img pair
   });
-  console.log(size);
   gameList = fillList(size);
   shuffleArray(extractedImgs);
   setImgsToMemoryArray(gameList);
