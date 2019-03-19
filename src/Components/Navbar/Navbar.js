@@ -7,7 +7,11 @@ class Navbar extends Component {
             <div className="nav shadow-sm">
                 <div className="nav-element-left">
                     <div className="user-name">
+<<<<<<< HEAD
                         luis
+=======
+                        {/* { JSON.parse(localStorage.getItem('actualUser')).name} */}
+>>>>>>> justin_dev
                     </div>
                 </div>
                 <div className="nav-element-rigth">
