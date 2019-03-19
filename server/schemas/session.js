@@ -15,7 +15,7 @@ const SessionType = new GraphQLObjectType({
   fields: () => ({
     users: { type: new GraphQLList(PlayerType) },
     index: { type: GraphQLInt },
-    uid: { type: GraphQLString },
+    sid: { type: GraphQLString },
     game: { type: GraphQLString },
     difficulty: { type: GraphQLInt },
     isMachine: { type: GraphQLBoolean },

@@ -10,9 +10,7 @@ import 'dotenv/config';
 const cors = require('cors')
 const port = process.env.port || 4000;
 
-import imgs from './logic/memory'
-
-imgs(200);
+import memoryInit from './logic/memory'
 
 import Schema from "./schemas/schema";
 
@@ -20,6 +18,8 @@ const app = express();
 const server = Server(app);
 
 app.use(cors());
+
+memoryInit(10);
 
 
 /** 
