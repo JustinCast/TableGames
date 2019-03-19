@@ -7,7 +7,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 
 class Session extends Component {
     render() {
-        const {name, game, size} = this.props.session;
+        const {game,name,gameSize} = this.props.session;
         return (
             <div className="container-card">
                 <ExpansionPanel>
@@ -27,7 +27,7 @@ class Session extends Component {
                                 </div>
                                 <div className="element-opt">
                                     <p className="title">Tamaño</p>
-                                    <p>{size}</p>
+                                    <p>{gameSize}</p>
                                 </div>
                             </div>
                             <div className="button">

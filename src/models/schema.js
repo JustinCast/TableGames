@@ -20,7 +20,8 @@ export const typeDefs = `
   }
 
   type Query {
-    players: [Player]
+    players: [Player],
+    sessions:[Session]
   }
   type Mutation {
     savePlayer(input: PlayerInputType!): Player,

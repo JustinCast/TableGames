@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import './WindowGame.scss'
 import Button from '@material-ui/core/Button';
+import { injector } from 'react-services-injector';
 
 class WindowGame extends Component {
   state = {}
   render() {
+    const { GameService } = this.services;
     return (
       <div id="main-card">
         <p>Nombre del Juego</p>
@@ -22,120 +24,11 @@ class WindowGame extends Component {
         </div>
 
         <div id="game-card" className="shadow rounded">
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-
-          <div>2</div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
-          <div></div>
-          <div id="disabled-button"></div>
+          {Object.keys(GameService.matrix).map(key => (<div key={key} session={GameService.matrix[key]}></div>))}
         </div>
         <Button id="chat-button">Chat</Button>
       </div>
     );
   }
 }
-
-export default WindowGame;
+export default injector.connect(WindowGame, { toRender: ['GameService'] });
