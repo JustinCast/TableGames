@@ -1,4 +1,4 @@
-export function fillList(size) {
+export default function fillList(size) {
   let array = [];
   
   for (let i = 0; i < size; i++){

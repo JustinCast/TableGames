@@ -1,20 +1,22 @@
 const axios = require("axios");
-import { fillList } from "./logic-index";
+import fillList from "./logic-index";
 // 563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a
 // https://api.pexels.com/v1/curated?per_page=15&page=1
 // https://api.pexels.com/v1/search?query=people&per_page=2
 
-let extractedImgs = new Array();
-function getImages(total, size) {
+const extractedImgs = new Array();
+let gameList = new Array();
+
+function getImages(total) {
   axios
-    .get(`https://api.pexels.com/v1/curated?per_page=${total}&page=1`, {
+    .get(`https://api.pexels.com/v1/curated?per_page=${total*total}&page=1`, {
       headers: {
         Authorization:
           "563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a"
       }
     })
     .then(data => {
-      extractImgs(data.data.photos, size);
+      extractImgs(data.data.photos, total);
     })
     .catch(e => console.log(e));
 }
@@ -25,14 +27,28 @@ function extractImgs(data, size) {
     extractedImgs.push(img.src.tiny); //first img pair
     extractedImgs.push(img.src.tiny); //second img pair
   });
-  let array = fillList(size);
-  setImgsToMemoryArray(array);
+  console.log(size);
+  gameList = fillList(size);
+  shuffleArray(extractedImgs);
+  setImgsToMemoryArray(gameList);
 }
 
 function setImgsToMemoryArray(array) {
-  for (let i = 0; i < array.length; i += 2) {
-    array[i].img = extractedImgs[i]; // set first image pair
-    array[i + 1].img = extractedImgs[i + 1]; // set second image pair
+  for (let i = 0; i < array.length; i ++) {
+    array[i].img = extractedImgs[i];
+  }
+}
+
+/**
+ * Randomize array element order in-place.
+ * Using Durstenfeld shuffle algorithm.
+ */
+function shuffleArray(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
   }
 }
 
