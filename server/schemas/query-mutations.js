@@ -21,13 +21,11 @@ const RootQuery = new GraphQLObjectType({
       type: new GraphQLList(SessionType),
       resolve() {
         return db
-          .collection("session")
-          .get()
-          .then(querySnapshot => {
-            querySnapshot.forEach(element => {
-              console.log(element.data());
-            });
-          });
+        .collection("session")
+        .get()
+        .then(elements => {
+          return elements.docs.map(doc => doc.data());
+        });
       }
     },
     session: {
@@ -89,8 +87,8 @@ const mutation = new GraphQLObjectType({
           type: new GraphQLNonNull(SessionInputType)
         }
       },
-      resolve: async (_, input) => {
-        db.collection("session").add(input);
+      resolve: async (_, data) => {
+        db.collection("session").add(data.input);
         return input
       }
     },
