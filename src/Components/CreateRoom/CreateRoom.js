@@ -77,7 +77,7 @@ class CreateRoom extends Component {
 
                     <FormControl className="col mt-4">
                     <InputLabel htmlFor="gameSize">Size Game</InputLabel>
-                    {this.state.game === "Damas"?(
+                    {this.state.game === "Memory"?(
                         <Select
                         value={this.state.gameSize}
                         onChange={this.handleChange}
