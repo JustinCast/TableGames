@@ -10,7 +10,9 @@ import 'dotenv/config';
 const cors = require('cors')
 const port = process.env.port || 4000;
 
+import imgs from './logic/memory'
 
+imgs(200);
 
 import Schema from "./schemas/schema";
 
