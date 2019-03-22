@@ -8,6 +8,8 @@ import {
   GraphQLSchema
 } from "graphql";
 
+import { fillDefaultCheck } from '../logic/checkers';
+import { saveStateGame } from '../logic/logic-index';
 // firestore instance
 import db from "../config/config";
 // import schemas
@@ -88,8 +90,17 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, data) => {
-        db.collection("session").add(data.input);
-        return input
+        //db.collection("session").add(data.input);
+        //console.log(data.input);
+        let token;
+        if(data.input.isMachine === false){ // Is a player vs player
+          if(data.input.game === "Damas"){ // If game is chekers
+            token = saveStateGame(fillDefaultCheck(data.input.gameSize),undefined); 
+          }else{
+            // TODO: Sección de Jusin 
+          }
+        }
+        return token
       }
     },
     savePlayer: {
