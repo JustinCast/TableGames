@@ -1,17 +1,43 @@
-import {Service} from 'react-services-injector';
-
+import { Service } from 'react-services-injector';
+import { GraphQLClient } from "../../index";
+import gql from "graphql-tag";
 
 class RoomService extends Service {
-    
-    get userName(){
-        return 'Luis Carlos González Calderón';
-    }
+  constructor() {
+    super();
+    this.allSessions = [];
+  }
 
-    get sessions(){
-        return {name:'luis', game:'damas',size:'2*7'}
+  get sessions() {
+    GraphQLClient.query({
+      query: gql`
+          {
+            sessions {
+              users{
+                name
+              },
+              index,
+              uid,
+              game,
+              difficulty,
+              isMachine,
+              name,
+              gameSize
+            }
+          }
+        `
+    }).then(data => {
+      if (this.allSessions.length === 0) {
+        this.allSessions = data.data.sessions;
+        this.$update();
+      }
     }
+    );
+
+    return this.allSessions;
+  }
 }
 
 RoomService.publicName = 'RoomService';
- 
+
 export default RoomService;

@@ -9,6 +9,8 @@ const bodyParser = require('body-parser');
 import 'dotenv/config';
 const cors = require('cors')
 const port = process.env.port || 4000;
+import { fillDefaultCheck } from './logic/checkers';
+
 
 import memoryInit from './logic/memory'
 

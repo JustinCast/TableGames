@@ -1,0 +1,28 @@
+@media screen and (min-width: 601px) {
+  .main-card{
+    width: 35vw;
+    margin-top: 3vw;
+    display: flex;
+    justify-content: center;
+    padding: 1vw;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .main-card{
+    width: 80vw;
+    margin-top: 10vw;
+    display: flex;
+    justify-content: center;
+    padding: 2vw;
+  }
+}
+
+h3{
+  text-align: center;
+  padding-top: 10vw;
+}
+
+.main-card>p{
+  margin-top: 1vw;
+}

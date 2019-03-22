@@ -23,7 +23,7 @@
 
 @media screen and (max-width: 700px) {
     .title{
-        font-size: 15px;
+        font-size: 13px;
         color: blueviolet;
         margin-top: 0px;
         margin-bottom: 0px;
@@ -71,7 +71,7 @@
 
 @media screen and (max-width: 700px) {
     p{
-        font-size: 15px;
+        font-size: 13px;
     } 
 }
 
@@ -80,13 +80,13 @@
     flex-direction: row;
 }
   
-
-
-Button{
-    width: 20%;
+.button{
+  margin: 2%;
 }
 
-
+p{
+    color: black;
+}
 
 
 

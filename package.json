@@ -25,7 +25,7 @@
     "react-apollo": "^2.4.1",
     "react-dom": "^16.8.1",
     "react-firebaseui": "^3.1.2",
-    "react-scripts": "2.1.5",
+    "react-scripts": "^2.1.8",
     "react-services-injector": "^1.0.0-rc.6",
     "subscriptions-transport-ws": "^0.9.15",
     "unsplash-js": "^5.0.0"

@@ -1,0 +1,115 @@
+#main-card{
+    margin: 0px;
+    padding: 0px;
+}
+
+@media screen and (min-width: 601px) {
+    #main-card>p{
+        text-align: center;
+        font-size: 2vw;
+        margin: 0px;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    #main-card>p{
+        text-align: center;
+        font-size: 6vw;
+        margin: 0px;
+    }
+}
+
+@media screen and (min-width: 601px) {
+    #main-card section{
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    #main-card section{
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+}
+
+@media screen and (min-width: 601px) {
+    #game-card{
+        width: 50%;
+        height: 50%;
+        background-color: rgba(192, 192, 192, 0.582);
+        margin: 0px auto 0px auto;
+        position: relative;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    #game-card{
+        width: 355px;
+        height: 355px;
+        background-color: rgba(192, 192, 192, 0.582);
+        margin: 0px auto 0px auto;
+    }
+}
+
+#players{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+@media screen and (min-width: 601px) {
+    #players>section p{
+        text-align: center; 
+        width: 20vw;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    #players>section p{
+        text-align: center; 
+        width: 45vw;
+    }
+}
+
+#game-card{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding-top: 1%;
+}
+
+#game-card>div{
+    width: 50px;
+    height: 50px;
+    margin: 1%;
+    border-radius: 3px;
+    background-color: white;
+}
+
+#game-card>div:active{
+    background-color: white;
+}
+#game-card>div:hover{
+    background-color: white;
+    cursor: pointer;
+}
+
+#game-card>#disabled-button{
+    background-color: white;
+}
+
+p{
+    color: white;
+}
+
+#chat-button{
+    position: fixed;
+    background-color: green;
+    top: 85%;
+    right: 8%;
+    color: white;
+}
