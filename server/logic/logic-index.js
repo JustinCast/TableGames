@@ -21,7 +21,9 @@ export function fillList(size) {
 
 export function saveStateGame(game,token){
   if(token === undefined){ // Start default state game
-    db.collection("stateGame").add(game)
+    console.log(game);
+    game.map(o => o.token = 0);
+    db.collection("stateGame").add({matrix: game})
     .then(function(docRef) {
       return docRef.id;
     })

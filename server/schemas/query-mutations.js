@@ -91,14 +91,12 @@ const mutation = new GraphQLObjectType({
       },
       resolve: async (_, data) => {
         //db.collection("session").add(data.input);
-        //console.log(data.input);
         let token;
-        if(data.input.isMachine === false){ // Is a player vs player
-          if(data.input.game === "Damas"){ // If game is chekers
-            token = saveStateGame(fillDefaultCheck(data.input.gameSize),undefined); 
-          }else{
-            // TODO: Sección de Jusin 
-          }
+      
+        if(data.input.game === "Damas"){ // If game is chekers
+          token = saveStateGame(fillDefaultCheck(data.input.gameSize),undefined); 
+        }else{
+          // TODO: Sección de Jusin 
         }
         return token
       }
@@ -111,7 +109,6 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, data) => {
-        console.log(data);
         var docRef = db.collection("player").doc(data.input.email);
         
         db.collection("player").doc(data.input.email)
