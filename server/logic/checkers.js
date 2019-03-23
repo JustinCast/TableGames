@@ -22,15 +22,22 @@ export function fillDefaultCheck(size){
                 element.img = red_token;
                 element.token = true;
             }else{
-                element.token = undefined;
+                element.token = null;
                 element.img = square_black;
             }
         }else{
             element.img = square_white;
-            element.token = undefined;
+            element.token = null;
         }
     });
-    return checkerGame;
+    let game = {
+        game: checkerGame,
+        scores:{
+            p1Score: 0,
+            p2Score: 0
+        }
+    }
+    return game;
 }
 
 
