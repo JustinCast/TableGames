@@ -9,7 +9,6 @@ import {
 } from "graphql";
 
 import { fillDefaultCheck } from '../logic/checkers';
-import { saveStateGame } from '../logic/logic-index';
 // firestore instance
 import db from "../config/config";
 // import schemas
@@ -17,7 +16,7 @@ import { SessionType, SessionInputType } from "./session";
 import { PlayerType, PlayerInputType } from "./player";
 
 // import memory fill
-
+import { memoryInit } from "../logic/memory";
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
   fields: {
@@ -97,7 +96,13 @@ const mutation = new GraphQLObjectType({
       
         if(data.input.game === "Damas"){ // If game is chekers
           token = saveStateGame(fillDefaultCheck(data.input.gameSize),undefined); 
-        }else if(data.input.game === "Memory")
+        }else if(data.input.game === "Memory"){
+          memoryInit(data.input.gameSize)
+          .then(gameData => {
+            saveMemoryInitialGameState(gameData),
+            undefined
+          });
+        }
         return token
       }
     },
@@ -138,3 +143,48 @@ const mutation = new GraphQLObjectType({
 
 // exporting RootQuery and mutations
 export { RootQuery, mutation };
+
+
+// some firebase funcs
+function saveStateGame(game,token){
+  if(token === undefined){ // Start default state game
+    db.collection("stateGame").add(game)
+    .then(function(docRef) {
+      return docRef.id;
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+    });
+
+  }else{ // Update state game
+    db.collection("stateGame").doc(token).set(game)
+    .then(function(docRef) {
+      return docRef.id;
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+    });
+  }
+}
+
+function saveMemoryInitialGameState(gameData, token) {
+  if(!token)
+    db.collection("stateGame")
+    .add(gameData)
+    .then(docRef => {
+      return docRef.id
+    })
+    .catch(function(error) {
+      console.error("Error adding document: ", error);
+    });
+  else
+    db.collection("stateGame")
+    .doc(token)
+    .set(game)
+    .then(docRef => {
+      return docRef.id;
+    })
+    .catch(function(error) {
+      console.error("Error adding document: ", error);
+    });
+}
