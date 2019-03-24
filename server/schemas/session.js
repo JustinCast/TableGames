@@ -34,7 +34,7 @@ const SessionInputType = new GraphQLInputObjectType({
     index: {
       type: new GraphQLNonNull(GraphQLInt)
     },
-    uid: {
+    sid: {
       type: new GraphQLNonNull(GraphQLString)
     },
     game: {

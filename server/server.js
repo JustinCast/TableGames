@@ -4,13 +4,11 @@ import { Server } from 'http';
 import { execute, subscribe } from 'graphql';
 const express = require("express");
 const expressGraphQL = require("express-graphql");
-import GraphHTTP from 'express-graphql';
-const bodyParser = require('body-parser');
+// import GraphHTTP from 'express-graphql';
+// const bodyParser = require('body-parser');
 import 'dotenv/config';
 const cors = require('cors')
 const port = process.env.port || 4000;
-
-import memoryInit from './logic/memory'
 
 import Schema from "./schemas/schema";
 
@@ -18,9 +16,6 @@ const app = express();
 const server = Server(app);
 
 app.use(cors());
-
-memoryInit(10);
-
 
 /** 
  * Http graphql definition

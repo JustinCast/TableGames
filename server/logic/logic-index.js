@@ -1,4 +1,7 @@
-export default function fillList(size) {
+// firestore instance
+import db from "../config/config";
+
+export function fillList(size) {
   let array = [];
   
   for (let i = 0; i < size; i++){
