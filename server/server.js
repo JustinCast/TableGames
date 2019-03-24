@@ -21,7 +21,9 @@ const server = Server(app);
 
 app.use(cors());
 
-memoryInit(10);
+async function test(params) {
+  memoryInit(10);
+}
 
 
 /** 
@@ -50,3 +52,5 @@ SubscriptionServer.create({
 app.listen(port, () => {
   console.log(`Running server on ${port}`);
 });
+
+test();

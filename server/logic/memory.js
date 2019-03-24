@@ -8,7 +8,8 @@ const extractedImgs = new Array();
 let gameList = new Array();
 
 function getImages(total) {
-  axios
+  return new Promise(r => r(
+    axios
     .get(`https://api.pexels.com/v1/curated?per_page=${total*total}&page=1`, {
       headers: {
         Authorization:
@@ -16,9 +17,10 @@ function getImages(total) {
       }
     })
     .then(data => {
-      extractImgs(data.data.photos, total);
+      return new Promise(resolve => resolve(extractImgs(data.data.photos, total)));
     })
-    .catch(e => console.log(e));
+    .catch(e => console.log(e))
+  ));
 }
 
 function extractImgs(data, size) {
@@ -30,7 +32,7 @@ function extractImgs(data, size) {
   gameList = fillList(size);
   shuffleArray(extractedImgs);
   setImgsToMemoryArray(gameList);
-  console.log(gameList)
+  return gameList;
 }
 
 function setImgsToMemoryArray(array) {
@@ -53,5 +55,5 @@ function shuffleArray(array) {
 }
 
 export default async function memoryInit(size) {
-  getImages(size);
+  getImages(size).then(data => console.log(data)).catch(e => console.log(e));
 }
