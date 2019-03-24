@@ -66,7 +66,14 @@ export async function memoryInit(size) {
     resolve(
       getImages(size)
         .then(data => {
-          return data;
+          let game = {
+            game: data,
+            scores:{
+              p1Score: 0,
+              p2Score: 0
+            }
+        }
+          return game;
         })
         .catch(e => console.log(e))
     )
