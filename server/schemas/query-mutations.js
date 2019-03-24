@@ -16,6 +16,8 @@ import db from "../config/config";
 import { SessionType, SessionInputType } from "./session";
 import { PlayerType, PlayerInputType } from "./player";
 
+// import memory fill
+
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
   fields: {
@@ -95,9 +97,7 @@ const mutation = new GraphQLObjectType({
       
         if(data.input.game === "Damas"){ // If game is chekers
           token = saveStateGame(fillDefaultCheck(data.input.gameSize),undefined); 
-        }else{
-          // TODO: Sección de Jusin 
-        }
+        }else if(data.input.game === "Memory")
         return token
       }
     },
