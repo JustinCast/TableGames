@@ -9,13 +9,14 @@ import {
 } from "graphql";
 
 import { fillDefaultCheck } from '../logic/checkers';
-import { saveStateGame } from '../logic/logic-index';
 // firestore instance
 import db from "../config/config";
 // import schemas
 import { SessionType, SessionInputType } from "./session";
 import { PlayerType, PlayerInputType } from "./player";
 
+// import memory fill
+import { memoryInit } from "../logic/memory";
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
   fields: {
@@ -90,13 +91,23 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, data) => {
-        //db.collection("session").add(data.input);
-        let token;
       
         if(data.input.game === "Damas"){ // If game is chekers
-          token = saveStateGame(fillDefaultCheck(data.input.gameSize),undefined); 
-        }else{
-          // TODO: Sección de Jusin 
+          saveStateGame(fillDefaultCheck(data.input.gameSize),undefined)
+          .then(ref => {
+              db.collection("session").add(data.input);
+          }); 
+        } 
+        else {
+          memoryInit(data.input.gameSize)
+            .then(gameData => {
+              saveMemoryInitialGameState(gameData, undefined)
+              .then(ref => {
+                data.input["stateGameId"] = ref;
+                db.collection("session").add(data.input);
+              }
+            );
+          });
         }
         return token
       }
@@ -138,3 +149,56 @@ const mutation = new GraphQLObjectType({
 
 // exporting RootQuery and mutations
 export { RootQuery, mutation };
+
+
+// some firebase funcs
+function saveStateGame(game,token){
+  if(token === undefined) // Start default state game
+    return new Promise(resolve => resolve(
+      db.collection("stateGame").add(game)
+      .then(function(docRef) {
+        return docRef.id;
+      })
+      .catch(function(error) {
+          console.error("Error adding document: ", error);
+      })
+    ));
+
+  else // Update state game
+    return new Promise(resolve => resolve(
+      db.collection("stateGame").doc(token).set(game)
+      .then(function(docRef) {
+        return docRef.id;
+      })
+      .catch(function(error) {
+          console.error("Error adding document: ", error);
+      })
+    ));
+  
+}
+
+async function saveMemoryInitialGameState(gameData, token) {
+  if(!token)
+    return new Promise(resolve => resolve(
+      db.collection("stateGame")
+      .add(gameData)
+      .then(docRef => {
+        return docRef.id
+      })
+      .catch(function(error) {
+        console.error("Error adding document: ", error);
+      })
+    ));
+  else
+    return new Promise(resolve => resolve(
+      db.collection("stateGame")
+      .doc(token)
+      .set(game)
+      .then(docRef => {
+        return docRef.id;
+      })
+      .catch(function(error) {
+        console.error("Error adding document: ", error);
+      })
+    ));
+}
