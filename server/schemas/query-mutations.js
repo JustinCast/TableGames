@@ -95,7 +95,10 @@ const mutation = new GraphQLObjectType({
         if(data.input.game === "Damas"){ // If game is chekers
           saveStateGame(fillDefaultCheck(data.input.gameSize),undefined)
           .then(ref => {
-              db.collection("session").add(data.input);
+            console.log(ref);
+            data.input["stateGameId"] = ref;
+            db.collection("session").add(data.input);
+            return ref;
           }); 
         } 
         else {
@@ -105,11 +108,11 @@ const mutation = new GraphQLObjectType({
               .then(ref => {
                 data.input["stateGameId"] = ref;
                 db.collection("session").add(data.input);
+                return ref;
               }
             );
           });
         }
-        return token
       }
     },
     savePlayer: {
