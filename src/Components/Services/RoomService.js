@@ -17,7 +17,7 @@ class RoomService extends Service {
                 name
               },
               index,
-              uid,
+              sid,
               game,
               difficulty,
               isMachine,
