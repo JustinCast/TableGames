@@ -8,12 +8,16 @@ import {
   GraphQLSchema
 } from "graphql";
 
+import { fillDefaultCheck } from '../logic/checkers';
 // firestore instance
 import db from "../config/config";
 // import schemas
 import { SessionType, SessionInputType } from "./session";
 import { PlayerType, PlayerInputType } from "./player";
 
+// import memory fill
+import { memoryInit } from "../logic/memory";
+import { promised } from "q";
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
   fields: {
@@ -88,8 +92,32 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, data) => {
-        db.collection("session").add(data.input);
-        return input
+        return new Promise(resolve =>{
+          if(data.input.game === "Damas"){ // If game is chekers
+            saveStateGame(fillDefaultCheck(data.input.gameSize),undefined)
+            .then(ref => {
+              console.log(ref);
+              data.input["stateGameId"] = ref;
+              db.collection("session").add(data.input);
+              console.log(data.input);
+               resolve(data.input);
+            }); 
+          } 
+          else {
+            memoryInit(data.input.gameSize)
+              .then(gameData => {
+                saveMemoryInitialGameState(gameData, undefined)
+                .then(ref => {
+                  data.input["stateGameId"] = ref;
+                  db.collection("session").add(data.input);
+                  console.log(data.input);
+                  resolve(data.input);
+                }
+              );
+            });
+          }
+        })
+        
       }
     },
     savePlayer: {
@@ -100,7 +128,6 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, data) => {
-        console.log(data);
         var docRef = db.collection("player").doc(data.input.email);
         
         db.collection("player").doc(data.input.email)
@@ -121,7 +148,6 @@ const mutation = new GraphQLObjectType({
         .doc(data.input.email)
         .get()
         .then(docs => {
-        //  console.log(docs.data());
           return docs.data();
         });
       }
@@ -131,3 +157,56 @@ const mutation = new GraphQLObjectType({
 
 // exporting RootQuery and mutations
 export { RootQuery, mutation };
+
+
+// some firebase funcs
+function saveStateGame(game,token){
+  if(token === undefined) // Start default state game
+    return new Promise(resolve => resolve(
+      db.collection("stateGame").add(game)
+      .then(function(docRef) {
+        return docRef.id;
+      })
+      .catch(function(error) {
+          console.error("Error adding document: ", error);
+      })
+    ));
+
+  else // Update state game
+    return new Promise(resolve => resolve(
+      db.collection("stateGame").doc(token).set(game)
+      .then(function(docRef) {
+        return docRef.id;
+      })
+      .catch(function(error) {
+          console.error("Error adding document: ", error);
+      })
+    ));
+  
+}
+
+async function saveMemoryInitialGameState(gameData, token) {
+  if(!token)
+    return new Promise(resolve => resolve(
+      db.collection("stateGame")
+      .add(gameData)
+      .then(docRef => {
+        return docRef.id
+      })
+      .catch(function(error) {
+        console.error("Error adding document: ", error);
+      })
+    ));
+  else
+    return new Promise(resolve => resolve(
+      db.collection("stateGame")
+      .doc(token)
+      .set(game)
+      .then(docRef => {
+        return docRef.id;
+      })
+      .catch(function(error) {
+        console.error("Error adding document: ", error);
+      })
+    ));
+}

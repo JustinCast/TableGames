@@ -2,10 +2,14 @@ import { Service } from "react-services-injector";
 import { GraphQLClient } from "../../index";
 import gql from "graphql-tag";
 class LoginService extends Service {
-
+  constructor() {
+    super();
+ 
+    this.player = {};
+  }
 
   // Sent User for after login
-  sentUser(user) {
+   sentUser(user) {
     GraphQLClient.mutate({
       variables: { 
         input: {
@@ -31,8 +35,9 @@ class LoginService extends Service {
       `
     }).then(data =>{
       if( data!= null ){
-        console.log(data.data.savePlayer);
+        this.player = data.data.savePlayer;
         localStorage.setItem('actualUser',JSON.stringify(data.data.savePlayer))
+        this.$update();
       }
     }).catch(error => {
         console.log(error);

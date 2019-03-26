@@ -11,12 +11,13 @@ export const typeDefs = `
   type Session {
     users: [Player!]!,
     index: Int!,
-    uid: Int!,
+    sid: Int!,
     game: String!,
     difficulty: Int!,
     isMachine: Boolean!,
     name: String!,
-    gameSize: Int!
+    gameSize: Int!,
+    stateGameId: String
   }
 
   type Query {
