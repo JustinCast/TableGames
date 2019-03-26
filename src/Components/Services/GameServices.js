@@ -1,37 +1,19 @@
-import {Service} from 'react-services-injector';
+import { Service } from 'react-services-injector';
 
+
+import firebaseApp from '../Services/FirebaseService';
 
 class GameService extends Service {
-    
-    get matrix(){
-        const matrix =[
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'},
-            {number:'1'}, 
-        ];
-        return matrix;
+
+    get matrix() {
+        return new Promise(resolve => {firebaseApp.firebase_.
+            firestore()
+            .collection("stateGame")
+            .doc("tTuDuPWESg6b2iUY4s8V")
+            .get()
+            .then(game => {
+                resolve(game.data())
+            })});
     }
 
     /*get sizeBox(size){
@@ -52,5 +34,5 @@ class GameService extends Service {
 }
 
 GameService.publicName = 'GameService';
- 
+
 export default GameService;
