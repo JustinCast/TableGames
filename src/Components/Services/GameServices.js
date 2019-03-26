@@ -25,10 +25,30 @@ class GameService extends Service {
             {number:'1'},
             {number:'1'},
             {number:'1'},
+            {number:'1'},
+            {number:'1'},
+            {number:'1'},
+            {number:'1'},
+            {number:'1'}, 
         ];
-         
         return matrix;
     }
+
+    /*get sizeBox(size){
+        switch (size) {
+            case 16:
+                
+                return 8;
+            case 36:
+                return 8;
+            default:
+                break;
+        }
+    }
+
+    get sizeElement(){
+
+    }*/
 }
 
 GameService.publicName = 'GameService';
