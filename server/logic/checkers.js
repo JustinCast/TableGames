@@ -14,20 +14,32 @@ const blueCrown_token = "https://firebasestorage.googleapis.com/v0/b/tablegames-
 export function fillDefaultCheck(size){
     let checkerGame = fillList(size);
     checkerGame.forEach(element =>{
-        if(element.x % 2 === 0 & element.y % 2 === 0){ // Fill black_square
-            if(element.x < 3){ // Player one
+        if(element.x <3){ // Player 1
+            if((element.x %2 === 0 & element.y %2 ===0) | (element.x %2 !== 0 & element.y %2 !==0)){
                 element.img = blue_token;
-                element.token = false; // Is player one
-            }else if( element.x >= size-3){ // Player two
-                element.img = red_token;
-                element.token = true;
+                 element.token = false; // Is player one
             }else{
                 element.token = null;
-                element.img = square_black;
+                 element.img = square_white;
             }
         }else{
-            element.img = square_white;
-            element.token = null;
+            if(element.x > size-4){
+                if((element.x %2 === 0 & element.y %2 ===0) | (element.x %2 !== 0 & element.y %2 !==0)){
+                    element.img = red_token;
+                     element.token = false; // Is player one
+                }else{
+                    element.token = null;
+                     element.img = square_white;
+                }
+            }else{
+                if((element.x %2 === 0 & element.y %2 ===0) | (element.x %2 !== 0 & element.y %2 !==0)){
+                    element.img = square_black;
+                     element.token = null; // Is player one
+                }else{
+                    element.token = null;
+                     element.img = square_white;
+                }
+            }
         }
     });
     let game = {
@@ -39,6 +51,3 @@ export function fillDefaultCheck(size){
     }
     return game;
 }
-
-
-

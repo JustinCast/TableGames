@@ -12,7 +12,7 @@ function getImages(total) {
     r(
       axios
         .get(
-          `https://api.pexels.com/v1/curated?per_page=${total * total}&page=1`,
+          `https://api.pexels.com/v1/curated?per_page=${total * 4}&page=1`,
           {
             headers: {
               Authorization:
