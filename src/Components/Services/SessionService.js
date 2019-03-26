@@ -32,12 +32,12 @@ class SessionService extends Service {
             }
           }
         `
-      }).then( token =>{
-        console.log(token);
+      }).then( data =>{
+        localStorage.setItem('stateGameId',JSON.stringify(data.data.saveSession.stateGameId));
       })
       .catch(error => {
           console.log(error);
-        });
+      });
     }
 }
 
