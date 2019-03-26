@@ -17,6 +17,7 @@ import { PlayerType, PlayerInputType } from "./player";
 
 // import memory fill
 import { memoryInit } from "../logic/memory";
+import { promised } from "q";
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
   fields: {
@@ -91,28 +92,32 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, data) => {
-      
-        if(data.input.game === "Damas"){ // If game is chekers
-          saveStateGame(fillDefaultCheck(data.input.gameSize),undefined)
-          .then(ref => {
-            console.log(ref);
-            data.input["stateGameId"] = ref;
-            db.collection("session").add(data.input);
-            return ref;
-          }); 
-        } 
-        else {
-          memoryInit(data.input.gameSize)
-            .then(gameData => {
-              saveMemoryInitialGameState(gameData, undefined)
-              .then(ref => {
-                data.input["stateGameId"] = ref;
-                db.collection("session").add(data.input);
-                return ref;
-              }
-            );
-          });
-        }
+        return new Promise(resolve =>{
+          if(data.input.game === "Damas"){ // If game is chekers
+            saveStateGame(fillDefaultCheck(data.input.gameSize),undefined)
+            .then(ref => {
+              console.log(ref);
+              data.input["stateGameId"] = ref;
+              db.collection("session").add(data.input);
+              console.log(data.input);
+               resolve(data.input);
+            }); 
+          } 
+          else {
+            memoryInit(data.input.gameSize)
+              .then(gameData => {
+                saveMemoryInitialGameState(gameData, undefined)
+                .then(ref => {
+                  data.input["stateGameId"] = ref;
+                  db.collection("session").add(data.input);
+                  console.log(data.input);
+                  resolve(data.input);
+                }
+              );
+            });
+          }
+        })
+        
       }
     },
     savePlayer: {

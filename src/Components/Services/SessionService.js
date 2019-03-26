@@ -28,10 +28,12 @@ class SessionService extends Service {
         mutation: gql`
           mutation saveSession($input: SessionInputType!) {
             saveSession(input: $input) {
-              name
+              stateGameId
             }
           }
         `
+      }).then( token =>{
+        console.log(token);
       })
       .catch(error => {
           console.log(error);
