@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import Snackbar from '@material-ui/core/Snackbar';
-// Firebase
-import firebase from 'firebase';
+
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+
+import firebaseApp from '../Services/FirebaseService';
 
 // Css
 import './login.scss';
@@ -13,10 +14,9 @@ import MainScreen from '../MainScreen/MainScreen';
 
 import {injector} from 'react-services-injector'
 
-import { CONFIG } from '../Services/FirebaseService';
 
-// Inicial firebase
-firebase.initializeApp(CONFIG);
+
+
 // Configuration of provider firebase
  
 class Login extends Component{
@@ -30,14 +30,14 @@ class Login extends Component{
       uid: ''
     }
   }
-
+  
   // Interface configuration (providers)
   uiConfig = {
     signInFlow: "popup",
     signInOptions: [
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-      firebase.auth.GithubAuthProvider.PROVIDER_ID
+      firebaseApp.firebase_.auth.GoogleAuthProvider.PROVIDER_ID,
+      firebaseApp.firebase_.auth.FacebookAuthProvider.PROVIDER_ID,
+      firebaseApp.firebase_.auth.GithubAuthProvider.PROVIDER_ID
     ],
     callbacks: {
       signInSuccessWithAuthResult: () => false
@@ -45,7 +45,7 @@ class Login extends Component{
   }
   
   signOutAuth = () => {
-    firebase.auth().signOut();
+    firebaseApp.auth().signOut();
   }
   
   componentDidMount = () =>{
@@ -62,7 +62,7 @@ class Login extends Component{
   };
   // Handle auth change of firebase
   authStateChange = () => {
-    firebase.auth().onAuthStateChanged( user => {
+    firebaseApp.firebase_.auth().onAuthStateChanged( user => {
       this.setState({
         isSignIn: !!user, // Change state sign in
       })
@@ -93,7 +93,7 @@ class Login extends Component{
               <hr/>
               <StyledFirebaseAuth 
                 uiConfig={this.uiConfig}
-                firebaseAuth={firebase.auth()}
+                firebaseAuth={firebaseApp.firebase_.auth()}
               />
             </div>
           
