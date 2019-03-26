@@ -42,7 +42,8 @@ class CreateRoom extends Component {
                 difficulty: this.state.difficulty,
                 isMachine: this.state.isMachine
             }
-            this.services.SessionService.createSession(session)
+            this.services.SessionService.createSession(session);
+            
         }
     }
 

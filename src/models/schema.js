@@ -16,7 +16,8 @@ export const typeDefs = `
     difficulty: Int!,
     isMachine: Boolean!,
     name: String!,
-    gameSize: Int!
+    gameSize: Int!,
+    stateGameId: String
   }
 
   type Query {

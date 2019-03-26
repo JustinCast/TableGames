@@ -17,7 +17,7 @@ class SessionService extends Service {
           input: {
             users: [actualUser], //TODO: get Actual Use,,
             index: 0,
-            sid: actualUser.uid, // TODO: get uid of Actual User
+            sid: actualUser.sid, // TODO: get uid of Actual User
             game: session.game,
             difficulty: session.difficulty,
             isMachine: session.isMachine,
@@ -28,14 +28,16 @@ class SessionService extends Service {
         mutation: gql`
           mutation saveSession($input: SessionInputType!) {
             saveSession(input: $input) {
-              name
+              stateGameId
             }
           }
         `
+      }).then( data =>{
+        localStorage.setItem('stateGameId',JSON.stringify(data.data.saveSession.stateGameId));
       })
       .catch(error => {
           console.log(error);
-        });
+      });
     }
 }
 
