@@ -18,6 +18,24 @@ export function fillList(size) {
   return array;
 }
 
+
+
+export function checkSelection(stateGameId){
+  return new Promise(r => {
+    db.collection("stateGame").doc(stateGameId)
+    .get().then((data) => {
+      if (!data.firstCheck) {
+        db.collection("stateGame").doc(stateGameId).update({firstCheck: true})
+        r(false)
+      } else {
+        db.collection("stateGame").doc(stateGameId).update({firstCheck: false})
+        r(true)
+      }
+    })
+  }) 
+  
+}
+
 export function checkActualPlayer(stateGameId, playerId){
   return new Promise( resolve => {
     db.collection("stateGame").doc(stateGameId)

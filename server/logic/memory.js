@@ -72,7 +72,8 @@ export async function memoryInit(size) {
             scores:{
               p1Score: 0,
               p2Score: 0
-            }
+            },
+            firstCheck: false
         }
           return game;
         })
