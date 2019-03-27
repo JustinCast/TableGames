@@ -14,13 +14,13 @@ const SessionType = new GraphQLObjectType({
   name: "SessionType",
   fields: () => ({
     users: { type: new GraphQLList(PlayerType) },
-    index: { type: GraphQLInt },
     sid: { type: GraphQLString },
     game: { type: GraphQLString },
     difficulty: { type: GraphQLInt },
     isMachine: { type: GraphQLBoolean },
     name: { type: GraphQLString },
-    gameSize: { type: GraphQLInt }
+    gameSize: { type: GraphQLInt },
+    stateGameId: { type: GraphQLString }
   })
 });
 
@@ -30,9 +30,6 @@ const SessionInputType = new GraphQLInputObjectType({
   fields: () => ({
     users: {
       type: new GraphQLNonNull(new GraphQLList(PlayerInputType))
-    },
-    index: {
-      type: new GraphQLNonNull(GraphQLInt)
     },
     sid: {
       type: new GraphQLNonNull(GraphQLString)
@@ -51,6 +48,9 @@ const SessionInputType = new GraphQLInputObjectType({
     },
     gameSize: {
       type: new GraphQLNonNull(GraphQLInt)
+    },
+    stateGameId: {
+      type: GraphQLString
     }
   })
 });

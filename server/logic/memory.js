@@ -12,7 +12,7 @@ function getImages(total) {
     r(
       axios
         .get(
-          `https://api.pexels.com/v1/curated?per_page=${total * total}&page=1`,
+          `https://api.pexels.com/v1/curated?per_page=${total * 4}&page=1`,
           {
             headers: {
               Authorization:
@@ -45,6 +45,7 @@ function extractImgs(data, size) {
 function setImgsToMemoryArray(array) {
   for (let i = 0; i < array.length; i++) {
     array[i].img = extractedImgs[i];
+    array[i].img2 = "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/question.png?alt=media&token=1e80093e-5d48-4ad6-8b3b-4838fd5a86d7";
   }
 }
 
