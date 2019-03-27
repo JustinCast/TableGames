@@ -44,7 +44,7 @@ class WindowGame extends Component {
           {this.state.game.length > 0 ? (
             Object.keys(this.state.game).map( key => (
               <div style={{width: sizeElement, height:sizeElement}} key={key}>
-                <img src={this.state.game[key].img} style={{width: "4.3vw", height:"4.3vw"}} ></img>
+                <img src={this.state.game[key].img2} style={{width: "4.3vw", height:"4.3vw"}} ></img>
               </div>)
             )
           ) : null

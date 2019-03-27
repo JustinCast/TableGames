@@ -9,7 +9,7 @@ class GameService extends Service {
         return new Promise(resolve => {firebaseApp.firebase_.
             firestore()
             .collection("stateGame")
-            .doc("tTuDuPWESg6b2iUY4s8V")
+            .doc("hpGwIgBb5iHlJTxKk4dH")
             .get()
             .then(game => {
                 resolve(game.data())
