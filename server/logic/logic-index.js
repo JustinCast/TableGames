@@ -17,3 +17,18 @@ export function fillList(size) {
   }
   return array;
 }
+
+
+export function checkActualPlayer(stateGameId, playerId){
+  return new Promise( resolve => {
+    db.collection("stateGame").doc(stateGameId)
+    .where("actualPlayer", "==", playerId)
+    .get().then((docSnapshot) => {
+      if (docSnapshot.exists) {
+        resolve(true)
+      } else {
+        resolve(false)
+      }
+    })
+  });
+}

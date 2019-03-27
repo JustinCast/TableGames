@@ -86,9 +86,9 @@ class CreateRoom extends Component {
                         id="gameSize"
                         >
                         <MenuItem value={8}>8 X 8</MenuItem>
-                        <MenuItem value={10}>10 X 10</MenuItem>
-                        <MenuItem value={12}>12 X 12</MenuItem>
-                        <MenuItem value={14}>14 X 14</MenuItem>
+                        <MenuItem value={7}>7 X 7</MenuItem>
+                        <MenuItem value={6}>6 X 6</MenuItem>
+                        <MenuItem value={5}>5 X 5</MenuItem>
                         </Select>
                     ):(
                         <Select
