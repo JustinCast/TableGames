@@ -16,7 +16,6 @@ class RoomService extends Service {
               users{
                 name
               },
-              index,
               sid,
               game,
               difficulty,

@@ -94,18 +94,19 @@ const mutation = new GraphQLObjectType({
       resolve: async (_, data) => {
         return new Promise(resolve =>{
           if(data.input.game === "Damas"){ // If game is chekers
-            saveStateGame(fillDefaultCheck(data.input.gameSize),undefined)
+            let game = fillDefaultCheck(data.input.gameSize);
+            game["actualPlayer"] = data.input.users[0].uid;
+            saveStateGame(game, undefined)
             .then(ref => {
-              console.log(ref);
               data.input["stateGameId"] = ref;
               db.collection("session").add(data.input);
-              console.log(data.input);
-               resolve(data.input);
+              resolve(data.input);
             }); 
           } 
           else {
             memoryInit(data.input.gameSize)
               .then(gameData => {
+                gameData["actualPlayer"] = data.input.users[0].uid;
                 saveMemoryInitialGameState(gameData, undefined)
                 .then(ref => {
                   data.input["stateGameId"] = ref;
