@@ -152,7 +152,6 @@ function changeActualUser(stateGameId, userToken) {
 export function addScore(stateGameId, actualPlayer) {
   db.collection("stateGame")
     .doc(stateGameId)
-    .where("actualPlayer", "==", actualPlayer)
     .get()
     .then(state => {
       if (state)
@@ -197,4 +196,24 @@ export function updateGame(stateGameId, game) {
         })
     )
   );
+}
+
+
+export function identifyGameWhenClick(stateGameId) {
+  return new Promise(resolve => resolve(
+    db.collection("session")
+    .where("stateGameId", "==", stateGameId)
+    .get()
+    .then(session => {
+      if(session)
+        switch (session.game) {
+          case "Damas":
+            return true;
+          case "Memory":
+            return false;
+          default:
+            break;
+        }
+    })
+  ));
 }

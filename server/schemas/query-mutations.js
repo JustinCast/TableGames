@@ -9,7 +9,7 @@ import {
 } from "graphql";
 
 import { fillDefaultCheck } from '../logic/checkers';
-import { saveMemoryInitialGameState, saveStateGame } from '../logic/logic-index';
+import { saveMemoryInitialGameState, saveStateGame, identifyGameWhenClick } from '../logic/logic-index';
 // firestore instance
 import db from "../config/config";
 // import schemas
@@ -17,7 +17,8 @@ import { SessionType, SessionInputType } from "./session";
 import { PlayerType, PlayerInputType } from "./player";
 
 // import memory fill
-import { memoryInit } from "../logic/memory";
+import { memoryInit, playMemory } from "../logic/memory";
+import { ClickObjectType, ClickObjectInputType } from "./click-object";
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
   fields: {
@@ -152,6 +153,21 @@ const mutation = new GraphQLObjectType({
           return docs.data();
         });
       }
+    },
+    click: {
+      type: ClickObjectType,
+      args: {
+        input: {
+          type: new GraphQLNonNull(ClickObjectInputType)
+        }
+      },
+      resolve: async(_, data) => {
+        if(!identifyGameWhenClick(data.input.stateGameId))
+          playMemory(data.input.stateGameId, data.input.player, data.input.object)
+        else {
+          // punto de entrada del juego damas
+        }
+      } 
     }
   }
 });
