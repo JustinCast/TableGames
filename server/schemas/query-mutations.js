@@ -18,7 +18,6 @@ import { PlayerType, PlayerInputType } from "./player";
 
 // import memory fill
 import { memoryInit } from "../logic/memory";
-import { promised } from "q";
 const RootQuery = new GraphQLObjectType({
   name: "RootQuery",
   fields: {

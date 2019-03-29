@@ -17,26 +17,26 @@ export function fillDefaultCheck(size){
         if(element.x <3){ // Player 1
             if((element.x %2 === 0 & element.y %2 ===0) | (element.x %2 !== 0 & element.y %2 !==0)){
                 element.img = blue_token;
-                 element.token = false; // Is player one
+                 element.owner = false; // Is player one
             }else{
-                element.token = null;
+                element.owner = null;
                  element.img = square_white;
             }
         }else{
             if(element.x > size-4){
                 if((element.x %2 === 0 & element.y %2 ===0) | (element.x %2 !== 0 & element.y %2 !==0)){
                     element.img = red_token;
-                     element.token = false; // Is player one
+                     element.owner = true; // Is player two
                 }else{
-                    element.token = null;
+                    element.owner = null;
                      element.img = square_white;
                 }
             }else{
                 if((element.x %2 === 0 & element.y %2 ===0) | (element.x %2 !== 0 & element.y %2 !==0)){
                     element.img = square_black;
-                     element.token = null; // Is player one
+                     element.owner = null; // Is player one
                 }else{
-                    element.token = null;
+                    element.owner = null;
                      element.img = square_white;
                 }
             }
@@ -47,7 +47,9 @@ export function fillDefaultCheck(size){
         scores:{
             p1Score: 0,
             p2Score: 0
-        }
+        },
+        firstCheck: false
     }
+    
     return game;
 }

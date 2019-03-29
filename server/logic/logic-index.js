@@ -1,6 +1,7 @@
 // firestore instance
 import db from "../config/config";
 
+// Fill list logit game
 export function fillList(size) {
   let array = [];
 
@@ -18,17 +19,53 @@ export function fillList(size) {
   return array;
 }
 
-export function checkActualPlayer(stateGameId, playerId){
-  return new Promise( resolve => {
-    db.collection("stateGame").doc(stateGameId)
-    .where("actualPlayer", "==", playerId)
-    .get().then((docSnapshot) => {
-      if (docSnapshot.exists) {
-        resolve(true)
-      } else {
-        resolve(false)
-      }
-    })
+// Check if element is checker and owner checker
+export function isCheckerPlayer(stateGameId, playerId, checker) {
+  return new Promise(r => {
+    db.collection("session")
+      .where("stateGameId", "==", stateGameId)
+      .get()
+      .then(data => {
+        if (data.users[0].uid === playerId) {
+          // Player one
+          if (checker.owner === false) {
+            // Checker owner is player one
+            r(true);
+          } else {
+            r(false);
+          }
+        } else {
+          // Player two
+          if (checker.owner === true) {
+            // Checker owner is player two
+            r(true);
+          } else {
+            r(false);
+          }
+        }
+      });
+  });
+}
+
+// Check if is the first or the second selection
+export function checkSelection(stateGameId) {
+  return new Promise(r => {
+    db.collection("stateGame")
+      .doc(stateGameId)
+      .get()
+      .then(data => {
+        if (!data.firstCheck) {
+          db.collection("stateGame")
+            .doc(stateGameId)
+            .update({ firstCheck: true });
+          r(false);
+        } else {
+          db.collection("stateGame")
+            .doc(stateGameId)
+            .update({ firstCheck: false });
+          r(true);
+        }
+      });
   });
 }
 
@@ -99,7 +136,7 @@ export function saveMemoryInitialGameState(gameData, token) {
     );
 }
 
-export function changeActualUser(stateGameId, userToken) {
+function changeActualUser(stateGameId, userToken) {
   return new Promise(resolve => {
     resolve(
       db
@@ -110,4 +147,54 @@ export function changeActualUser(stateGameId, userToken) {
         })
     );
   });
+}
+
+export function addScore(stateGameId, actualPlayer) {
+  db.collection("stateGame")
+    .doc(stateGameId)
+    .where("actualPlayer", "==", actualPlayer)
+    .get()
+    .then(state => {
+      if (state)
+        db.collection("session")
+          .where("stateGameId", "==", stateGameId)
+          .get()
+          .then(session => {
+            if (session.users[0].uid === actualPlayer) {
+              state.scores.p1Score++;
+              changeActualUser(stateGameId, session.users[1].uid);
+            } else {
+              state.scores.p2Score++;
+              changeActualUser(stateGameId, session.users[0].uid);
+            }
+            // resetear el primer click
+            resetFirstCheck(stateGameId); // suscribirse a la promise, si es necesario
+          });
+    });
+}
+
+function resetFirstCheck(stateGameId) {
+  return new Promise(resolve => {
+    resolve(
+      db
+        .collection("stateGame")
+        .doc(stateGameId)
+        .update({
+          firstCheck: null
+        })
+    );
+  });
+}
+
+export function updateGame(stateGameId, game) {
+  return new Promise(resolve =>
+    resolve(
+      db
+        .collection("stateGame")
+        .doc(stateGameId)
+        .update({
+          game: game
+        })
+    )
+  );
 }
