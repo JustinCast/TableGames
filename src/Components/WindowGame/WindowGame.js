@@ -12,14 +12,6 @@ class WindowGame extends Component {
   }
 
   componentDidMount(){
-    /*this.services.GameService.matrix.then(data => 
-      this.setState({
-        game : data.game,
-        score : data.scores,
-        
-      })
-    );*/
-    
     this.services.GameService.newMatrix.then(data => 
       this.setState({
         game : data.game,
@@ -28,6 +20,11 @@ class WindowGame extends Component {
   }
 
   render() {
+    this.services.GameService.newMatrix.then(data => 
+      this.setState({
+        game : data.game,
+        score : data.scores,
+      }));
 
     const sizeBox="44%";
     const sizeElement="4.8vw";
@@ -43,7 +40,6 @@ class WindowGame extends Component {
           <section>
             <p>Luis Carlos González Calderón</p>
             <p>Points  <b>8</b></p>
-           
           </section>
         </div>
 
