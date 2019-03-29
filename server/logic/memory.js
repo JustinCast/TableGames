@@ -93,24 +93,25 @@ export async function memoryInit(size) {
   );
 }
 
-export function playMemory(stateGameId, actualPlayer, object) {
+export function playMemory(stateGameId, player, object) {
   // recibir actualPlayer, game
-  db.collection("stateGame").doc(stateGameId);
-  get();
-  then(state => {
-    if (state) {
-      if (state.firstCheck === null) state.firstCheck = object;
-      else {
-        if (compareCards(state.firstCheck, object)) {
-          addScore(stateGameId, actualPlayer);
-          blockCards(stateGameId, state.img)
-          .then(updatedMtx => (
-            updateGame(stateGameId, updatedMtx)
-          ));
+  db.collection("stateGame")
+    .doc(stateGameId)
+    .where("actualPlayer", "==", player)
+    .get()
+    .then(state => {
+      if (state) {
+        if (state.firstCheck === null) state.firstCheck = object;
+        else {
+          if (compareCards(state.firstCheck, object)) {
+            addScore(stateGameId, player);
+            blockCards(stateGameId, state.img).then(updatedMtx =>
+              updateGame(stateGameId, updatedMtx)
+            );
+          }
         }
       }
-    }
-  });
+    });
 }
 
 /**
