@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import { Link } from 'react-router-dom';
 
 class Session extends Component {
     render() {
@@ -31,7 +32,9 @@ class Session extends Component {
                                 </div>
                             </div>
                             <div className="button">
+                            <Link to={{ pathname: '/windowGame'}}>
                                 <Button>Ir al juego</Button>
+                            </Link>
                             </div>
                         </div>
                     </ExpansionPanelDetails>

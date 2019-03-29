@@ -5,15 +5,18 @@ import firebaseApp from '../Services/FirebaseService';
 
 class GameService extends Service {
 
-    get matrix() {
-        return new Promise(resolve => {firebaseApp.firebase_.
-            firestore()
+    get newMatrix(){
+        
+        return new Promise(resolve => {
+            firebaseApp.firebase_
+            .firestore()
             .collection("stateGame")
-            .doc("tTuDuPWESg6b2iUY4s8V")
-            .get()
-            .then(game => {
-                resolve(game.data())
-            })});
+            .doc("kr4WedJ6oqrAyx0dOgtv")
+            .onSnapshot(function(doc) {
+                resolve(doc.data());
+                console.log(doc.data().game);
+            });
+        });
     }
 
     /*get sizeBox(size){

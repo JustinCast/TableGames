@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import './WindowGame.scss'
 import Button from '@material-ui/core/Button';
 import { injector } from 'react-services-injector';
-import { green } from '@material-ui/core/colors';
+
+import firebaseApp from '../Services/FirebaseService';
 
 class WindowGame extends Component {
   state = {
@@ -11,12 +12,19 @@ class WindowGame extends Component {
   }
 
   componentDidMount(){
-    this.services.GameService.matrix.then(data => 
+    /*this.services.GameService.matrix.then(data => 
       this.setState({
         game : data.game,
-        score : data.scores
+        score : data.scores,
+        
       })
-    )
+    );*/
+    
+    this.services.GameService.newMatrix.then(data => 
+      this.setState({
+        game : data.game,
+        score : data.scores,
+      }));
   }
 
   render() {
@@ -40,17 +48,14 @@ class WindowGame extends Component {
         </div>
 
         <div style={{width: sizeBox}} id="game-card" className="shadow rounded" >
-        
           {this.state.game.length > 0 ? (
             Object.keys(this.state.game).map( key => (
               <div style={{width: sizeElement, height:sizeElement}} key={key}>
                 <img src={this.state.game[key].img} style={{width: "4.3vw", height:"4.3vw"}} ></img>
               </div>)
             )
-          ) : null
-           
+          ) : (<h2>Loading game</h2>) 
           }
-
         </div>
         <Button id="chat-button">Chat</Button>
       </div>
