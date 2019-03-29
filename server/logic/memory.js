@@ -1,4 +1,6 @@
 const axios = require("axios");
+// firestore instance
+import db from "../config/config";
 import { fillList } from "./logic-index";
 // 563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a
 // https://api.pexels.com/v1/curated?per_page=15&page=1
@@ -81,3 +83,4 @@ export async function memoryInit(size) {
     )
   );
 }
+

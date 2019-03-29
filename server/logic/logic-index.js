@@ -19,40 +19,20 @@ export function fillList(size) {
   return array;
 }
 
-// Check if element is checker and owner checker
-export function isCheckerPlayer(stateGameId, playerId,checker){
-  return new Promise(r => {
-    db.collection("session").where("stateGameId", "==",stateGameId)
-    .get().then((data) => {
-      if(data.users[0].uid === playerId){ // Player one
-        if(checker.owner === false){ // Checker owner is player one
-          r(true);
-        }else{
-          r(false);
-        }
-      }else{ // Player two
-        if(checker.owner === true){ // Checker owner is player two
-          r(true);
-        }else{
-          r(false);
-        }
-      }
-    })
-  }) 
-}
+
 
 
 // Check if is the first or the second selection
-export function checkSelection(stateGameId){
+export function checkSelection(stateGameId, element){
   return new Promise(r => {
     db.collection("stateGame").doc(stateGameId)
     .get().then((data) => {
-      if (!data.firstCheck) {
-        db.collection("stateGame").doc(stateGameId).update({firstCheck: true})
-        r(false)
+      if (data.firstCheck === null) {
+        db.collection("stateGame").doc(stateGameId).update({firstCheck: element})
+        r(element)
       } else {
-        db.collection("stateGame").doc(stateGameId).update({firstCheck: false})
-        r(true)
+        db.collection("stateGame").doc(stateGameId).update({firstCheck: null})
+        r(data.firstCheck)
       }
     })
   }) 
