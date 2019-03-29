@@ -163,15 +163,18 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, data) => {
-        if (!identifyGameWhenClick(data.input.stateGameId))
-          playMemory(
-            data.input.stateGameId,
-            data.input.player,
-            data.input.object
-          );
-        else {
-          // punto de entrada del juego damas
-        }
+        identifyGameWhenClick(data.input.stateGameId)
+        .then(result => {
+          if(!result)
+            playMemory(
+              data.input.stateGameId,
+              data.input.player,
+              data.input.object
+            );
+          else {
+            // punto de entrada del juego damas
+          }
+        })
       }
     }
   }
