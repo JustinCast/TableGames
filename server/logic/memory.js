@@ -1,9 +1,9 @@
 const axios = require("axios");
-import { fillList, checkSelection } from "./logic-index";
+import { fillList, addScore, updateGame } from "./logic-index";
 // 563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a
 // https://api.pexels.com/v1/curated?per_page=15&page=1
 // https://api.pexels.com/v1/search?query=people&per_page=2
-
+import db from "../config/config";
 const extractedImgs = new Array();
 let gameList = new Array();
 
@@ -84,7 +84,7 @@ export async function memoryInit(size) {
               p1Score: 0,
               p2Score: 0
             },
-            firstCheck: false
+            firstCheck: null
           };
           return game;
         })
@@ -93,6 +93,49 @@ export async function memoryInit(size) {
   );
 }
 
-export function playMemory(params) { // recibir actualPlayer, game
-  
+export function playMemory(stateGameId, actualPlayer, object) {
+  // recibir actualPlayer, game
+  db.collection("stateGame").doc(stateGameId);
+  get();
+  then(state => {
+    if (state) {
+      if (state.firstCheck === null) state.firstCheck = object;
+      else {
+        if (compareCards(state.firstCheck, object)) {
+          addScore(stateGameId, actualPlayer);
+          blockCards(stateGameId, state.img)
+          .then(updatedMtx => (
+            updateGame(stateGameId, updatedMtx)
+          ));
+        }
+      }
+    }
+  });
+}
+
+/**
+ *
+ * @param {*} firstObjectClicked objeto obtenido con el primer click
+ * @param {*} secondObjectClicked objeto obtenido con el segundo click
+ */
+function compareCards(firstObjectClicked, secondObjectClicked) {
+  return firstObjectClicked.img === secondObjectClicked.img;
+}
+
+function blockCards(stateGameId, imgURL) {
+  return new Promise(resolve =>
+    resolve(
+      db
+        .collection("stateGame")
+        .doc(stateGameId)
+        .get()
+        .then(gameState => {
+          return blockObjects(gameState.game, imgURL);
+        })
+    )
+  );
+}
+
+function blockObjects(matrix, imgURL) {
+  return matrix.filter(e => e.img === imgURL).forEach(e => (e.img = ""));
 }
