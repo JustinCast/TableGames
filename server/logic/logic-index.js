@@ -59,22 +59,6 @@ export function checkSelection(stateGameId){
   
 }
 
-// Check if the user is the actual user that play
-export function checkActualPlayer(stateGameId, playerId){
-  return new Promise(r => {
-    db.collection("stateGame").doc(stateGameId)
-    .get().then((data) => {
-      if (!data.firstCheck) {
-        db.collection("stateGame").doc(stateGameId).update({firstCheck: true})
-        r(false)
-      } else {
-        db.collection("stateGame").doc(stateGameId).update({firstCheck: false})
-        r(true)
-      }
-    })
-  }) 
-}
-
 // some firebase funcs
 export function saveStateGame(game, token) {
   if (token === undefined)
