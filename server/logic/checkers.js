@@ -1,23 +1,36 @@
 import {
   fillList
-} from './logic-index';
+} from "./logic-index";
 // firestore instance
 import db from "../config/config";
 
 // Images
-const square_black = "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/black_square.png?alt=media&token=33c73aa8-d651-4b4f-82de-097c01cdaac4";
-const square_white = "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/white_square.png?alt=media&token=2439fb8c-86f3-442b-9ddd-5e18580e23d8";
-const blue_token = "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/blue_token.png?alt=media&token=8f8e309f-052b-4a87-a18b-637fa884baad";
-const red_token = "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/red_token.png?alt=media&token=0e734f98-c4b9-4474-836e-1dc8b9cd9937";
-const redCrown_token = "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/redCrown_token.png?alt=media&token=384ac3e1-c149-4a4b-8235-88d196bd8f4d";
-const blueCrown_token = "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/blueCrown_token.png?alt=media&token=fa454b24-e8ce-4ef0-ae7c-6a8e689b02b9";
+const square_black =
+  "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/black_square.png?alt=media&token=33c73aa8-d651-4b4f-82de-097c01cdaac4";
+const square_white =
+  "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/white_square.png?alt=media&token=2439fb8c-86f3-442b-9ddd-5e18580e23d8";
+const blue_token =
+  "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/blue_token.png?alt=media&token=8f8e309f-052b-4a87-a18b-637fa884baad";
+const red_token =
+  "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/red_token.png?alt=media&token=0e734f98-c4b9-4474-836e-1dc8b9cd9937";
+const redCrown_token =
+  "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/redCrown_token.png?alt=media&token=384ac3e1-c149-4a4b-8235-88d196bd8f4d";
+const blueCrown_token =
+  "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/blueCrown_token.png?alt=media&token=fa454b24-e8ce-4ef0-ae7c-6a8e689b02b9";
+
+ 
+let game = [];
 
 // Method to fill default checker game
 export function fillDefaultCheck(size) {
   let checkerGame = fillList(size);
   checkerGame.forEach(element => {
-    if (element.x < 3) { // Player 1
-      if ((element.x % 2 === 0 & element.y % 2 === 0) | (element.x % 2 !== 0 & element.y % 2 !== 0)) {
+    if (element.x < 3) {
+      // Player 1
+      if (
+        ((element.x % 2 === 0) & (element.y % 2 === 0)) |
+        ((element.x % 2 !== 0) & (element.y % 2 !== 0))
+      ) {
         element.img = blue_token;
         element.owner = false; // Is player one
       } else {
@@ -26,7 +39,10 @@ export function fillDefaultCheck(size) {
       }
     } else {
       if (element.x > size - 4) {
-        if ((element.x % 2 === 0 & element.y % 2 === 0) | (element.x % 2 !== 0 & element.y % 2 !== 0)) {
+        if (
+          ((element.x % 2 === 0) & (element.y % 2 === 0)) |
+          ((element.x % 2 !== 0) & (element.y % 2 !== 0))
+        ) {
           element.img = red_token;
           element.owner = true; // Is player two
         } else {
@@ -34,7 +50,10 @@ export function fillDefaultCheck(size) {
           element.img = square_white;
         }
       } else {
-        if ((element.x % 2 === 0 & element.y % 2 === 0) | (element.x % 2 !== 0 & element.y % 2 !== 0)) {
+        if (
+          ((element.x % 2 === 0) & (element.y % 2 === 0)) |
+          ((element.x % 2 !== 0) & (element.y % 2 !== 0))
+        ) {
           element.img = square_black;
           element.owner = null; // Is player one
         } else {
@@ -51,7 +70,7 @@ export function fillDefaultCheck(size) {
       p2Score: 0
     },
     firstCheck: null
-  }
+  };
 
   return game;
 }
@@ -59,111 +78,198 @@ export function fillDefaultCheck(size) {
 // Check if element is checker and owner checker
 export function isCheckerPlayer(stateGameId, playerId, checker) {
   return new Promise(r => {
-    db.collection("session").where("stateGameId", "==", stateGameId)
-      .get().then((data) => {
-        if (data.users[0].uid === playerId) { // Player one
-          if (checker.owner === false) { // Checker owner is player one
+    db.collection("session")
+      .where("stateGameId", "==", stateGameId)
+      .get()
+      .then(data => {
+        if (data.users[0].uid === playerId) {
+          // Player one
+          if (checker.owner === false) {
+            // Checker owner is player one
             r(true);
           } else {
             r(false);
           }
-        } else { // Player two
-          if (checker.owner === true) { // Checker owner is player two
+        } else {
+          // Player two
+          if (checker.owner === true) {
+            // Checker owner is player two
             r(true);
           } else {
             r(false);
           }
         }
-      })
-  })
+      });
+  });
 }
 
 export function isMovementValid(checker, nextMovement, stateGameId) {
   return new Promise(r => {
-    db.collection("stateGame").doc(stateGameId)
-      .get().then((data) => {
-        data.game.forEach(element => {
-          if(element.x === nextMovement.x & element.y === nextMovement.y){ // Search second movement
-            if (checker.owner === false) { // Checker Player One
-              if (oneMovementDown(element,checker)) { 
-                if(element.owner === null){ 
-                  if(convertInCrown(nextMovement,data.game.length)){
-                    //TODO: corona azul
-                  }
-                  //TODO: pintar 
-                }else if(element.owner === true & twoMovementDown(element,checker)){
-                  //TODO: come
-                  /// TODO: pintar
-                }
+    db.collection("stateGame")
+      .doc(stateGameId)
+      .get()
+      .then(data => {
+        this.game = data.game.slice();
+        for (let i = 0; i < this.game.length; i++) {
+          if ((this.game[i].x === nextMovement.x) & (this.game[i].y === nextMovement.y)) {
+            if (checker.img === redCrown_token || checker.img === blueCrown_token) { // Is Crown ?
+              checkerCrown(i, checker);
+              r(true);
+            }else{
+              if (checker.owner === false) { // Is checker of player one ?   
+                checkerPlayerOne(i, checker, nextMovement);
+                r(true);
+              } else if (checker.owner == true) { // Is checker of plyer two ?
+                checkerPlayerTwo(i, checker, nextMovement);
+                r(true);
+              }else{
+                r(false);
               }
-            }else if(checker.owner == true){ // Checker Player two
-              if (oneMovementUp(element,checker)) { 
-                if(element.owner === null){
-                  if(convertInCrown(nextMovement,data.game.length)){
-                    //TODO: corona roja
-                  }
-                  //TODO: pintar 
-                }else if(element.owner === false & twoMovementUp(element,checker)){
-                  //TODO: come
-                  /// TODO: pintar
-                }
-              }
-            }else if(checker.img === redCrown_token || checker.img === blueCrown_token){ // Checker is Crown
-              if( oneMovementUp(element, checker) || oneMovementDown(element, checker)){
-                if(element.owner === null){ 
-                  //TODO: pintar 
-                }else if(element.owner === true & (twoMovementDown(element,checker))|| twoMovementUp(element,checker)){
-                  //TODO: come
-                  /// TODO: pintar
-                }
-              }
-            } 
+            }
           }
-        })
-      })
+        }
+      });
   })
+};
+function checkerCrown(i, checker){
+  if (this.game[i].owner === null & (oneMovementUp(this.game[i], checker) || oneMovementDown(this.game[i], checker))) {
+    pintingChecker(i, checker);
+    removeLastPosition(checker);
+  } else if (this.game[i].owner === null & 
+        (twoMovementUp(this.game[i], checker) || twoMovementDown(this.game[i], checker))) {
+    for (let j = 0; j < this.game.length; j++) {
+      if ((oneMovementUp(this.game[j], checker) || oneMovementDown(this.game[j], checker))&
+       (this.game[j].owner ===  false & checker.owner === true) ||(this.game[j].owner ===  true & checker.owner === false) ) {
+        this.game[j].img = square_black;
+        //TODO: Sumar puntaje
+      }
+    }
+    pintingChecker(i, checker);
+    removeLastPosition(checker);
+  }  
+    
+}
+function checkerPlayerTwo(i, checker, nextMovement) {
+  if (oneMovementUp(this.game[i], checker)) {
+    if (this.game[i].owner === null) {
+      if (convertInCrown(nextMovement, this.game.length)) {
+        this.game[i].img = redCrown_token;
+      } else {
+        pintingChecker(i, checker);
+      }
+      removeLastPosition(checker);
+    } else if ((this.game[i].owner === null) & twoMovementUp(this.game[i], checker)) {
+      for (let j = 0; j < this.game.length; j++) {
+        if (oneMovementUp(this.game[j], checker) & this.game[j].owner === false) {
+          this.game[j].img = square_black;
+          //TODO: Sumar puntaje
+        }
+      }
+      pintingChecker(i, checker);
+      removeLastPosition(checker);
+    }
+  }
 }
 
-function oneMovementDown(element,checker){
-  if ((element.x === (checker.x + 1) & element.y === (checker.y - 1))
-    || (element.x === (checker.x + 1) & element.y === (checker.y + 1))) {
+function checkerPlayerOne(i, checker, nextMovement) {
+  // Checker Player One
+  if (oneMovementDown(this.game[i], checker) & (this.game[i].owner === null)) {
+    if (convertInCrown(nextMovement, this.game.length)) {
+      this.game[i].img = blueCrown_token;
+    } else {
+      pintingChecker(i, checker);
+    }
+    removeLastPosition(checker);
+  } else if ((this.game[i].owner === null) & twoMovementDown(this.game[i], checker)) {
+    for (let j = 0; j < this.game.length; j++) {
+      if (oneMovementDown(this.game[j], checker) & this.game[j].owner === true) {
+        this.game[j].img = square_black;
+        //TODO: Sumar puntaje
+      }
+    }
+    pintingChecker(i, checker);
+    removeLastPosition(checker);
+
+  }
+}
+
+function pintingChecker(i, checker) {
+  switch (checker.img) {
+    case blue_token:
+      this.game[i].img = blue_token;
+      break;
+    case red_token:
+      this.game[i].img = red_token;
+      break;
+    case redCrown_token:
+      this.game[i].img = redCrown_token;
+      break;
+    case blueCrown_token:
+      this.game[i].img = blueCrown_token;
+      break;
+  }
+}
+
+function removeLastPosition(checker) {
+  for (let i = 0; i < this.game.length; i++) {
+    if ((this.game[i].x === checker.x) & (this.game[i].y === checker.y)) {
+      this.game[i].img = square_black;
+      this.game[i].owner = null;
+    }
+  }
+}
+
+function oneMovementDown(element, checker) {
+  if (
+    (element.x === checker.x + 1) & (element.y === checker.y - 1) ||
+    (element.x === checker.x + 1) & (element.y === checker.y + 1)
+  ) {
     return true;
-  }else{
+  } else {
     return false;
   }
 }
 
-function twoMovementDown(element,checker){
-  if ((element.x === (checker.x + 2) & element.y === (checker.y - 2)) // two movement
-    || (element.x === (checker.x + 2) & element.y === (checker.y + 2))) {
+function twoMovementDown(element, checker) {
+  if (
+    (element.x === checker.x + 2) & (element.y === checker.y - 2) || // two movement
+    (element.x === checker.x + 2) & (element.y === checker.y + 2)
+  ) {
     return true;
-  }else{
+  } else {
     return false;
   }
 }
 
-function oneMovementUp(element,checker){
-  if ((element.x === (checker.x -1) & element.y === (checker.y - 1))
-  || (element.x === (checker.x -1) & element.y === (checker.y + 1))) {
+function oneMovementUp(element, checker) {
+  if (
+    (element.x === checker.x - 1) & (element.y === checker.y - 1) ||
+    (element.x === checker.x - 1) & (element.y === checker.y + 1)
+  ) {
     return true;
-  }else{
+  } else {
     return false;
   }
 }
 
-function twoMovementUp(element,checker){
-  if ((element.x === (checker.x - 2) & element.y === (checker.y - 2)) 
-  || (element.x === (checker.x - 2) & element.y === (checker.y + 2))) {
+function twoMovementUp(element, checker) {
+  if (
+    (element.x === checker.x - 2) & (element.y === checker.y - 2) ||
+    (element.x === checker.x - 2) & (element.y === checker.y + 2)
+  ) {
     return true;
-  }else{
+  } else {
     return false;
   }
 }
 
-function convertInCrown(nextMovement,size){
-  switch(nextMovement.x){
-    case 0: return true;
-    case size: return true;
-    default: return false;
+function convertInCrown(nextMovement, size) {
+  switch (nextMovement.x) {
+    case 0:
+      return true;
+    case size - 1:
+      return true;
+    default:
+      return false;
   }
 }
