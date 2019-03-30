@@ -48,21 +48,21 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
 }
 
 // Check if is the first or the second selection
-export function checkSelection(stateGameId) {
+export function checkSelection(stateGameId,obj) {
   return new Promise(r => {
     db.collection("stateGame")
       .doc(stateGameId)
       .get()
       .then(data => {
-        if (!data.firstCheck) {
+        if (data.firstCheck === null) {
           db.collection("stateGame")
             .doc(stateGameId)
-            .update({ firstCheck: true });
+            .update({ firstCheck: obj });
           r(false);
         } else {
           db.collection("stateGame")
             .doc(stateGameId)
-            .update({ firstCheck: false });
+            .update({ firstCheck: null });
           r(true);
         }
       });
@@ -148,7 +148,17 @@ function changeActualUser(stateGameId, userToken) {
     );
   });
 }
-
+export function getChecker(stateGameId){
+  return new Promise(r =>{
+    db.collection("stateGame")
+    .doc(stateGameId)
+    .get()
+    .then(checker => {
+      r(checker.firstCheck)
+    });
+  })
+  
+}
 export function addScore(stateGameId, actualPlayer) {
   db.collection("stateGame")
     .doc(stateGameId)

@@ -8,11 +8,13 @@ import {
   GraphQLSchema
 } from "graphql";
 
-import { fillDefaultCheck } from "../logic/checkers";
+import { fillDefaultCheck,isCheckerPlayer,isMovementValid,game } from "../logic/checkers";
 import {
   saveMemoryInitialGameState,
   saveStateGame,
-  identifyGameWhenClick
+  identifyGameWhenClick,
+  checkSelection,
+  getChecker
 } from "../logic/logic-index";
 // firestore instance
 import db from "../config/config";
@@ -172,13 +174,24 @@ const mutation = new GraphQLObjectType({
               data.input.object
             );
           else {
-            // punto de entrada del juego damas
+            if(isCheckerPlayer(data.input.stateGameId,data.input.player,data.input.object)){ // Corresponds to the current player ?
+              if(checkSelection(data.input.stateGameId,data.input.object)){ // Is the second click ?
+                if(isMovementValid( // Is a valid movement ?
+                  getChecker(data.input.stateGameId),
+                  data.input.object, 
+                  data.input.stateGameId,
+                  data.input.player)){
+                    saveStateGame(game,data.input.stateGameId);
+                  }
+              }
+            }
           }
         })
       }
     }
   }
 });
+
 
 // exporting RootQuery and mutations
 export { RootQuery, mutation };

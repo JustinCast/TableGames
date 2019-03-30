@@ -3,7 +3,7 @@ import {
 } from "./logic-index";
 // firestore instance
 import db from "../config/config";
-
+import { addScore } from "./logic-index";
 // Images
 const square_black =
   "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/black_square.png?alt=media&token=33c73aa8-d651-4b4f-82de-097c01cdaac4";
@@ -19,7 +19,7 @@ const blueCrown_token =
   "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/blueCrown_token.png?alt=media&token=fa454b24-e8ce-4ef0-ae7c-6a8e689b02b9";
 
  
-let game = [];
+export let game = [];
 
 // Method to fill default checker game
 export function fillDefaultCheck(size) {
@@ -103,7 +103,7 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
   });
 }
 
-export function isMovementValid(checker, nextMovement, stateGameId) {
+export function isMovementValid(checker, nextMovement, stateGameId, actualPlayer) {
   return new Promise(r => {
     db.collection("stateGame")
       .doc(stateGameId)
@@ -113,14 +113,14 @@ export function isMovementValid(checker, nextMovement, stateGameId) {
         for (let i = 0; i < this.game.length; i++) {
           if ((this.game[i].x === nextMovement.x) & (this.game[i].y === nextMovement.y)) {
             if (checker.img === redCrown_token || checker.img === blueCrown_token) { // Is Crown ?
-              checkerCrown(i, checker);
+              checkerCrown(i, checker,stateGameId,actualPlayer);
               r(true);
             }else{
               if (checker.owner === false) { // Is checker of player one ?   
-                checkerPlayerOne(i, checker, nextMovement);
+                checkerPlayerOne(i, checker, nextMovement,stateGameId,actualPlayer);
                 r(true);
               } else if (checker.owner == true) { // Is checker of plyer two ?
-                checkerPlayerTwo(i, checker, nextMovement);
+                checkerPlayerTwo(i, checker, nextMovement,stateGameId,actualPlayer);
                 r(true);
               }else{
                 r(false);
@@ -131,7 +131,7 @@ export function isMovementValid(checker, nextMovement, stateGameId) {
       });
   })
 };
-function checkerCrown(i, checker){
+function checkerCrown(i, checker, stateGameId, actualPlayer){
   if (this.game[i].owner === null & (oneMovementUp(this.game[i], checker) || oneMovementDown(this.game[i], checker))) {
     pintingChecker(i, checker);
     removeLastPosition(checker);
@@ -141,7 +141,7 @@ function checkerCrown(i, checker){
       if ((oneMovementUp(this.game[j], checker) || oneMovementDown(this.game[j], checker))&
        (this.game[j].owner ===  false & checker.owner === true) ||(this.game[j].owner ===  true & checker.owner === false) ) {
         this.game[j].img = square_black;
-        //TODO: Sumar puntaje
+        addScore(stateGameId,actualPlayer);
       }
     }
     pintingChecker(i, checker);
@@ -149,7 +149,7 @@ function checkerCrown(i, checker){
   }  
     
 }
-function checkerPlayerTwo(i, checker, nextMovement) {
+function checkerPlayerTwo(i, checker, nextMovement,stateGameId, actualPlayer) {
   if (oneMovementUp(this.game[i], checker)) {
     if (this.game[i].owner === null) {
       if (convertInCrown(nextMovement, this.game.length)) {
@@ -162,7 +162,8 @@ function checkerPlayerTwo(i, checker, nextMovement) {
       for (let j = 0; j < this.game.length; j++) {
         if (oneMovementUp(this.game[j], checker) & this.game[j].owner === false) {
           this.game[j].img = square_black;
-          //TODO: Sumar puntaje
+       
+          addScore(stateGameId,actualPlayer);
         }
       }
       pintingChecker(i, checker);
@@ -171,8 +172,7 @@ function checkerPlayerTwo(i, checker, nextMovement) {
   }
 }
 
-function checkerPlayerOne(i, checker, nextMovement) {
-  // Checker Player One
+function checkerPlayerOne(i, checker, nextMovement,stateGameId, actualPlayer) {
   if (oneMovementDown(this.game[i], checker) & (this.game[i].owner === null)) {
     if (convertInCrown(nextMovement, this.game.length)) {
       this.game[i].img = blueCrown_token;
@@ -184,7 +184,8 @@ function checkerPlayerOne(i, checker, nextMovement) {
     for (let j = 0; j < this.game.length; j++) {
       if (oneMovementDown(this.game[j], checker) & this.game[j].owner === true) {
         this.game[j].img = square_black;
-        //TODO: Sumar puntaje
+       
+        addScore(stateGameId,actualPlayer);
       }
     }
     pintingChecker(i, checker);
