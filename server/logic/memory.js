@@ -93,7 +93,6 @@ export async function memoryInit(size) {
   );
 }
 
-<<<<<<< HEAD
 export function playMemory(stateGameId, player, object) {
   // recibir actualPlayer, game
   db.collection("stateGame")
@@ -141,5 +140,3 @@ function blockCards(stateGameId, imgURL) {
 function blockObjects(matrix, imgURL) {
   return matrix.filter(e => e.img === imgURL).forEach(e => (e.img = ""));
 }
-=======
->>>>>>> pablo_dev
