@@ -171,7 +171,10 @@ export function addScore(stateGameId, actualPlayer) {
           .then(session => {
             if (session.users[0].uid === actualPlayer) {
               state.scores.p1Score++;
-              changeActualUser(stateGameId, session.users[1].uid);
+              if (session.user[1] === null) {
+                // Is machine
+                // TODO: machine logic
+              } else changeActualUser(stateGameId, session.users[1].uid);
             } else {
               state.scores.p2Score++;
               changeActualUser(stateGameId, session.users[0].uid);
@@ -208,22 +211,55 @@ export function updateGame(stateGameId, game) {
   );
 }
 
-
 export function identifyGameWhenClick(stateGameId) {
-  return new Promise(resolve => resolve(
-    db.collection("session")
-    .where("stateGameId", "==", stateGameId)
-    .get()
-    .then(session => {
-      if(session)
-        switch (session.game) {
-          case "Damas":
-            return true;
-          case "Memory":
-            return false;
-          default:
-            break;
-        }
-    })
-  ));
+  return new Promise(resolve =>
+    resolve(
+      db
+        .collection("session")
+        .where("stateGameId", "==", stateGameId)
+        .get()
+        .then(session => {
+          if (session)
+            switch (session.game) {
+              case "Damas":
+                return true;
+              case "Memory":
+                return false;
+              default:
+                break;
+            }
+        })
+    )
+  );
+}
+
+// función de probabilidad
+export function getProbability(difficulty) {
+  switch (difficulty) {
+    case 1:
+      getAssertion(0.25);
+      break;
+    case 2:
+      getAssertion(0.6);
+      break;
+
+    case 3:
+      getAssertion(0.85);
+      break;
+    default:
+      break;
+  }
+}
+
+function getAssertion(prob) {
+  let weights = [1 - prob, prob];
+  let num = Math.random(),
+    s = 0,
+    lastIndex = weights.length - 1;
+
+  for (var i = 0; i < lastIndex; ++i) {
+    s += weights[i];
+    if (num < s) return false;
+  }
+  return true;
 }
