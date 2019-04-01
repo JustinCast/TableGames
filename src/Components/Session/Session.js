@@ -7,8 +7,10 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import { Link } from 'react-router-dom';
 
 class Session extends Component {
+
     render() {
-        const {game,name,gameSize} = this.props.session;
+        const {game,name,gameSize,stateGameId} = this.props.session;
+        console.log(stateGameId);
         return (
             <div className="container-card">
                 <ExpansionPanel>
@@ -32,7 +34,7 @@ class Session extends Component {
                                 </div>
                             </div>
                             <div className="button">
-                            <Link to={{ pathname: '/windowGame'}}>
+                            <Link to={{ pathname: '/windowGame', state: {stateGameId: stateGameId } }}>
                                 <Button>Ir al juego</Button>
                             </Link>
                             </div>

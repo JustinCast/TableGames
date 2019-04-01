@@ -5,16 +5,23 @@ import firebaseApp from '../Services/FirebaseService';
 
 class GameService extends Service {
 
+    setElement(element){
+         this.stateGameId=element;
+    }
+
+    get getElement(){
+        return this.stateGameId;
+    }
+
     get newMatrix(){
-        
         return new Promise(resolve => {
             firebaseApp.firebase_
             .firestore()
             .collection("stateGame")
-            .doc("kr4WedJ6oqrAyx0dOgtv")
+            .doc(this.stateGameId+"")
             .onSnapshot(function(doc) {
-                resolve(doc.data());
-                console.log(doc.data().game);
+                resolve(   
+                    doc.data());
             });
         });
     }
