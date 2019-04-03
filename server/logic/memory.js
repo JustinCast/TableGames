@@ -1,5 +1,5 @@
 const axios = require("axios");
-import { fillList, addScore, updateGame } from "./logic-index";
+import { fillList, addScore, updateGame, changeActualUser } from "./logic-index";
 // 563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a
 // https://api.pexels.com/v1/curated?per_page=15&page=1
 // https://api.pexels.com/v1/search?query=people&per_page=2
@@ -108,6 +108,9 @@ export function playMemory(stateGameId, player, object) {
               updateGame(stateGameId, updatedMtx)
             );
           }
+          else{
+            changeActualUser(stateGameId, player, "Memory");
+          }
         }
       }
     });
@@ -140,8 +143,7 @@ function blockObjects(matrix, imgURL) {
   return matrix.filter(e => e.img === imgURL).forEach(e => (e.img = ""));
 }
 
-
 // logica cpuPlayer
 export function cpuPlayer(stateGameId, game) {
-  
+
 }

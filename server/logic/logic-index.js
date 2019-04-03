@@ -137,7 +137,7 @@ export function saveMemoryInitialGameState(gameData, token) {
     );
 }
 
-function changeActualUser(stateGameId, user, gameName) {
+export function changeActualUser(stateGameId, user, gameName) {
   return new Promise(resolve => {
     resolve(
       db
@@ -146,10 +146,10 @@ function changeActualUser(stateGameId, user, gameName) {
         .update({
           actualPlayer: user
         })
-        .then(game => {
+        .then(state => {
           // aqui se llama el jugador automático para cada juego
-          if (gameName === "Memory") 
-            cpuPlayer(stateGameId, game);
+          if (gameName === "Memory" && user === null)
+            cpuPlayer(stateGameId, state.game);
           else {
             // llamar a damas
           }
