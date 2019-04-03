@@ -1,5 +1,6 @@
 // firestore instance
 import db from "../config/config";
+import { cpuPlayer } from "./memory";
 
 // Fill list logit game
 export function fillList(size) {
@@ -136,14 +137,22 @@ export function saveMemoryInitialGameState(gameData, token) {
     );
 }
 
-function changeActualUser(stateGameId, userToken) {
+function changeActualUser(stateGameId, user, gameName) {
   return new Promise(resolve => {
     resolve(
       db
         .collection("stateGame")
         .doc(stateGameId)
         .update({
-          actualPlayer: userToken
+          actualPlayer: user
+        })
+        .then(game => {
+          // aqui se llama el jugador automático para cada juego
+          if (gameName === "Memory") 
+            cpuPlayer(stateGameId, game);
+          else {
+            // llamar a damas
+          }
         })
     );
   });
@@ -161,15 +170,19 @@ export function addScore(stateGameId, actualPlayer) {
           .then(session => {
             if (session.users[0].uid === actualPlayer) {
               state.scores.p1Score++;
-              if (session.user[1] === null) {
-                // Is machine
-                // TODO: machine logic
-              } else changeActualUser(stateGameId, session.users[1].uid);
+              session.users[1] === null
+                ? changeActualUser(stateGameId, null, session.game)
+                : changeActualUser(
+                    stateGameId,
+                    session.users[1].uid,
+                    session.game
+                  );
             } else {
               state.scores.p2Score++;
-              changeActualUser(stateGameId, session.users[0].uid);
+              changeActualUser(stateGameId, session.users[0].uid, session.game);
             }
             // resetear el primer click
+            // TODO: es posible que esto deba hacerse desde cada lógica de juego
             resetFirstCheck(stateGameId); // suscribirse a la promise, si es necesario
           });
     });
@@ -232,7 +245,6 @@ export function getProbability(difficulty) {
     case 2:
       getAssertion(0.6);
       break;
-
     case 3:
       getAssertion(0.85);
       break;
