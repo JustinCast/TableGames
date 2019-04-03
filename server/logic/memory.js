@@ -1,5 +1,12 @@
 const axios = require("axios");
-import { fillList, addScore, updateGame, changeActualUser, getDifficulty, getProbability } from "./logic-index";
+import {
+  fillList,
+  addScore,
+  updateGame,
+  changeActualUser,
+  getDifficulty,
+  getProbability
+} from "./logic-index";
 // 563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a
 // https://api.pexels.com/v1/curated?per_page=15&page=1
 // https://api.pexels.com/v1/search?query=people&per_page=2
@@ -102,15 +109,16 @@ export function playMemory(stateGameId, player, object) {
       if (state) {
         if (state.firstCheck === null) state.firstCheck = object;
         else {
-          if (compareCards(state.firstCheck, object)) {
-            addScore(stateGameId, player);
-            blockCards(stateGameId, state.img).then(updatedMtx =>
-              updateGame(stateGameId, updatedMtx)
-            );
-          }
-          else{
-            changeActualUser(stateGameId, player, "Memory");
-          }
+          handleComparation(stateGameId, state, object);
+          // if (compareCards(state.firstCheck, object)) {
+          //   addScore(stateGameId, player);
+          //   blockCards(stateGameId, state.img).then(updatedMtx =>
+          //     updateGame(stateGameId, updatedMtx)
+          //   );
+          // }
+          // else{
+          //   changeActualUser(stateGameId, player, "Memory");
+          // }
         }
       }
     });
@@ -123,6 +131,30 @@ export function playMemory(stateGameId, player, object) {
  */
 function compareCards(firstObjectClicked, secondObjectClicked) {
   return firstObjectClicked.img === secondObjectClicked.img;
+}
+
+/**
+ *
+ * @param {*} stateGameId identificador del estado del juego
+ * @param {*} state estado del juego
+ * @param {*} secondObjectClicked segundo objeto clickeado
+ * @param {*} player jugador
+ */
+function handleComparation(stateGameId, state, secondObjectClicked, player) {
+  return new Promise(resolve => {
+    if (compareCards(state.firstCheck, secondObjectClicked)) {
+      addScore(stateGameId, player);
+      blockCards(stateGameId, state.img).then(updatedMtx =>
+        updateGame(stateGameId, updatedMtx).then(() => {
+          resolve(true);
+        })
+      );
+    } else {
+      changeActualUser(stateGameId, player, "Memory").then(() => {
+        resolve(false);
+      });
+    }
+  });
 }
 
 function blockCards(stateGameId, imgURL) {
@@ -144,15 +176,32 @@ function blockObjects(matrix, imgURL) {
 }
 
 // logica cpuPlayer
-export function cpuPlayer(stateGameId, game) {
-  getDifficulty(stateGameId)
-  .then(difficulty => {
-    let randomLocation = Math.floor(Math.random() * (game.length - 1)); // se escoge una carta random
+export function cpuPlayer(stateGameId, state) {
+  getDifficulty(stateGameId).then(difficulty => {
+    let randomLocation = Math.floor(Math.random() * state.game.length); // se escoge una carta random
+    state.firstCheck = state.game[randomLocation];
     let pair = undefined;
-    if(getProbability(difficulty))
-      let pair = game.find(e => e.img === game[randomLocation].img);
-    else{
-      
+    if (getProbability(difficulty)) {
+      let pair = state.game.find(e => e.img === state.firstCheck.img);
+      handleComparation(stateGameId, state, pair, null);
+    } else {
+      handleComparation(
+        stateGameId,
+        state,
+        getRandomElementFromArray(state.game, randomLocation),
+        null
+      );
     }
   });
+}
+
+/**
+ * Metodo que obtiene un elemento random de un array distinto de uno previamente obtenido
+ * @param {*} array array para obtener el elemento
+ * @param {*} randomLocation posición de la cual debe ser distinto el elemento obtenido
+ */
+function getRandomElementFromArray(array, randomLocation) {
+  return array.filter(e => e.img !== array[randomLocation].img)[
+    Math.floor(Math.random() * array.length)
+  ];
 }

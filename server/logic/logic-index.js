@@ -149,7 +149,7 @@ export function changeActualUser(stateGameId, user, gameName) {
         .then(state => {
           // aqui se llama el jugador automático para cada juego
           if (gameName === "Memory" && user === null)
-            cpuPlayer(stateGameId, state.game);
+            cpuPlayer(stateGameId, state);
           else {
             // llamar a damas
           }
