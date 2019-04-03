@@ -145,5 +145,5 @@ function blockObjects(matrix, imgURL) {
 
 // logica cpuPlayer
 export function cpuPlayer(stateGameId, game) {
-
+  
 }
