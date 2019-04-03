@@ -49,21 +49,21 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
 }
 
 // Check if is the first or the second selection
-export function checkSelection(stateGameId) {
+export function checkSelection(stateGameId,obj) {
   return new Promise(r => {
     db.collection("stateGame")
       .doc(stateGameId)
       .get()
       .then(data => {
-        if (!data.firstCheck) {
+        if (data.firstCheck === null) {
           db.collection("stateGame")
             .doc(stateGameId)
-            .update({ firstCheck: true });
+            .update({ firstCheck: obj });
           r(false);
         } else {
           db.collection("stateGame")
             .doc(stateGameId)
-            .update({ firstCheck: false });
+            .update({ firstCheck: null });
           r(true);
         }
       });
@@ -157,7 +157,17 @@ export function changeActualUser(stateGameId, user, gameName) {
     );
   });
 }
-
+export function getChecker(stateGameId){
+  return new Promise(r =>{
+    db.collection("stateGame")
+    .doc(stateGameId)
+    .get()
+    .then(checker => {
+      r(checker.firstCheck)
+    });
+  })
+  
+}
 export function addScore(stateGameId, actualPlayer) {
   db.collection("stateGame")
     .doc(stateGameId)
@@ -236,18 +246,28 @@ export function identifyGameWhenClick(stateGameId) {
   );
 }
 
+export function getDifficulty(stateGameId){
+  return new Promise(r => {
+    db
+    .collection("session")
+    .where("stateGameId", "==", stateGameId)
+    .get()
+    .then(session => {
+      r(session.difficulty)
+    })
+  })
+}
+
+
 // función de probabilidad
 export function getProbability(difficulty) {
   switch (difficulty) {
     case 1:
-      getAssertion(0.25);
-      break;
+      return getAssertion(0.25);
     case 2:
-      getAssertion(0.6);
-      break;
+      return getAssertion(0.6);
     case 3:
-      getAssertion(0.85);
-      break;
+      return getAssertion(0.85);
     default:
       break;
   }

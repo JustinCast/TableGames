@@ -8,11 +8,13 @@ import {
   GraphQLSchema
 } from "graphql";
 
-import { fillDefaultCheck } from "../logic/checkers";
+import { fillDefaultCheck,isCheckerPlayer,isMovementValid,game } from "../logic/checkers";
 import {
   saveMemoryInitialGameState,
   saveStateGame,
-  identifyGameWhenClick
+  identifyGameWhenClick,
+  checkSelection,
+  getChecker
 } from "../logic/logic-index";
 // firestore instance
 import db from "../config/config";
@@ -85,6 +87,8 @@ const RootQuery = new GraphQLObjectType({
   }
 });
 
+
+
 // TODO: DEFINE THE PLAYER INPUT MODEL
 const mutation = new GraphQLObjectType({
   name: "Mutation",
@@ -98,26 +102,36 @@ const mutation = new GraphQLObjectType({
       },
       resolve: async (_, data) => {
         return new Promise(resolve => {
-          if (data.input.game === "Damas") {
-            // If game is chekers
-            let game = fillDefaultCheck(data.input.gameSize);
-            game["actualPlayer"] = data.input.users[0].uid;
-            saveStateGame(game, undefined).then(ref => {
-              data.input["stateGameId"] = ref;
-              db.collection("session").add(data.input);
-              resolve(data.input);
-            });
-          } else {
-            memoryInit(data.input.gameSize).then(gameData => {
-              gameData["actualPlayer"] = data.input.users[0].uid;
-              saveMemoryInitialGameState(gameData, undefined).then(ref => {
-                data.input["stateGameId"] = ref;
-                db.collection("session").add(data.input);
-                console.log(data.input);
-                resolve(data.input);
-              });
-            });
-          }
+          const sessionRef = db.collection("session").where("stateGameId","==",data.input.stateGameId);
+          sessionRef.get()
+          .then((docSnapshot) => {
+            if (docSnapshot.exists) {
+              sessionRef.update(data.input);
+            } else {
+              if (data.input.game === "Damas") {
+                // If game is chekers
+                let game = fillDefaultCheck(data.input.gameSize);
+                game["actualPlayer"] = data.input.users[0].uid;
+                saveStateGame(game, undefined).then(ref => {
+                  data.input["stateGameId"] = ref;
+                  db.collection("session").add(data.input);
+                  resolve(data.input);
+                });
+              } else {
+                memoryInit(data.input.gameSize).then(gameData => {
+                  gameData["actualPlayer"] = data.input.users[0].uid;
+                  saveMemoryInitialGameState(gameData, undefined).then(ref => {
+                    data.input["stateGameId"] = ref;
+                    db.collection("session").add(data.input);
+                    console.log(data.input);
+                    resolve(data.input);
+                  });
+                });
+              }
+            }
+          });
+
+
         });
       }
     },
@@ -172,13 +186,24 @@ const mutation = new GraphQLObjectType({
               data.input.object
             );
           else {
-            // punto de entrada del juego damas
+            if(isCheckerPlayer(data.input.stateGameId,data.input.player,data.input.object)){ // Corresponds to the current player ?
+              if(checkSelection(data.input.stateGameId,data.input.object)){ // Is the second click ?
+                if(isMovementValid( // Is a valid movement ?
+                  getChecker(data.input.stateGameId),
+                  data.input.object, 
+                  data.input.stateGameId,
+                  data.input.player)){
+                    saveStateGame(game,data.input.stateGameId);
+                  }
+              }
+            }
           }
         })
       }
     }
   }
 });
+
 
 // exporting RootQuery and mutations
 export { RootQuery, mutation };

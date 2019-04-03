@@ -12,10 +12,14 @@ class SessionService extends Service {
         tiedGames: JSON.parse(localStorage.getItem('actualUser')).tiedGames,
         uid: JSON.parse(localStorage.getItem('actualUser')).uid
       }
+      let users = [actualUser];
+      if(session.isMachine){
+        users.push(null);
+      }
       GraphQLClient.mutate({
         variables: { 
           input: {
-            users: [actualUser], //TODO: get Actual Use,
+            users: users, //TODO: get Actual Use,
             sid: "", // TODO: get uid of Actual User
             game: session.game,
             difficulty: session.difficulty,
