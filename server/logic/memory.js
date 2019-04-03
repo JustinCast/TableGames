@@ -110,15 +110,6 @@ export function playMemory(stateGameId, player, object) {
         if (state.firstCheck === null) state.firstCheck = object;
         else {
           handleComparation(stateGameId, state, object);
-          // if (compareCards(state.firstCheck, object)) {
-          //   addScore(stateGameId, player);
-          //   blockCards(stateGameId, state.img).then(updatedMtx =>
-          //     updateGame(stateGameId, updatedMtx)
-          //   );
-          // }
-          // else{
-          //   changeActualUser(stateGameId, player, "Memory");
-          // }
         }
       }
     });
@@ -142,18 +133,22 @@ function compareCards(firstObjectClicked, secondObjectClicked) {
  */
 function handleComparation(stateGameId, state, secondObjectClicked, player) {
   return new Promise(resolve => {
-    if (compareCards(state.firstCheck, secondObjectClicked)) {
-      addScore(stateGameId, player);
-      blockCards(stateGameId, state.img).then(updatedMtx =>
-        updateGame(stateGameId, updatedMtx).then(() => {
-          resolve(true);
-        })
-      );
-    } else {
-      changeActualUser(stateGameId, player, "Memory").then(() => {
-        resolve(false);
-      });
-    }
+    state.game[state.findIndex(e => e.img === state.firstCheck.img)].img2 = state.firstCheck.img;
+    updateGame(stateGameId, state.game)
+    .then(() => {
+      if (compareCards(state.firstCheck, secondObjectClicked)) {
+        addScore(stateGameId, player);
+        blockCards(stateGameId, secondObjectClicked.img).then(updatedMtx =>
+          updateGame(stateGameId, updatedMtx).then(() => {
+            resolve(true);
+          })
+        );
+      } else {
+        changeActualUser(stateGameId, player, "Memory").then(() => {
+          resolve(false);
+        });
+      }
+    })
   });
 }
 
@@ -171,16 +166,20 @@ function blockCards(stateGameId, imgURL) {
   );
 }
 
+
 function blockObjects(matrix, imgURL) {
   return matrix.filter(e => e.img === imgURL).forEach(e => (e.img = ""));
 }
 
-// logica cpuPlayer
+/**
+ * 
+ * @param {*} stateGameId identificador del estado de juego de la sesión
+ * @param {*} state estado de juego de la sesión
+ */
 export function cpuPlayer(stateGameId, state) {
   getDifficulty(stateGameId).then(difficulty => {
     let randomLocation = Math.floor(Math.random() * state.game.length); // se escoge una carta random
     state.firstCheck = state.game[randomLocation];
-    let pair = undefined;
     if (getProbability(difficulty)) {
       let pair = state.game.find(e => e.img === state.firstCheck.img);
       handleComparation(stateGameId, state, pair, null);

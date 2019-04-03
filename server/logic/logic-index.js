@@ -213,14 +213,15 @@ function resetFirstCheck(stateGameId) {
 
 export function updateGame(stateGameId, game) {
   return new Promise(resolve =>
-    resolve(
       db
         .collection("stateGame")
         .doc(stateGameId)
         .update({
           game: game
         })
-    )
+        .then(updatedMtx => {
+          resolve(updatedMtx);
+        })
   );
 }
 
