@@ -1,5 +1,5 @@
 const axios = require("axios");
-import { fillList, addScore, updateGame, changeActualUser } from "./logic-index";
+import { fillList, addScore, updateGame, changeActualUser, getDifficulty, getProbability } from "./logic-index";
 // 563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a
 // https://api.pexels.com/v1/curated?per_page=15&page=1
 // https://api.pexels.com/v1/search?query=people&per_page=2
@@ -145,5 +145,14 @@ function blockObjects(matrix, imgURL) {
 
 // logica cpuPlayer
 export function cpuPlayer(stateGameId, game) {
-  
+  getDifficulty(stateGameId)
+  .then(difficulty => {
+    let randomLocation = Math.floor(Math.random() * (game.length - 1)); // se escoge una carta random
+    let pair = undefined;
+    if(getProbability(difficulty))
+      let pair = game.find(e => e.img === game[randomLocation].img);
+    else{
+      
+    }
+  });
 }
