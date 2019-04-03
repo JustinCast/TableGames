@@ -1,7 +1,7 @@
 // firestore instance
 import db from "../config/config";
 import { cpuPlayer } from "./memory";
-
+import { machineLogicChecker } from "./checkers";
 // Fill list logit game
 export function fillList(size) {
   let array = [];
@@ -151,7 +151,7 @@ export function changeActualUser(stateGameId, user, gameName) {
           if (gameName === "Memory" && user === null)
             cpuPlayer(stateGameId, state.game);
           else {
-            // llamar a damas
+            machineLogicChecker(stateGameId);
           }
         })
     );
