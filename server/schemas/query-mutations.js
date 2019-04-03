@@ -87,6 +87,8 @@ const RootQuery = new GraphQLObjectType({
   }
 });
 
+
+
 // TODO: DEFINE THE PLAYER INPUT MODEL
 const mutation = new GraphQLObjectType({
   name: "Mutation",
@@ -100,26 +102,36 @@ const mutation = new GraphQLObjectType({
       },
       resolve: async (_, data) => {
         return new Promise(resolve => {
-          if (data.input.game === "Damas") {
-            // If game is chekers
-            let game = fillDefaultCheck(data.input.gameSize);
-            game["actualPlayer"] = data.input.users[0].uid;
-            saveStateGame(game, undefined).then(ref => {
-              data.input["stateGameId"] = ref;
-              db.collection("session").add(data.input);
-              resolve(data.input);
-            });
-          } else {
-            memoryInit(data.input.gameSize).then(gameData => {
-              gameData["actualPlayer"] = data.input.users[0].uid;
-              saveMemoryInitialGameState(gameData, undefined).then(ref => {
-                data.input["stateGameId"] = ref;
-                db.collection("session").add(data.input);
-                console.log(data.input);
-                resolve(data.input);
-              });
-            });
-          }
+          const sessionRef = db.collection("session").where("stateGameId","==",data.input.stateGameId);
+          sessionRef.get()
+          .then((docSnapshot) => {
+            if (docSnapshot.exists) {
+              sessionRef.update(data.input);
+            } else {
+              if (data.input.game === "Damas") {
+                // If game is chekers
+                let game = fillDefaultCheck(data.input.gameSize);
+                game["actualPlayer"] = data.input.users[0].uid;
+                saveStateGame(game, undefined).then(ref => {
+                  data.input["stateGameId"] = ref;
+                  db.collection("session").add(data.input);
+                  resolve(data.input);
+                });
+              } else {
+                memoryInit(data.input.gameSize).then(gameData => {
+                  gameData["actualPlayer"] = data.input.users[0].uid;
+                  saveMemoryInitialGameState(gameData, undefined).then(ref => {
+                    data.input["stateGameId"] = ref;
+                    db.collection("session").add(data.input);
+                    console.log(data.input);
+                    resolve(data.input);
+                  });
+                });
+              }
+            }
+          });
+
+
         });
       }
     },

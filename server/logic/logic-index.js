@@ -172,8 +172,7 @@ export function addScore(stateGameId, actualPlayer) {
             if (session.users[0].uid === actualPlayer) {
               state.scores.p1Score++;
               if (session.user[1] === null) {
-                // Is machine
-                // TODO: machine logic
+                machineLogicChecker(stateGameId);
               } else changeActualUser(stateGameId, session.users[1].uid);
             } else {
               state.scores.p2Score++;
@@ -233,19 +232,29 @@ export function identifyGameWhenClick(stateGameId) {
   );
 }
 
+export function getDifficulty(stateGameId){
+  return new Promise(r => {
+    db
+    .collection("session")
+    .where("stateGameId", "==", stateGameId)
+    .get()
+    .then(session => {
+      r(session.difficulty)
+    })
+  })
+}
+
+
 // función de probabilidad
 export function getProbability(difficulty) {
   switch (difficulty) {
     case 1:
-      getAssertion(0.25);
-      break;
+      return getAssertion(0.25);
     case 2:
-      getAssertion(0.6);
-      break;
+      return getAssertion(0.6);
 
     case 3:
-      getAssertion(0.85);
-      break;
+      return getAssertion(0.85);
     default:
       break;
   }
