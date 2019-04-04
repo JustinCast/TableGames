@@ -19,21 +19,13 @@ export const typeDefs = `
     stateGameId: String
   }
 
-  type Click {
-    stateGameId: String!,
-    player: String!,
-    object: Object!
-  }
-
   type Query {
     players: [Player],
-    sessions:[Session],
-    click:[Click]
+    sessions:[Session]
   }
   type Mutation {
     savePlayer(input: PlayerInputType!): Player,
-    saveSession(input: SessionInputType!): Session,
-    click(input: ClickObjectInputType!): Click
+    saveSession(input: SessionInputType!): Session
   }
 
   input SessionInputType{
@@ -46,11 +38,6 @@ export const typeDefs = `
     sizeGame: Int
   }
 
-  input ClickObjectInputType{
-    stateGameId: String,
-    player: String,
-    object: Object
-  }
   input PlayerInputType {
     name: String,
     email: String,
