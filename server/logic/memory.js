@@ -1,5 +1,14 @@
 const axios = require("axios");
-import { fillList, addScore, updateGame, changeActualUser } from "./logic-index";
+import {
+  fillList,
+  addScore,
+  updateGame,
+  changeActualUser,
+  getDifficulty,
+  getProbability,
+  getNextUserInfo,
+  resetFirstCheck
+} from "./logic-index";
 // 563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a
 // https://api.pexels.com/v1/curated?per_page=15&page=1
 // https://api.pexels.com/v1/search?query=people&per_page=2
@@ -102,15 +111,7 @@ export function playMemory(stateGameId, player, object) {
       if (state) {
         if (state.firstCheck === null) state.firstCheck = object;
         else {
-          if (compareCards(state.firstCheck, object)) {
-            addScore(stateGameId, player);
-            blockCards(stateGameId, state.img).then(updatedMtx =>
-              updateGame(stateGameId, updatedMtx)
-            );
-          }
-          else{
-            changeActualUser(stateGameId, player, "Memory");
-          }
+          handleComparation(stateGameId, state, object, player);
         }
       }
     });
@@ -123,6 +124,46 @@ export function playMemory(stateGameId, player, object) {
  */
 function compareCards(firstObjectClicked, secondObjectClicked) {
   return firstObjectClicked.img === secondObjectClicked.img;
+}
+
+function flipCards(stateGameId, state, img1, img2) {
+  return new Promise(resolve => {
+    state.game[state.findIndex(e => e.img === img1)].img2 = img1;
+    state.game[state.findIndex(e => e.img === img2)].img2 = img2;
+    updateGame(stateGameId, state.game).then(() => resolve(true));
+  });
+}
+
+/**
+ *
+ * @param {*} stateGameId identificador del estado del juego
+ * @param {*} state estado del juego
+ * @param {*} secondObjectClicked segundo objeto clickeado
+ * @param {*} player jugador
+ */
+function handleComparation(stateGameId, state, secondObjectClicked, player) {
+  return new Promise(resolve => {
+    flipCards(stateGameId, state, state.firstCheck.img, secondObjectClicked.img)
+    .then(() => {
+      if (compareCards(state.firstCheck, secondObjectClicked)) {
+        addScore(stateGameId, player);
+        blockCards(stateGameId, secondObjectClicked.img).then(updatedMtx =>
+          updateGame(stateGameId, updatedMtx).then(() => {
+            resolve(true);
+          })
+        );
+      } else {
+        flipCards(stateGameId, state, state.firstCheck.img, secondObjectClicked.img)
+        .then(() => {
+          getNextUserInfo(stateGameId, player).then(data => {
+            resetFirstCheck(stateGameId).then(() => {
+              changeActualUser(stateGameId, data.player, data.gameName);
+            });
+          });
+        })
+      }
+    })
+  });
 }
 
 function blockCards(stateGameId, imgURL) {
@@ -143,7 +184,36 @@ function blockObjects(matrix, imgURL) {
   return matrix.filter(e => e.img === imgURL).forEach(e => (e.img = ""));
 }
 
-// logica cpuPlayer
-export function cpuPlayer(stateGameId, game) {
-  
+/**
+ *
+ * @param {*} stateGameId identificador del estado de juego de la sesión
+ * @param {*} state estado de juego de la sesión
+ */
+export function cpuPlayer(stateGameId, state) {
+  getDifficulty(stateGameId).then(difficulty => {
+    let randomLocation = Math.floor(Math.random() * state.game.length); // se escoge una carta random
+    state.firstCheck = state.game[randomLocation];
+    if (getProbability(difficulty)) {
+      let pair = state.game.find(e => e.img === state.firstCheck.img);
+      handleComparation(stateGameId, state, pair, null);
+    } else {
+      handleComparation(
+        stateGameId,
+        state,
+        getRandomElementFromArray(state.game, randomLocation),
+        null
+      );
+    }
+  });
+}
+
+/**
+ * Metodo que obtiene un elemento random de un array distinto de uno previamente obtenido
+ * @param {*} array array para obtener el elemento
+ * @param {*} randomLocation posición de la cual debe ser distinto el elemento obtenido
+ */
+function getRandomElementFromArray(array, randomLocation) {
+  return array.filter(e => e.img !== array[randomLocation].img)[
+    Math.floor(Math.random() * array.length)
+  ];
 }
