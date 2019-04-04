@@ -4,15 +4,19 @@ import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import { Link } from 'react-router-dom';
 
 class Session extends Component {
+
+   
+
     render() {
-        const {game,name,gameSize} = this.props.session;
+        const {game,name,gameSize,stateGameId, users} = this.props.session;
         return (
             <div className="container-card">
                 <ExpansionPanel>
                     <ExpansionPanelSummary>
-                      <p className="title">Nombre de la sala</p>
+                      <p className="title">{name}</p>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
                         <div className="rounded main-card">
@@ -23,15 +27,17 @@ class Session extends Component {
                                 </div>
                                 <div className="element-opt">
                                     <p className="title">Creador</p>
-                                    <p>{name}</p>
+                                    <p>{users[0].name}</p>
                                 </div>
                                 <div className="element-opt">
                                     <p className="title">Tamaño</p>
                                     <p>{gameSize}</p>
                                 </div>
                             </div>
-                            <div className="button">
+                            <div className="button" >
+                            <Link to={{ pathname: '/windowGame', state: {stateGameId: stateGameId, users: users, gameName: game}}} >
                                 <Button>Ir al juego</Button>
+                            </Link>
                             </div>
                         </div>
                     </ExpansionPanelDetails>

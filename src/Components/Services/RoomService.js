@@ -21,7 +21,8 @@ class RoomService extends Service {
               difficulty,
               isMachine,
               name,
-              gameSize
+              gameSize,
+              stateGameId
             }
           }
         `
