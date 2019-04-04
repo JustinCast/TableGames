@@ -208,7 +208,7 @@ export function getNextUserInfo(stateGameId, actualPlayer) {
   });
 }
 
-function resetFirstCheck(stateGameId) {
+export function resetFirstCheck(stateGameId) {
   return new Promise(resolve => {
     resolve(
       db

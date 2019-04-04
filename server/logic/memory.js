@@ -6,7 +6,8 @@ import {
   changeActualUser,
   getDifficulty,
   getProbability,
-  getNextUserInfo
+  getNextUserInfo,
+  resetFirstCheck
 } from "./logic-index";
 // 563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a
 // https://api.pexels.com/v1/curated?per_page=15&page=1
@@ -125,6 +126,14 @@ function compareCards(firstObjectClicked, secondObjectClicked) {
   return firstObjectClicked.img === secondObjectClicked.img;
 }
 
+function flipCards(stateGameId, state, img1, img2) {
+  return new Promise(resolve => {
+    state.game[state.findIndex(e => e.img === img1)].img2 = img1;
+    state.game[state.findIndex(e => e.img === img2)].img2 = img2;
+    updateGame(stateGameId, state.game).then(() => resolve(true));
+  });
+}
+
 /**
  *
  * @param {*} stateGameId identificador del estado del juego
@@ -134,8 +143,7 @@ function compareCards(firstObjectClicked, secondObjectClicked) {
  */
 function handleComparation(stateGameId, state, secondObjectClicked, player) {
   return new Promise(resolve => {
-    state.game[state.findIndex(e => e.img === state.firstCheck.img)].img2 = state.firstCheck.img;
-    updateGame(stateGameId, state.game)
+    flipCards(stateGameId, state, state.firstCheck.img, secondObjectClicked.img)
     .then(() => {
       if (compareCards(state.firstCheck, secondObjectClicked)) {
         addScore(stateGameId, player);
@@ -145,9 +153,13 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
           })
         );
       } else {
-        getNextUserInfo(stateGameId, player)
-        .then(data => {
-          changeActualUser(stateGameId, data.player, data.gameName);
+        flipCards(stateGameId, state, state.firstCheck.img, secondObjectClicked.img)
+        .then(() => {
+          getNextUserInfo(stateGameId, player).then(data => {
+            resetFirstCheck(stateGameId).then(() => {
+              changeActualUser(stateGameId, data.player, data.gameName);
+            });
+          });
         })
       }
     })
@@ -168,13 +180,12 @@ function blockCards(stateGameId, imgURL) {
   );
 }
 
-
 function blockObjects(matrix, imgURL) {
   return matrix.filter(e => e.img === imgURL).forEach(e => (e.img = ""));
 }
 
 /**
- * 
+ *
  * @param {*} stateGameId identificador del estado de juego de la sesión
  * @param {*} state estado de juego de la sesión
  */
