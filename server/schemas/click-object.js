@@ -19,7 +19,7 @@ const ClickObjectInputType = new GraphQLInputObjectType({
       type: new GraphQLNonNull(GraphQLString)
     },
     object: {
-      type: Object
+      type: new GraphQLNonNull(Object)
     }
   })
 });

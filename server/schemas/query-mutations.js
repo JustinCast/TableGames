@@ -3,8 +3,9 @@ import {
   GraphQLObjectType,
   GraphQLList,
   GraphQLString,
-  GraphQLNonNull
-  
+  GraphQLNonNull,
+  GraphQLInt,
+  GraphQLSchema
 } from "graphql";
 
 import { fillDefaultCheck,isCheckerPlayer,isMovementValid,game } from "../logic/checkers";
