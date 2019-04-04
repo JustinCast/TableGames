@@ -51,7 +51,8 @@ class WindowGame extends Component {
             Object.keys(this.state.game).map(key => (
               <div style={{ width: sizeElement, height: sizeElement }} key={key} 
               onClick={()=> {
-                console.log(" Uid "+JSON.parse(localStorage.getItem("actualUser")).uid +" "+this.state.game[key]+this.state.stateGameId)}
+                this.services.GameService.sentClick(this.state.stateGameId,JSON.parse(localStorage.getItem("actualUser")).uid,this.state.game[key])
+              }
               }>
                 <img alt="Loading" src={this.state.game[key].img} style={{ width: "4.3vw", height: "4.3vw" }}></img>
               </div>)
