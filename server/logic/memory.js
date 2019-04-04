@@ -5,7 +5,8 @@ import {
   updateGame,
   changeActualUser,
   getDifficulty,
-  getProbability
+  getProbability,
+  getNextUserInfo
 } from "./logic-index";
 // 563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a
 // https://api.pexels.com/v1/curated?per_page=15&page=1
@@ -109,7 +110,7 @@ export function playMemory(stateGameId, player, object) {
       if (state) {
         if (state.firstCheck === null) state.firstCheck = object;
         else {
-          handleComparation(stateGameId, state, object);
+          handleComparation(stateGameId, state, object, player);
         }
       }
     });
@@ -144,9 +145,10 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
           })
         );
       } else {
-        changeActualUser(stateGameId, player, "Memory").then(() => {
-          resolve(false);
-        });
+        getNextUserInfo(stateGameId, player)
+        .then(data => {
+          changeActualUser(stateGameId, data.player, data.gameName);
+        })
       }
     })
   });

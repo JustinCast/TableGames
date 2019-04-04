@@ -49,7 +49,7 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
 }
 
 // Check if is the first or the second selection
-export function checkSelection(stateGameId,obj) {
+export function checkSelection(stateGameId, obj) {
   return new Promise(r => {
     db.collection("stateGame")
       .doc(stateGameId)
@@ -157,16 +157,15 @@ export function changeActualUser(stateGameId, user, gameName) {
     );
   });
 }
-export function getChecker(stateGameId){
-  return new Promise(r =>{
+export function getChecker(stateGameId) {
+  return new Promise(r => {
     db.collection("stateGame")
-    .doc(stateGameId)
-    .get()
-    .then(checker => {
-      r(checker.firstCheck)
-    });
-  })
-  
+      .doc(stateGameId)
+      .get()
+      .then(checker => {
+        r(checker.firstCheck);
+      });
+  });
 }
 export function addScore(stateGameId, actualPlayer) {
   db.collection("stateGame")
@@ -174,28 +173,39 @@ export function addScore(stateGameId, actualPlayer) {
     .get()
     .then(state => {
       if (state)
-        db.collection("session")
-          .where("stateGameId", "==", stateGameId)
-          .get()
-          .then(session => {
-            if (session.users[0].uid === actualPlayer) {
-              state.scores.p1Score++;
-              session.users[1] === null
-                ? changeActualUser(stateGameId, null, session.game)
-                : changeActualUser(
-                    stateGameId,
-                    session.users[1].uid,
-                    session.game
-                  );
-            } else {
-              state.scores.p2Score++;
-              changeActualUser(stateGameId, session.users[0].uid, session.game);
-            }
-            // resetear el primer click
-            // TODO: es posible que esto deba hacerse desde cada lógica de juego
-            resetFirstCheck(stateGameId); // suscribirse a la promise, si es necesario
+        getNextUserInfo(stateGameId, actualPlayer).then(data => {
+          if (data.number === "one") state.scores.p1Score++;
+          else state.scores.p2Score++;
+
+          resetFirstCheck(stateGameId).then(() => {
+            changeActualUser(stateGameId, data.player, data.gameName);
           });
+        });
     });
+}
+
+export function getNextUserInfo(stateGameId, actualPlayer) {
+  return new Promise(resolve => {
+    db.collection("session")
+      .where("stateGameId", "==", stateGameId)
+      .get()
+      .then(session => {
+        if (session.users[0].uid === actualPlayer)
+          session.users[1] === null
+            ? resolve({ player: null, number: "one", gameName: session.name })
+            : resolve({
+                player: session.users[1].uid,
+                number: "one",
+                gameName: session.name
+              });
+        else
+          resolve({
+            player: session.users[0].uid,
+            number: "two",
+            gameName: session.name
+          });
+      });
+  });
 }
 
 function resetFirstCheck(stateGameId) {
@@ -213,15 +223,15 @@ function resetFirstCheck(stateGameId) {
 
 export function updateGame(stateGameId, game) {
   return new Promise(resolve =>
-      db
-        .collection("stateGame")
-        .doc(stateGameId)
-        .update({
-          game: game
-        })
-        .then(updatedMtx => {
-          resolve(updatedMtx);
-        })
+    db
+      .collection("stateGame")
+      .doc(stateGameId)
+      .update({
+        game: game
+      })
+      .then(updatedMtx => {
+        resolve(updatedMtx);
+      })
   );
 }
 
@@ -247,18 +257,16 @@ export function identifyGameWhenClick(stateGameId) {
   );
 }
 
-export function getDifficulty(stateGameId){
+export function getDifficulty(stateGameId) {
   return new Promise(r => {
-    db
-    .collection("session")
-    .where("stateGameId", "==", stateGameId)
-    .get()
-    .then(session => {
-      r(session.difficulty)
-    })
-  })
+    db.collection("session")
+      .where("stateGameId", "==", stateGameId)
+      .get()
+      .then(session => {
+        r(session.difficulty);
+      });
+  });
 }
-
 
 // función de probabilidad
 export function getProbability(difficulty) {
