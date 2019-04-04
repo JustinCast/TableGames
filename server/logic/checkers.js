@@ -277,11 +277,11 @@ function checkerPlayerOne(i, checker, nextMovement,stateGameId, actualPlayer) {
       pintingChecker(i, checker);
     }
     removeLastPosition(checker);
+    //TODO: camibiar de jugador
   } else if ((this.game[i].owner === null) & twoMovementDown(this.game[i], checker)) {
     for (let j = 0; j < this.game.length; j++) {
       if (oneMovementDown(this.game[j], checker) & this.game[j].owner === true) {
         this.game[j].img = square_black;
-       
         addScore(stateGameId,actualPlayer);
       }
     }
