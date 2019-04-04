@@ -33,7 +33,6 @@ class WindowGame extends Component {
     const sizeElement = "4.8vw";
     
     return (
-
       <div id="main-card">
         <p>{this.state.gameName}</p>
         <div id="players">
@@ -50,7 +49,10 @@ class WindowGame extends Component {
         <div style={{ width: sizeBox }} id="game-card" className="shadow rounded" >
           {this.state.game.length > 0 ? (
             Object.keys(this.state.game).map(key => (
-              <div style={{ width: sizeElement, height: sizeElement }} key={key} onClick={()=> console.log(this.state.game[key])} >
+              <div style={{ width: sizeElement, height: sizeElement }} key={key} 
+              onClick={()=> {
+                console.log(" Uid "+JSON.parse(localStorage.getItem("actualUser")).uid +" "+this.state.game[key]+this.state.stateGameId)}
+              }>
                 <img alt="Loading" src={this.state.game[key].img} style={{ width: "4.3vw", height: "4.3vw" }}></img>
               </div>)
             )
