@@ -14,7 +14,12 @@ class RoomService extends Service {
           {
             sessions {
               users{
-                name
+                name,
+                email,
+                lostGames,
+                tiedGames,
+                wonGames,
+                uid
               },
               sid,
               game,
