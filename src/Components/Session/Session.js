@@ -8,10 +8,13 @@ import { Link } from 'react-router-dom';
 
 class Session extends Component {
 
-   
-
     render() {
+
+        function addPlayer(session) {
+        console.log(this.props.session);
+        }
         const {game,name,gameSize,stateGameId, users} = this.props.session;
+        
         return (
             <div className="container-card">
                 <ExpansionPanel>
@@ -36,7 +39,9 @@ class Session extends Component {
                             </div>
                             <div className="button" >
                             <Link to={{ pathname: '/windowGame', state: {stateGameId: stateGameId, users: users, gameName: game}}} >
-                                <Button>Ir al juego</Button>
+                                <Button onClick={()=>{
+                                    addPlayer();
+                                }}>Ir al juego</Button>
                             </Link>
                             </div>
                         </div>

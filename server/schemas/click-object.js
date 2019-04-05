@@ -5,7 +5,7 @@ const ClickObjectType = new GraphQLObjectType({
   fields: () => ({
     stateGameId: { type: GraphQLString },
     player: { type: GraphQLString }, // es el identificador del jugador
-    object: { type: Object }
+    object: { type: GraphQLString }
   })
 });
 
@@ -19,7 +19,7 @@ const ClickObjectInputType = new GraphQLInputObjectType({
       type: new GraphQLNonNull(GraphQLString)
     },
     object: {
-      type: new GraphQLNonNull(Object)
+      type: new GraphQLNonNull(GraphQLString)
     }
   })
 });

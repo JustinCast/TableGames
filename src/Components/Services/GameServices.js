@@ -29,7 +29,7 @@ class GameService extends Service {
                 input: {
                     stateGameId: stateGameId,
                     player: actualUser,
-                    object: click
+                    object: JSON.stringify(click)
                 }
             },
             mutation: gql`

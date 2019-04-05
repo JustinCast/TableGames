@@ -183,14 +183,14 @@ const mutation = new GraphQLObjectType({
             playMemory(
               data.input.stateGameId,
               data.input.player,
-              data.input.object
+              JSON.parse(data.input.object)
             );
           else {
-            if(isCheckerPlayer(data.input.stateGameId,data.input.player,data.input.object)){ // Corresponds to the current player ?
-              if(checkSelection(data.input.stateGameId,data.input.object)){ // Is the second click ?
+            if(isCheckerPlayer(data.input.stateGameId,data.input.player,JSON.parse(data.input.object))){ // Corresponds to the current player ?
+              if(checkSelection(data.input.stateGameId,JSON.parse(data.input.object))){ // Is the second click ?
                 if(isMovementValid( // Is a valid movement ?
                   getChecker(data.input.stateGameId),
-                  data.input.object, 
+                  JSON.parse(data.input.object), 
                   data.input.stateGameId,
                   data.input.player)){
                     saveStateGame(game,data.input.stateGameId);
