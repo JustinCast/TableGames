@@ -22,7 +22,7 @@ export const typeDefs = `
   type Click {
     stateGameId: String!,
     player: String!,
-    object: Object!
+    object: String!
   }
 
   type Query {
@@ -49,7 +49,7 @@ export const typeDefs = `
   input ClickObjectInputType{
     stateGameId: String,
     player: String,
-    object: Object
+    object: String
   }
   input PlayerInputType {
     name: String,
