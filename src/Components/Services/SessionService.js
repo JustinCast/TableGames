@@ -4,15 +4,36 @@ import gql from "graphql-tag";
 class SessionService extends Service {
 
   addUser(session){
-    let currentSession = session;
-    currentSession.users.push(JSON.parse(localStorage.getItem("actualUser")));
-    console.log(currentSession);
+    let userList=[];
+
+    let creatorUser = {
+      name: session.users[0].name,
+      email: session.users[0].email,
+      wonGames: session.users[0].wonGames,
+      lostGames: session.users[0].lostGames,
+      tiedGames: session.users[0].tiedGames,
+      uid: session.users[0].uid
+    }
+
+    let actualUser = {
+      name: JSON.parse(localStorage.getItem('actualUser')).name,
+      email: JSON.parse(localStorage.getItem('actualUser')).email,
+      wonGames: JSON.parse(localStorage.getItem('actualUser')).wonGames,
+      lostGames: JSON.parse(localStorage.getItem('actualUser')).lostGames,
+      tiedGames: JSON.parse(localStorage.getItem('actualUser')).tiedGames,
+      uid: JSON.parse(localStorage.getItem('actualUser')).uid
+    }
+    
+    userList.push(creatorUser);
+    userList.push(actualUser);
+    
+    console.log(userList);
 
     GraphQLClient.mutate({
       variables: {
         input: {
-          users: currentSession.users,
-          sid: "", // TODO: get uid of Actual User
+          users: userList,
+          sid: session.sid, // TODO: get uid of Actual User
           game: session.game,
           difficulty: session.difficulty,
           isMachine: session.isMachine,

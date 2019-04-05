@@ -14,9 +14,11 @@ class AllSessions extends Component {
             <div className="container">
                 <div className="card main-card">
                     <div className="card-body">
-                        <h5 className="card-title">Salas de juego</h5>
-                        {   
+                    <h5 className="card-title">Game sessions</h5>
+                        {RoomService.sessions.length > 0?(
                             Object.keys(RoomService.sessions).map(key => (<Session key={key} session={RoomService.sessions[key]} />))
+                        ) : (<h2>There aren't sessions yet</h2>)
+                        
                         }
                     </div>
                 </div>
