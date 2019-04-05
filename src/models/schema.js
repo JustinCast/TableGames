@@ -19,10 +19,17 @@ export const typeDefs = `
     stateGameId: String
   }
 
+<<<<<<< HEAD
   type click {
     stateGameId: String,
     player: String,
     object: Object
+=======
+  type Click {
+    stateGameId: String!,
+    player: String!,
+    object: String!
+>>>>>>> luis_dev
   }
 
   type Query {
@@ -34,12 +41,7 @@ export const typeDefs = `
     saveSession(input: SessionInputType!): Session,
     click(input: ClickObjectInputType!): click
   }
-
-  input ClickObjectInputType{
-    stateGameId: String,
-    player: String,
-    object: Object
-  }
+  
   input SessionInputType{
     users: [Player],
     sid: Int,
@@ -50,6 +52,11 @@ export const typeDefs = `
     sizeGame: Int
   }
 
+  input ClickObjectInputType{
+    stateGameId: String,
+    player: String,
+    object: String
+  }
   input PlayerInputType {
     name: String,
     email: String,
