@@ -3,7 +3,14 @@ import {
 } from "./logic-index";
 // firestore instance
 import db from "../config/config";
-import { addScore, getDifficulty, getProbability} from "./logic-index";
+import { 
+  addScore,
+  getDifficulty,
+  getProbability,
+  getNextUserInfo,
+  resetFirstCheck,
+  changeActualUser,
+  updateGame} from "./logic-index";
 // Images
 export const square_black =
   "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/black_square.png?alt=media&token=33c73aa8-d651-4b4f-82de-097c01cdaac4";
@@ -77,24 +84,29 @@ export function fillDefaultCheck(size) {
 // Logic Machine
 export function machineLogicChecker(stateGameId){
   let allClicks = [];
-  let checkers = getCheckersMachine(stateGameId);
-  checkers.forEach(e =>{
-    allClicks.push(getAllMovementsMachineCheckers(stateGameId,e));
-  })
-  //Filter Cleaner movements
-  allClicks = allClicks.filter(e => e.movements.length >0).slice();
-  // This is the best option to machine
-  selectedChecker = getMovementMachine(allClicks);
-  
-  if(getProbability(getDifficulty(stateGameId))){ // get True
-    isMovementValid(selectedChecker.checker,selectedChecker.nextMovement,stateGameId,null);
-  }else{
-    selectedChecker = allClicks[getRandomNumber(allClicks.length)];
-    isMovementValid(
-      selectedChecker.checker,
-      selectedChecker.movements[getRandomNumber(selectedChecker.movements.length)],
-      stateGameId,null);
-  }
+  getCheckersMachine(stateGameId).then(r => {
+    r.forEach(e =>{
+      getAllMovementsMachineCheckers(stateGameId,e).then( mov =>{
+        if(mov.movements.length > 0)   allClicks.push(mov) 
+      });
+      
+    })
+    // This is the best option to machine
+    let selectedChecker = getMovementMachine(allClicks);
+    console.log(selectedChecker);
+
+    
+    //console.log(selectedChecker);
+    /*if(getProbability(getDifficulty(stateGameId))){ // get True
+      isMovementValid(selectedChecker.checker,selectedChecker.nextMovement,stateGameId,null);
+    }else{
+      selectedChecker = allClicks[getRandomNumber(allClicks.length)];
+      isMovementValid(
+        selectedChecker.checker,
+        selectedChecker.movements[getRandomNumber(selectedChecker.movements.length)],
+        stateGameId,null);
+    }*/
+  });
 }
 
 
@@ -132,7 +144,8 @@ function getAllMovementsMachineCheckers(stateGameId, checker){
     db.collection("stateGame")
       .doc(stateGameId)
       .get()
-      .then(data => {
+      .then(res => {
+        let data = res.data();
         if(checker.img !== redCrown_token){
           if(twoMovementUpMachine(checker, data) !== null){
             movements.push(twoMovementUpMachine(checker, data));
@@ -168,7 +181,7 @@ function getCheckersMachine(stateGameId){
       .doc(stateGameId)
       .get()
       .then(data => {
-        r(data.game.filter(e => e.owner === true));
+        r(data.data().game.filter(e => e.owner === true));
       })
   })
 }
@@ -215,16 +228,15 @@ export function isMovementValid(checker, nextMovement, stateGameId, actualPlayer
         for (let i = 0; i < game.length; i++) {
           if ((game[i].x === nextMovement.x) & (game[i].y === nextMovement.y)) {
             if (checker.img === redCrown_token || checker.img === blueCrown_token) { // Is Crown ?
-              
+              console.log("Es corona");
               //checkerCrown(i, checker,stateGameId,actualPlayer);
               r(true);
             }else{
               if (checker.owner === false) { // Is checker of player one ?   
-                console.log(checker.owner); 
-                //checkerPlayerOne(i, checker, nextMovement,stateGameId,actualPlayer);
+                checkerPlayerOne(i, checker, nextMovement,stateGameId,actualPlayer);
                 r(true);
               } else if (checker.owner == true) { // Is checker of plyer two ?
-                console.log(checker.owner);
+                console.log("Es player dos");
                 //checkerPlayerTwo(i, checker, nextMovement,stateGameId,actualPlayer);
                 r(true);
               }else{
@@ -287,9 +299,11 @@ function checkerPlayerOne(i, checker, nextMovement,stateGameId, actualPlayer) {
       checker.img = blueCrown_token;
     }
     pintingChecker(i, checker);
-    getNextUserInfo(stateGameId, actualPlayer).then(data => {
-      resetFirstCheck(stateGameId).then(() => {
-        changeActualUser(stateGameId, data.player, data.gameName);
+    updateGame(stateGameId,game).then( () => {
+      getNextUserInfo(stateGameId, actualPlayer).then(data => {
+        resetFirstCheck(stateGameId).then(() => {
+          changeActualUser(stateGameId, data.player, data.gameName);
+        });
       });
     });
   } else if ((game[i].owner === null) & twoMovementDown(game[i], checker)) {
@@ -297,7 +311,9 @@ function checkerPlayerOne(i, checker, nextMovement,stateGameId, actualPlayer) {
       if (oneMovementDown(game[j], checker) & game[j].owner === true) {
         game[j].img = square_black;
         pintingChecker(i, checker);
-        addScore(stateGameId,actualPlayer);
+        updateGame(stateGameId,game).then( () => {
+          addScore(stateGameId,actualPlayer);
+        })
       }
     }
   }
@@ -306,18 +322,25 @@ function checkerPlayerOne(i, checker, nextMovement,stateGameId, actualPlayer) {
 
 
 function pintingChecker(i, checker) {
+  for (let i = 0; i < game.length; i++) {
+    if(game[i].x === checker.x & game[i].y === checker.y){ game[i].img = square_black; game[i].owner = null}
+  }
   switch (checker.img) {
     case blue_token:
       game[i].img = blue_token;
+      game[i].owner = false;
       break;
     case red_token:
       game[i].img = red_token;
+      game[i].owner = true;
       break;
     case redCrown_token:
       game[i].img = redCrown_token;
+      game[i].owner = true;
       break;
     case blueCrown_token:
       game[i].img = blueCrown_token;
+      game[i].owner = false;
       break;
   }
 }

@@ -1,7 +1,7 @@
 // firestore instance
 import db from "../config/config";
 import { cpuPlayer } from "./memory";
-import { square_black } from "./checkers";
+import { square_black, machineLogicChecker } from "./checkers";
 import { check } from "graphql-anywhere";
 // Fill list logit game
 export function fillList(size) {
@@ -154,13 +154,19 @@ export function changeActualUser(stateGameId, user, gameName) {
         .update({
           actualPlayer: user
         })
-        .then(state => {
-          // aqui se llama el jugador automático para cada juego
-          if (gameName === "Memory" && user === null)
-            cpuPlayer(stateGameId, state);
-          else {
-            // llamar a damas
-          }
+        .then(() => {
+          db.collection("stateGame")
+            .doc(stateGameId)
+            .get()
+            .then(data => {
+              // aqui se llama el jugador automático para cada juego
+              let state = data.data();
+              if (gameName === "Memory" && user === null)
+                cpuPlayer(stateGameId, state);
+              else {
+                machineLogicChecker(stateGameId);
+              }
+            });
         })
     );
   });
@@ -197,10 +203,11 @@ export function getNextUserInfo(stateGameId, actualPlayer) {
     db.collection("session")
       .where("stateGameId", "==", stateGameId)
       .get()
-      .then(session => {
+      .then(querySnapshot => {
+        let session = querySnapshot.docs[0].data();
         if (session.users[0].uid === actualPlayer)
           session.users[1] === null
-            ? resolve({ player: null, number: "one", gameName: session.name })
+            ? resolve({ player: null, number: "one", gameName: session.game })
             : resolve({
                 player: session.users[1].uid,
                 number: "one",
@@ -238,6 +245,7 @@ export function updateGame(stateGameId, game) {
         game: game
       })
       .then(updatedMtx => {
+        console.log("!!!!!!!  Acualizar !!!!!!!!!!!!");
         resolve(updatedMtx);
       })
   );
