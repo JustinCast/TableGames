@@ -1,7 +1,8 @@
 // firestore instance
 import db from "../config/config";
 import { cpuPlayer } from "./memory";
-
+import { square_black } from "./checkers";
+import { check } from "graphql-anywhere";
 // Fill list logit game
 export function fillList(size) {
   let array = [];
@@ -12,7 +13,7 @@ export function fillList(size) {
         img: "",
         x: i,
         y: j,
-        token: false,
+        owner: false,
         img2: ""
       });
     }
@@ -54,18 +55,25 @@ export function checkSelection(stateGameId, obj) {
     db.collection("stateGame")
       .doc(stateGameId)
       .get()
-      .then(data => {
-        if (data.firstCheck === null) {
+      .then(querySnapshot => {
+        let data = querySnapshot.data();
+        if (obj.owner === false) {
+          db.collection("stateGame")
+            .doc(stateGameId)
+            .update({ firstCheck: obj });   
+          r(false)
+        } else if(obj.owner === true){
           db.collection("stateGame")
             .doc(stateGameId)
             .update({ firstCheck: obj });
+          r(false)
+        }else if(obj.img === square_black){
+          if(data.firstCheck !== null) r(true)
+          else r(false)
+        }else{
           r(false);
-        } else {
-          db.collection("stateGame")
-            .doc(stateGameId)
-            .update({ firstCheck: null });
-          r(true);
         }
+        
       });
   });
 }
@@ -237,12 +245,14 @@ export function updateGame(stateGameId, game) {
 
 export function identifyGameWhenClick(stateGameId) {
   return new Promise(resolve =>
+    
     resolve(
       db
         .collection("session")
         .where("stateGameId", "==", stateGameId)
         .get()
-        .then(session => {
+        .then(querySnapshot => {
+          let session = querySnapshot.docs[0].data();
           if (session)
             switch (session.game) {
               case "Damas":

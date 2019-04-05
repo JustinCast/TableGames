@@ -10,8 +10,8 @@ class Session extends Component {
 
     render() {
 
-        function addPlayer(session) {
-        console.log(this.props.session);
+        function addPlayer() {
+        // console.log(this.props.session);
         }
         const {game,name,gameSize,stateGameId, users} = this.props.session;
         

@@ -10,7 +10,7 @@ export const typeDefs = `
 
   type Session {
     users: [Player!]!,
-    sid: Int!,
+    sid: String!,
     game: String!,
     difficulty: Int!,
     isMachine: Boolean!,
@@ -19,17 +19,10 @@ export const typeDefs = `
     stateGameId: String
   }
 
-<<<<<<< HEAD
   type click {
     stateGameId: String,
     player: String,
-    object: Object
-=======
-  type Click {
-    stateGameId: String!,
-    player: String!,
-    object: String!
->>>>>>> luis_dev
+    object: String
   }
 
   type Query {
@@ -44,7 +37,7 @@ export const typeDefs = `
   
   input SessionInputType{
     users: [Player],
-    sid: Int,
+    sid: String,
     game: String,
     difficulty: Int,
     isMachine: Boolean,

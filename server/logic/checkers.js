@@ -5,7 +5,7 @@ import {
 import db from "../config/config";
 import { addScore, getDifficulty, getProbability} from "./logic-index";
 // Images
-const square_black =
+export const square_black =
   "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/black_square.png?alt=media&token=33c73aa8-d651-4b4f-82de-097c01cdaac4";
 const square_white =
   "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/white_square.png?alt=media&token=2439fb8c-86f3-442b-9ddd-5e18580e23d8";
@@ -178,10 +178,13 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
     db.collection("session")
       .where("stateGameId", "==", stateGameId)
       .get()
-      .then(data => {
+      .then(querySnapshot => {
+        let data = querySnapshot.docs[0].data();
+    
         if (data.users[0].uid === playerId) {
           // Player one
-          if (checker.owner === false) {
+          if(checker.img === square_black) r(true)
+          else if (checker.owner === false) {
             // Checker owner is player one
             r(true);
           } else {
@@ -190,7 +193,8 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
         }
          else {
           // Player two
-          if (checker.owner === true) {
+          if(checker.img === square_black) r(true)
+          else if (checker.owner === true) {
             // Checker owner is player two
             r(true);
           } else {

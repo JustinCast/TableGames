@@ -102,12 +102,16 @@ const mutation = new GraphQLObjectType({
       },
       resolve: async (_, data) => {
         return new Promise(resolve => {
-          const sessionRef = db.collection("session").where("stateGameId","==",data.input.stateGameId);
-          sessionRef.get()
-          .then((docSnapshot) => {
-            if (docSnapshot.exists) {
-              sessionRef.update(data.input);
-            } else {
+          console.log(data.input.users.length);
+          if(data.input.users.length > 1 & data.input.users[1] !== null){
+            const sessionRef = db.collection("session").where("stateGameId","==",data.input.stateGameId);
+            sessionRef.get()
+            .then((docSnapshot) => {
+              if (docSnapshot.exists) {
+                sessionRef.update(data.input);
+              }
+            })
+          }else {
               if (data.input.game === "Damas") {
                 // If game is chekers
                 let game = fillDefaultCheck(data.input.gameSize);
@@ -130,9 +134,6 @@ const mutation = new GraphQLObjectType({
               }
             }
           });
-
-
-        });
       }
     },
     savePlayer: {
@@ -177,6 +178,7 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, data) => {
+        
         identifyGameWhenClick(data.input.stateGameId)
         .then(result => {
           if(!result)
@@ -186,17 +188,27 @@ const mutation = new GraphQLObjectType({
               JSON.parse(data.input.object)
             );
           else {
-            if(isCheckerPlayer(data.input.stateGameId,data.input.player,JSON.parse(data.input.object))){ // Corresponds to the current player ?
-              if(checkSelection(data.input.stateGameId,JSON.parse(data.input.object))){ // Is the second click ?
-                if(isMovementValid( // Is a valid movement ?
-                  getChecker(data.input.stateGameId),
-                  JSON.parse(data.input.object), 
-                  data.input.stateGameId,
-                  data.input.player)){
-                    saveStateGame(game,data.input.stateGameId);
+            isCheckerPlayer(data.input.stateGameId,data.input.player,JSON.parse(data.input.object)).then( res => {
+              if(res){ 
+              checkSelection(data.input.stateGameId,JSON.parse(data.input.object)).then( res =>{ // Corresponds to the current player ?
+                  if(res){
+                    if(isMovementValid( // Is a valid movement ?
+                      getChecker(data.input.stateGameId),
+                      JSON.parse(data.input.object), 
+                      data.input.stateGameId,
+                      data.input.player)){
+                        saveStateGame(game,data.input.stateGameId);
+                      }
                   }
+                })
               }
-            }
+              //if() console.log("hola")
+              /*if(checkSelection(data.input.stateGameId,JSON.parse(data.input.object)) === true){ // Is the second click ?
+                console.log("Es ficha del jugador actual");
+                /*
+            }*/
+            
+            })
           }
         })
       }
