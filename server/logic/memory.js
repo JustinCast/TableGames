@@ -7,7 +7,8 @@ import {
   getDifficulty,
   getProbability,
   getNextUserInfo,
-  resetFirstCheck
+  resetFirstCheck,
+  updateFirstCheck
 } from "./logic-index";
 // 563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a
 // https://api.pexels.com/v1/curated?per_page=15&page=1
@@ -107,14 +108,16 @@ export function playMemory(stateGameId, player, object) {
     .doc(stateGameId)
     //.where("actualPlayer", "==", player)
     .get()
-    .then(state => {
+    .then(querySnapshot => {
+      let state = querySnapshot.data();
       if (state) {
-        if (state.firstCheck === null) state.firstCheck = object;
+        if (state.firstCheck === null) updateFirstCheck(stateGameId, object);
         else {
-          handleComparation(stateGameId, state, object, player);
+          handleComparation(stateGameId, state, object, state.actualPlayer);
         }
       }
-    });
+    })
+    .catch(err => console.log(err));
 }
 
 /**
@@ -128,8 +131,8 @@ function compareCards(firstObjectClicked, secondObjectClicked) {
 
 function flipCards(stateGameId, state, img1, img2) {
   return new Promise(resolve => {
-    state.game[state.findIndex(e => e.img === img1)].img2 = img1;
-    state.game[state.findIndex(e => e.img === img2)].img2 = img2;
+    state.game[state.game.findIndex(e => e.img === img1)].img2 = img1;
+    state.game[state.game.findIndex(e => e.img === img2)].img2 = img2;
     updateGame(stateGameId, state.game).then(() => resolve(true));
   });
 }
@@ -143,26 +146,36 @@ function flipCards(stateGameId, state, img1, img2) {
  */
 function handleComparation(stateGameId, state, secondObjectClicked, player) {
   return new Promise(resolve => {
-    flipCards(stateGameId, state, state.firstCheck.img, secondObjectClicked.img)
-    .then(() => {
+    flipCards(
+      stateGameId,
+      state,
+      state.firstCheck.img,
+      secondObjectClicked.img
+    ).then(() => {
       if (compareCards(state.firstCheck, secondObjectClicked)) {
         addScore(stateGameId, player);
-        blockCards(stateGameId, secondObjectClicked.img).then(updatedMtx =>
-          updateGame(stateGameId, updatedMtx).then(() => {
-            resolve(true);
-          })
-        );
+        console.log("IGUALES")
+        // blockCards(stateGameId, secondObjectClicked.img).then(updatedMtx =>
+        //   console.log
+        //   // updateGame(stateGameId, updatedMtx).then(() => {
+        //   //   resolve(true);
+        //   // })
+        // );
       } else {
-        flipCards(stateGameId, state, state.firstCheck.img, secondObjectClicked.img)
-        .then(() => {
+        flipCards(
+          stateGameId,
+          state,
+          state.firstCheck.img,
+          secondObjectClicked.img
+        ).then(() => {
           getNextUserInfo(stateGameId, player).then(data => {
             resetFirstCheck(stateGameId).then(() => {
               changeActualUser(stateGameId, data.player, data.gameName);
             });
           });
-        })
+        });
       }
-    })
+    });
   });
 }
 
@@ -174,7 +187,7 @@ function blockCards(stateGameId, imgURL) {
         .doc(stateGameId)
         .get()
         .then(gameState => {
-          return blockObjects(gameState.game, imgURL);
+          //return blockObjects(gameState.game, imgURL);
         })
     )
   );

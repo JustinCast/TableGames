@@ -60,20 +60,19 @@ export function checkSelection(stateGameId, obj) {
         if (obj.owner === false) {
           db.collection("stateGame")
             .doc(stateGameId)
-            .update({ firstCheck: obj });   
-          r(false)
-        } else if(obj.owner === true){
+            .update({ firstCheck: obj });
+          r(false);
+        } else if (obj.owner === true) {
           db.collection("stateGame")
             .doc(stateGameId)
             .update({ firstCheck: obj });
-          r(false)
-        }else if(obj.img === square_black){
-          if(data.firstCheck !== null) r(true)
-          else r(false)
-        }else{
+          r(false);
+        } else if (obj.img === square_black) {
+          if (data.firstCheck !== null) r(true);
+          else r(false);
+        } else {
           r(false);
         }
-        
       });
   });
 }
@@ -154,13 +153,19 @@ export function changeActualUser(stateGameId, user, gameName) {
         .update({
           actualPlayer: user
         })
-        .then(state => {
-          // aqui se llama el jugador automático para cada juego
-          if (gameName === "Memory" && user === null)
-            cpuPlayer(stateGameId, state);
-          else {
-            // llamar a damas
-          }
+        .then(() => {
+          db.collection("stateGame")
+            .doc(stateGameId)
+            .get()
+            .then(data => {
+              // aqui se llama el jugador automático para cada juego
+              let state = data.data();
+              if (gameName === "Memory" && user === null)
+                cpuPlayer(stateGameId, state);
+              else {
+                // llamar a damas
+              }
+            });
         })
     );
   });
@@ -179,17 +184,25 @@ export function addScore(stateGameId, actualPlayer) {
   db.collection("stateGame")
     .doc(stateGameId)
     .get()
-    .then(state => {
-      if (state)
+    .then(data => {
+      if (data) {
+        let state = data.data();
         getNextUserInfo(stateGameId, actualPlayer).then(data => {
-          if (data.number === "one") state.scores.p1Score++;
-          else state.scores.p2Score++;
-
+          if (data.number === "one") {
+            state.scores.p1Score++;
+            saveNewScoreInDB(stateGameId, state.scores);
+          }
+          else{
+            state.scores.p2Score++;
+            saveNewScoreInDB(stateGameId, state.scores);
+          }
           resetFirstCheck(stateGameId).then(() => {
             changeActualUser(stateGameId, data.player, data.gameName);
           });
         });
-    });
+      }
+    })
+    .catch(err => console.log(err));
 }
 
 export function getNextUserInfo(stateGameId, actualPlayer) {
@@ -197,10 +210,11 @@ export function getNextUserInfo(stateGameId, actualPlayer) {
     db.collection("session")
       .where("stateGameId", "==", stateGameId)
       .get()
-      .then(session => {
+      .then(querySnapshot => {
+        let session = querySnapshot.docs[0].data();
         if (session.users[0].uid === actualPlayer)
           session.users[1] === null
-            ? resolve({ player: null, number: "one", gameName: session.name })
+            ? resolve({ player: null, number: "one", gameName: session.game })
             : resolve({
                 player: session.users[1].uid,
                 number: "one",
@@ -229,6 +243,33 @@ export function resetFirstCheck(stateGameId) {
   });
 }
 
+export function updateFirstCheck(stateGameId, firstCheck) {
+  return new Promise(resolve =>
+    db
+      .collection("stateGame")
+      .doc(stateGameId)
+      .update({
+        firstCheck: firstCheck
+      })
+      .then(() => {
+        resolve(true);
+      })
+      .catch(err => console.log)
+  );
+}
+
+function saveNewScoreInDB(stateGameId, scores) {
+  console.log(scores);
+  return new Promise(resolve =>
+    db
+      .collection("stateGame")
+      .doc(stateGameId)
+      .update({
+        scores: scores
+      })
+  );
+}
+
 export function updateGame(stateGameId, game) {
   return new Promise(resolve =>
     db
@@ -245,7 +286,6 @@ export function updateGame(stateGameId, game) {
 
 export function identifyGameWhenClick(stateGameId) {
   return new Promise(resolve =>
-    
     resolve(
       db
         .collection("session")
@@ -273,7 +313,7 @@ export function getDifficulty(stateGameId) {
       .where("stateGameId", "==", stateGameId)
       .get()
       .then(session => {
-        r(session.difficulty);
+        r(session.docs[0].data().difficulty);
       });
   });
 }

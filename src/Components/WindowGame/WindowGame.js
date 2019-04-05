@@ -54,7 +54,7 @@ class WindowGame extends Component {
                 this.services.GameService.sentClick(this.state.stateGameId,JSON.parse(localStorage.getItem("actualUser")).uid,this.state.game[key])
               }
               }>
-                <img alt="Loading" src={this.state.game[key].img} style={{ width: "4.3vw", height: "4.3vw" }}></img>
+                <img alt="Loading" src={this.state.game[key].img2} style={{ width: "4.3vw", height: "4.3vw" }}></img>
               </div>)
             )
           ) : (<h2>Loading game</h2>)
