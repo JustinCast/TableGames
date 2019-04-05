@@ -5,9 +5,9 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import { Link } from 'react-router-dom';
+import { injector } from 'react-services-injector';
 
 class Session extends Component {
-
     render() {
 
         function addPlayer() {
@@ -35,13 +35,11 @@ class Session extends Component {
                                 <div className="element-opt">
                                     <p className="title">Tamaño</p>
                                     <p>{gameSize}</p>
-                                </div>
+                                </div>  
                             </div>
                             <div className="button" >
-                            <Link to={{ pathname: '/windowGame', state: {stateGameId: stateGameId, users: users, gameName: game}}} >
-                                <Button onClick={()=>{
-                                    addPlayer();
-                                }}>Ir al juego</Button>
+                            <Link to={{ pathname: '/windowGame', state: {stateGameId: stateGameId, users: users, gameName: game}}}>
+                                <Button onClick={()=>{this.services.SessionService.addUser(this.props.session)}} >Ir al juego</Button>
                             </Link>
                             </div>
                         </div>
@@ -51,5 +49,4 @@ class Session extends Component {
         );
     }
 }
-
-export default Session;
+export default injector.connect(Session, { toRender: ['SessionService'] });
