@@ -171,7 +171,7 @@ export function getChecker(stateGameId) {
       .doc(stateGameId)
       .get()
       .then(checker => {
-        r(checker.firstCheck);
+        r(checker.data().firstCheck);
       });
   });
 }

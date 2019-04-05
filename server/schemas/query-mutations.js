@@ -192,13 +192,17 @@ const mutation = new GraphQLObjectType({
               if(res){ 
               checkSelection(data.input.stateGameId,JSON.parse(data.input.object)).then( res =>{ // Corresponds to the current player ?
                   if(res){
-                    if(isMovementValid( // Is a valid movement ?
-                      getChecker(data.input.stateGameId),
-                      JSON.parse(data.input.object), 
-                      data.input.stateGameId,
-                      data.input.player)){
-                        saveStateGame(game,data.input.stateGameId);
-                      }
+                    getChecker(data.input.stateGameId).then(checker => {
+        
+                      if(isMovementValid( // Is a valid movement ?
+                        checker,
+                        JSON.parse(data.input.object), 
+                        data.input.stateGameId,
+                        data.input.player)){
+                          //saveStateGame(game,data.input.stateGameId);
+                        }
+                    })
+                    
                   }
                 })
               }
