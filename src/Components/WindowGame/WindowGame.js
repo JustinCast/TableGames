@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './WindowGame.scss'
 import Button from '@material-ui/core/Button';
 import { injector } from 'react-services-injector';
-import { element } from 'prop-types';
+import { element, string } from 'prop-types';
 import { Link } from '@material-ui/core';
 
 class WindowGame extends Component {
@@ -11,7 +11,8 @@ class WindowGame extends Component {
     score: {},
     users: this.props.location.state.users,
     stateGameId: this.props.location.state.stateGameId,
-    gameName: this.props.location.state.gameName
+    gameName: this.props.location.state.gameName,
+    sizeBox: "39%"
   }
 
   componentDidMount() {
@@ -26,12 +27,16 @@ class WindowGame extends Component {
           game: data.game,
           score: data.scores
         })
-      );
+      )
     }
 
-    const sizeBox = "44%";
-    const sizeElement = "4.8vw";
-    
+    var sizeElement = "4.8vw";
+
+    /*if (this.state.game.length !== 0) {
+      this.services.GameService.sizeBox(this.state.game.length);
+      this.setState({ sizeBox: this.services.GameService.getSizeBox });
+    }*/
+
     return (
       <div id="main-card">
         <p>{this.state.gameName}</p>
@@ -45,23 +50,22 @@ class WindowGame extends Component {
             <p>Score <b>{this.state.score.p2Score}</b></p>
           </section>
         </div>
-
-        <div style={{ width: sizeBox }} id="game-card" className="shadow rounded" >
+         <div style={{ width: this.state.sizeBox }} id="game-card" className="shadow rounded" >
           {this.state.game.length > 0 ? (
             Object.keys(this.state.game).map(key => (
-              <div style={{ width: sizeElement, height: sizeElement }} key={key} 
-              onClick={()=> {
-                console.log(" Uid "+JSON.parse(localStorage.getItem("actualUser")).uid +" "+this.state.game[key]+this.state.stateGameId)}
-              }>
+              <div style={{ width: sizeElement, height: sizeElement }} key={key}
+                onClick={() => {
+                  console.log(" Uid " + JSON.parse(localStorage.getItem("actualUser")).uid + " " + this.state.game[key] + this.state.stateGameId)
+                }
+                }>
                 <img alt="Loading" src={this.state.game[key].img} style={{ width: "4.3vw", height: "4.3vw" }}></img>
               </div>)
             )
           ) : (<h2>Loading game</h2>)
           }
         </div>
+        <Button id="chat-button" onClick={() => console.log("Hola munndo")}>Chat</Button>
 
-        <Button id="chat-button" onClick={()=> console.log("Hola munndo")}>Chat</Button>   
-          
       </div>
     );
   }

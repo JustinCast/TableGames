@@ -9,7 +9,6 @@ import gql from "graphql-tag";
 import firebaseApp from '../Services/FirebaseService';
 
 class GameService extends Service {
-
     get matrix() {
         return new Promise(resolve => {
             firebaseApp.firebase_.
@@ -70,15 +69,25 @@ class GameService extends Service {
         });
     }
 
-    /*get sizeBox(size){
-       switch (size) {
-           case 16:
-               
-               return 8;
-           case 36:
-               return 8;
-           default:
-               break;*/
+
+    sizeBox(size) {
+        this.currentSize="";
+        if (size == 25) //5*5
+            this.currentSize = "44%";
+        if (size == 36) //6*6
+            this.currentSize = "45%";
+        if (size == 89) //7*7
+            this.currentSize = "43%";
+        if (size == 64) //8*8
+            this.currentSize = "39%";
+    }
+
+
+    get getSizeBox() {
+        return this.currentSize;
+    }
+
+
 }
 
 GameService.publicName = 'GameService';
