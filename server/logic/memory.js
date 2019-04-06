@@ -131,15 +131,17 @@ function compareCards(firstObjectClicked, secondObjectClicked) {
 
 function flipCards(stateGameId, state, img1, img2, aux) {
   return new Promise(resolve => {
-    /*console.log(state.game[state.game.findIndex(e => e.img === img1)].img2);
-    console.log(state.game[state.game.findIndex(e => e.img === img1)].img);*/
-    state.game[state.game.findIndex(e => e.img === img1)].img2 = aux ? img1 : questionMark;
-    state.game[state.game.findIndex(e => e.img === img2)].img2 = aux ? img2: questionMark;
-    
-    state.game[state.game.findIndex(e => e.img === img1)].owner = !state.game[state.game.findIndex(e => e.img === img1)].owner;
-    state.game[state.game.findIndex(e => e.img === img2)].owner = !state.game[state.game.findIndex(e => e.img === img2)].owner;
+    if(aux){
+      state.game.filter(e => e.img === img1).forEach(e => e.img2 = img1);
+      state.game.filter(e => e.img === img1).forEach(e => e.owner = true);
+      /*state.game[state.game.findIndex(e => e.img === img1)].img2 = img1;
+      state.game[state.game.findIndex(e => e.img === img2)].img2 = img2;
+      
+      state.game[state.game.findIndex(e => e.img === img1)].owner = true;
+      state.game[state.game.findIndex(e => e.img === img2)].owner = true;*/
+    }
+    resolve(updateGame(stateGameId, state.game));
 
-    updateGame(stateGameId, state.game).then(() => resolve(true));
   });
 }
 
@@ -152,42 +154,38 @@ function flipCards(stateGameId, state, img1, img2, aux) {
  */
 function handleComparation(stateGameId, state, secondObjectClicked, player) {
   return new Promise(resolve => {
-    flipCards(
-      stateGameId,
-      state,
-      state.firstCheck.img,
-      secondObjectClicked.img,
-      true
-    ).then(() => {
-      if (compareCards(state.firstCheck, secondObjectClicked)) {
-        addScore(stateGameId, player);
+    console.log(`${player}: ${state.firstCheck.img}`);
+    console.log(`${player}: ${secondObjectClicked.img}`);
+    if (compareCards(state.firstCheck, secondObjectClicked)) {
+      addScore(stateGameId, player);
+      flipCards(
+        stateGameId,
+        state,
+        state.firstCheck.img,
+        secondObjectClicked.img,
+        true
+      ).then(() => {
         getNextUserInfo(stateGameId, player).then(data => {
           resetFirstCheck(stateGameId).then(() => {
             changeActualUser(stateGameId, data.player, data.gameName);
           });
         });
-        // blockCards(stateGameId, secondObjectClicked.img).then(updatedMtx =>
-        //   console.log
-        //   // updateGame(stateGameId, updatedMtx).then(() => {
-        //   //   resolve(true);
-        //   // })
-        // );
-      } else {
-        flipCards(
-          stateGameId,
-          state,
-          state.firstCheck.img,
-          secondObjectClicked.img,
-          false
-        ).then(() => {
-          getNextUserInfo(stateGameId, player).then(data => {
-            resetFirstCheck(stateGameId).then(() => {
-              changeActualUser(stateGameId, data.player, data.gameName);
-            });
+      });
+    } else {
+      flipCards(
+        stateGameId,
+        state,
+        state.firstCheck.img,
+        secondObjectClicked.img,
+        false
+      ).then(() => {
+        getNextUserInfo(stateGameId, player).then(data => {
+          resetFirstCheck(stateGameId).then(() => {
+            changeActualUser(stateGameId, data.player, data.gameName);
           });
         });
-      }
-    });
+      });
+    }
   });
 }
 
