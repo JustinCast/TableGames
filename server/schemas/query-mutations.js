@@ -102,13 +102,26 @@ const mutation = new GraphQLObjectType({
       },
       resolve: async (_, data) => {
         return new Promise(resolve => {
-          console.log(data.input.users.length);
-          if(data.input.users.length > 1 & data.input.users[1] !== null){
+          
+          if(data.input.users.length === 2 & data.input.users[1] !== null){
             const sessionRef = db.collection("session").where("stateGameId","==",data.input.stateGameId);
             sessionRef.get()
             .then((docSnapshot) => {
-              if (docSnapshot.exists) {
-                sessionRef.update(data.input);
+              if (docSnapshot.docs[0].exists) {
+                db.collection("session").
+                doc(docSnapshot.docs[0].id).
+                update({
+                  difficulty: data.input.difficulty,
+                  game: data.input.game,
+                  gameSize: data.input.gameSize,
+                  isMachine: data.input.isMachine,
+                  name: data.input.name,
+                  sid: data.input.sid,
+                  stateGameId: data.input.stateGameId,
+                  users: data.input.users
+                }).then( () => {
+                  resolve(data.input);
+                });
               }
             })
           }else {
@@ -145,7 +158,6 @@ const mutation = new GraphQLObjectType({
       },
       resolve: async (_, data) => {
         var docRef = db.collection("player").doc(data.input.email);
-
         db.collection("player")
           .doc(data.input.email)
           .get()
