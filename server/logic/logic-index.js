@@ -190,7 +190,6 @@ export function addScore(stateGameId, actualPlayer) {
         getNextUserInfo(stateGameId, actualPlayer).then(data => {
           if (data.number === "one") state.scores.p1Score++;
           else state.scores.p2Score++;
-
           resetFirstCheck(stateGameId).then(() => {
             changeActualUser(stateGameId, data.player, data.gameName);
           });

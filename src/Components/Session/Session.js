@@ -10,9 +10,6 @@ import { injector } from 'react-services-injector';
 class Session extends Component {
     render() {
 
-        function addPlayer() {
-        // console.log(this.props.session);
-        }
         const {game,name,gameSize,stateGameId, users} = this.props.session;
         
         return (

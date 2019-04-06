@@ -11,8 +11,8 @@ import firebaseApp from '../Services/FirebaseService';
 class GameService extends Service {
     get matrix() {
         return new Promise(resolve => {
-            firebaseApp.firebase_.
-                firestore()
+            firebaseApp.firebase_
+                .firestore()
                 .collection("stateGame")
                 .doc("hpGwIgBb5iHlJTxKk4dH")
                 .get()
@@ -39,7 +39,7 @@ class GameService extends Service {
         }
       `
         }).then(data => {
-            if (data != null) {
+            if (data !== null) {
                 //TODO: retorna algo
                 console.log(data);
             }
@@ -72,13 +72,13 @@ class GameService extends Service {
 
     sizeBox(size) {
         this.currentSize="";
-        if (size == 25) //5*5
+        if (size === 25) //5*5
             this.currentSize = "44%";
-        if (size == 36) //6*6
+        if (size === 36) //6*6
             this.currentSize = "45%";
-        if (size == 89) //7*7
+        if (size === 89) //7*7
             this.currentSize = "43%";
-        if (size == 64) //8*8
+        if (size === 64) //8*8
             this.currentSize = "39%";
     }
 

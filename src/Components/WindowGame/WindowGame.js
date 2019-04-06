@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import './WindowGame.scss'
 import Button from '@material-ui/core/Button';
 import { injector } from 'react-services-injector';
-import { element } from 'prop-types';
-import { Link } from '@material-ui/core';
+
 
 class WindowGame extends Component {
   state = {
@@ -54,7 +53,7 @@ class WindowGame extends Component {
                 this.services.GameService.sentClick(this.state.stateGameId,JSON.parse(localStorage.getItem("actualUser")).uid,this.state.game[key])
               }
               }>
-                <img alt="Loading" src={this.state.game[key].img2} style={{ width: "4.3vw", height: "4.3vw" }}></img>
+                <img alt="Loading" src={this.state.game[key].img} style={{ width: "4.3vw", height: "4.3vw" }}></img>
               </div>)
             )
           ) : (<h2>Loading game</h2>)
