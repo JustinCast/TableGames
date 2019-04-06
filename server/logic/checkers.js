@@ -3,9 +3,16 @@ import {
 } from "./logic-index";
 // firestore instance
 import db from "../config/config";
-import { addScore, getDifficulty, getProbability} from "./logic-index";
+import { 
+  addScore,
+  getDifficulty,
+  getProbability,
+  getNextUserInfo,
+  resetFirstCheck,
+  changeActualUser,
+  updateGame} from "./logic-index";
 // Images
-const square_black =
+export const square_black =
   "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/black_square.png?alt=media&token=33c73aa8-d651-4b4f-82de-097c01cdaac4";
 const square_white =
   "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/white_square.png?alt=media&token=2439fb8c-86f3-442b-9ddd-5e18580e23d8";
@@ -77,24 +84,29 @@ export function fillDefaultCheck(size) {
 // Logic Machine
 export function machineLogicChecker(stateGameId){
   let allClicks = [];
-  let checkers = getCheckersMachine(stateGameId);
-  checkers.forEach(e =>{
-    allClicks.push(getAllMovementsMachineCheckers(stateGameId,e));
-  })
-  //Filter Cleaner movements
-  allClicks = allClicks.filter(e => e.movements.length >0).slice();
-  // This is the best option to machine
-  selectedChecker = getMovementMachine(allClicks);
-  
-  if(getProbability(getDifficulty(stateGameId))){ // get True
-    isMovementValid(selectedChecker.checker,selectedChecker.nextMovement,stateGameId,null);
-  }else{
-    selectedChecker = allClicks[getRandomNumber(allClicks.length)];
-    isMovementValid(
-      selectedChecker.checker,
-      selectedChecker.movements[getRandomNumber(selectedChecker.movements.length)],
-      stateGameId,null);
-  }
+  getCheckersMachine(stateGameId).then(r => {
+    r.forEach(e =>{
+      getAllMovementsMachineCheckers(stateGameId,e).then( mov =>{
+        if(mov.movements.length > 0)   allClicks.push(mov) 
+      });
+      
+    })
+    // This is the best option to machine
+    let selectedChecker = getMovementMachine(allClicks);
+    console.log(selectedChecker);
+
+    
+    //console.log(selectedChecker);
+    /*if(getProbability(getDifficulty(stateGameId))){ // get True
+      isMovementValid(selectedChecker.checker,selectedChecker.nextMovement,stateGameId,null);
+    }else{
+      selectedChecker = allClicks[getRandomNumber(allClicks.length)];
+      isMovementValid(
+        selectedChecker.checker,
+        selectedChecker.movements[getRandomNumber(selectedChecker.movements.length)],
+        stateGameId,null);
+    }*/
+  });
 }
 
 
@@ -132,7 +144,8 @@ function getAllMovementsMachineCheckers(stateGameId, checker){
     db.collection("stateGame")
       .doc(stateGameId)
       .get()
-      .then(data => {
+      .then(res => {
+        let data = res.data();
         if(checker.img !== redCrown_token){
           if(twoMovementUpMachine(checker, data) !== null){
             movements.push(twoMovementUpMachine(checker, data));
@@ -168,7 +181,7 @@ function getCheckersMachine(stateGameId){
       .doc(stateGameId)
       .get()
       .then(data => {
-        r(data.game.filter(e => e.owner === true));
+        r(data.data().game.filter(e => e.owner === true));
       })
   })
 }
@@ -178,10 +191,13 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
     db.collection("session")
       .where("stateGameId", "==", stateGameId)
       .get()
-      .then(data => {
+      .then(querySnapshot => {
+        let data = querySnapshot.docs[0].data();
+    
         if (data.users[0].uid === playerId) {
           // Player one
-          if (checker.owner === false) {
+          if(checker.img === square_black) r(true)
+          else if (checker.owner === false) {
             // Checker owner is player one
             r(true);
           } else {
@@ -190,7 +206,8 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
         }
          else {
           // Player two
-          if (checker.owner === true) {
+          if(checker.img === square_black) r(true)
+          else if (checker.owner === true) {
             // Checker owner is player two
             r(true);
           } else {
@@ -201,15 +218,15 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
   });
 }
 
-export function isMovementValid(checker, nextMovement, stateGameId, actualPlayer) {
+export function isMovementValid(checker, nextMovement, stateGameId, actualPlayer) { 
   return new Promise(r => {
     db.collection("stateGame")
       .doc(stateGameId)
       .get()
       .then(data => {
-        this.game = data.game.slice();
-        for (let i = 0; i < this.game.length; i++) {
-          if ((this.game[i].x === nextMovement.x) & (this.game[i].y === nextMovement.y)) {
+        game = data.data().game.slice();
+        for (let i = 0; i < game.length; i++) {
+          if ((game[i].x === nextMovement.x) & (game[i].y === nextMovement.y)) {
             if (checker.img === redCrown_token || checker.img === blueCrown_token) { // Is Crown ?
               checkerCrown(i, checker,stateGameId,actualPlayer);
               r(true);
@@ -230,94 +247,119 @@ export function isMovementValid(checker, nextMovement, stateGameId, actualPlayer
   })
 };
 function checkerCrown(i, checker, stateGameId, actualPlayer){
-  if (this.game[i].owner === null & (oneMovementUp(this.game[i], checker) || oneMovementDown(this.game[i], checker))) {
-    pintingChecker(i, checker);
-    removeLastPosition(checker);
-  } else if (this.game[i].owner === null & 
-        (twoMovementUp(this.game[i], checker) || twoMovementDown(this.game[i], checker))) {
-    for (let j = 0; j < this.game.length; j++) {
-      if ((oneMovementUp(this.game[j], checker) || oneMovementDown(this.game[j], checker))&
-       (this.game[j].owner ===  false & checker.owner === true) ||(this.game[j].owner ===  true & checker.owner === false) ) {
-        this.game[j].img = square_black;
-        addScore(stateGameId,actualPlayer);
+  if (game[i].owner === null & (oneMovementUp(game[i], checker) || oneMovementDown(game[i], checker))) {
+    pintingChecker(i, checker); 
+    updateGame(stateGameId,game).then( () => {
+      getNextUserInfo(stateGameId, actualPlayer).then(data => {
+        resetFirstCheck(stateGameId).then(() => {
+          changeActualUser(stateGameId, data.player, data.gameName);
+        });
+      });
+    });
+  } else if (game[i].owner === null & 
+        (twoMovementUp(game[i], checker) || twoMovementDown(game[i], checker))) {
+    for (let j = 0; j < game.length; j++) {
+      if ((oneMovementUp(game[j],game[i]) || oneMovementDown(game[j],game[i])) ) {
+        if((game[j].owner ===  false & checker.owner === true) || (game[j].owner ===  true & checker.owner === false)){
+          game[j].img = square_black;
+          game[j].owner = null;
+          pintingChecker(i, checker);
+          updateGame(stateGameId,game).then( () => {
+            addScore(stateGameId,actualPlayer);
+          })
+        }
       }
     }
-    pintingChecker(i, checker);
-    removeLastPosition(checker);
   }  
 }
 function checkerPlayerTwo(i, checker, nextMovement,stateGameId, actualPlayer) {
-  if (oneMovementUp(this.game[i], checker)) {
-    if (this.game[i].owner === null) {
-      if (convertInCrown(nextMovement, this.game.length)) {
-        this.game[i].img = redCrown_token;
-      } else {
-        pintingChecker(i, checker);
-      }
-      removeLastPosition(checker);
-    } else if ((this.game[i].owner === null) & twoMovementUp(this.game[i], checker)) {
-      for (let j = 0; j < this.game.length; j++) {
-        if (oneMovementUp(this.game[j], checker) & this.game[j].owner === false) {
-          this.game[j].img = square_black;
-       
-          addScore(stateGameId,actualPlayer);
-        }
+  if (oneMovementUp(game[i], checker)) {
+    if (game[i].owner === null) {
+      if (convertInCrown(nextMovement)) {
+        checker.img = redCrown_token;
       }
       pintingChecker(i, checker);
-      removeLastPosition(checker);
+      updateGame(stateGameId,game).then( () => {
+        getNextUserInfo(stateGameId, actualPlayer).then(data => {
+          resetFirstCheck(stateGameId).then(() => {
+            changeActualUser(stateGameId, data.player, data.gameName);
+          });
+        });
+      });
+    } else if ((game[i].owner === null) & twoMovementUp(game[i], checker)) {
+      for (let j = 0; j < game.length; j++) {
+        if (oneMovementUp(game[j], checker) & game[j].owner === false) {
+          if (convertInCrown(nextMovement)) {
+            checker.img = redCrown_token;
+          }
+          game[j].img = square_black;
+          game[j].img = null;
+          pintingChecker(i, checker);
+          updateGame(stateGameId,game).then( () => {
+            addScore(stateGameId,actualPlayer);
+          })
+        }
+      }
     }
   }
 }
 
 function checkerPlayerOne(i, checker, nextMovement,stateGameId, actualPlayer) {
-  if (oneMovementDown(this.game[i], checker) & (this.game[i].owner === null)) {
-    if (convertInCrown(nextMovement, this.game.length)) {
-      this.game[i].img = blueCrown_token;
-    } else {
-      pintingChecker(i, checker);
-    }
-    removeLastPosition(checker);
-    //TODO: camibiar de jugador
-  } else if ((this.game[i].owner === null) & twoMovementDown(this.game[i], checker)) {
-    for (let j = 0; j < this.game.length; j++) {
-      if (oneMovementDown(this.game[j], checker) & this.game[j].owner === true) {
-        this.game[j].img = square_black;
-        addScore(stateGameId,actualPlayer);
-      }
+  if (oneMovementDown(game[i], checker) & (game[i].owner === null)) {
+    if (convertInCrown(nextMovement)) {
+      checker.img = blueCrown_token;
     }
     pintingChecker(i, checker);
-    removeLastPosition(checker);
-
+    updateGame(stateGameId,game).then( () => {
+      getNextUserInfo(stateGameId, actualPlayer).then(data => {
+        resetFirstCheck(stateGameId).then(() => {
+          changeActualUser(stateGameId, data.player, data.gameName);
+        });
+      });
+    });
+  } else if ((game[i].owner === null) & twoMovementDown(game[i], checker)) {
+    for (let j = 0; j < game.length; j++) {
+      if (oneMovementDown(game[j], checker) & game[j].owner === true) {
+        if (convertInCrown(nextMovement)) {
+          checker.img = blueCrown_token;
+        }
+        game[j].img = square_black;
+        game[j].owner = null;
+        pintingChecker(i, checker);
+        updateGame(stateGameId,game).then( () => {
+          addScore(stateGameId,actualPlayer);
+        })
+      }
+    }
   }
 }
 
 
 
 function pintingChecker(i, checker) {
+  for (let i = 0; i < game.length; i++) {
+    if(game[i].x === checker.x & game[i].y === checker.y){ game[i].img = square_black; game[i].owner = null}
+  }
   switch (checker.img) {
     case blue_token:
-      this.game[i].img = blue_token;
+      game[i].img = blue_token;
+      game[i].owner = false;
       break;
     case red_token:
-      this.game[i].img = red_token;
+      game[i].img = red_token;
+      game[i].owner = true;
       break;
     case redCrown_token:
-      this.game[i].img = redCrown_token;
+      game[i].img = redCrown_token;
+      game[i].owner = true;
       break;
     case blueCrown_token:
-      this.game[i].img = blueCrown_token;
+      game[i].img = blueCrown_token;
+      game[i].owner = false;
       break;
   }
 }
 
-function removeLastPosition(checker) {
-  for (let i = 0; i < this.game.length; i++) {
-    if ((this.game[i].x === checker.x) & (this.game[i].y === checker.y)) {
-      this.game[i].img = square_black;
-      this.game[i].owner = null;
-    }
-  }
-}
 function oneMovementDownMachine(checker,data) {
   let positions = data.game.filter(e => ((e.x === checker.x + 1) & (e.y === checker.y - 1))
               || ((e.x === checker.x + 1) & (e.y === checker.y + 1)));
@@ -396,11 +438,11 @@ function twoMovementUp(element, checker) {
   }
 }
 
-function convertInCrown(nextMovement, size) {
+function convertInCrown(nextMovement) {
   switch (nextMovement.x) {
     case 0:
       return true;
-    case size - 1:
+    case 7:
       return true;
     default:
       return false;

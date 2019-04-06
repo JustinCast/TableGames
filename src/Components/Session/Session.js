@@ -8,9 +8,10 @@ import { Link } from 'react-router-dom';
 import { injector } from 'react-services-injector';
 
 class Session extends Component {
-   
     render() {
+
         const {game,name,gameSize,stateGameId, users} = this.props.session;
+        
         return (
             <div className="container-card">
                 <ExpansionPanel>

@@ -1,7 +1,8 @@
 // firestore instance
 import db from "../config/config";
 import { cpuPlayer } from "./memory";
-import { machineLogicChecker } from "./checkers";
+import { square_black, machineLogicChecker } from "./checkers";
+import { check } from "graphql-anywhere";
 // Fill list logit game
 export function fillList(size) {
   let array = [];
@@ -12,7 +13,7 @@ export function fillList(size) {
         img: "",
         x: i,
         y: j,
-        token: false,
+        owner: false,
         img2: ""
       });
     }
@@ -49,23 +50,30 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
 }
 
 // Check if is the first or the second selection
-export function checkSelection(stateGameId,obj) {
+export function checkSelection(stateGameId, obj) {
   return new Promise(r => {
     db.collection("stateGame")
       .doc(stateGameId)
       .get()
-      .then(data => {
-        if (data.firstCheck === null) {
+      .then(querySnapshot => {
+        let data = querySnapshot.data();
+        if (obj.owner === false) {
+          db.collection("stateGame")
+            .doc(stateGameId)
+            .update({ firstCheck: obj });   
+          r(false)
+        } else if(obj.owner === true){
           db.collection("stateGame")
             .doc(stateGameId)
             .update({ firstCheck: obj });
+          r(false)
+        }else if(obj.img === square_black){
+          if(data.firstCheck !== null) r(true)
+          else r(false)
+        }else{
           r(false);
-        } else {
-          db.collection("stateGame")
-            .doc(stateGameId)
-            .update({ firstCheck: null });
-          r(true);
         }
+        
       });
   });
 }
@@ -146,27 +154,32 @@ export function changeActualUser(stateGameId, user, gameName) {
         .update({
           actualPlayer: user
         })
-        .then(state => {
-          // aqui se llama el jugador automático para cada juego
-          if (gameName === "Memory" && user === null)
-            cpuPlayer(stateGameId, state.game);
-          else {
-            machineLogicChecker(stateGameId);
-          }
+        .then(() => {
+          db.collection("stateGame")
+            .doc(stateGameId)
+            .get()
+            .then(data => {
+              // aqui se llama el jugador automático para cada juego
+              let state = data.data();
+              if (gameName === "Memory" && user === null)
+                cpuPlayer(stateGameId, state);
+              else {
+                machineLogicChecker(stateGameId);
+              }
+            });
         })
     );
   });
 }
-export function getChecker(stateGameId){
-  return new Promise(r =>{
+export function getChecker(stateGameId) {
+  return new Promise(r => {
     db.collection("stateGame")
-    .doc(stateGameId)
-    .get()
-    .then(checker => {
-      r(checker.firstCheck)
-    });
-  })
-  
+      .doc(stateGameId)
+      .get()
+      .then(checker => {
+        r(checker.data().firstCheck);
+      });
+  });
 }
 export function addScore(stateGameId, actualPlayer) {
   db.collection("stateGame")
@@ -174,31 +187,42 @@ export function addScore(stateGameId, actualPlayer) {
     .get()
     .then(state => {
       if (state)
-        db.collection("session")
-          .where("stateGameId", "==", stateGameId)
-          .get()
-          .then(session => {
-            if (session.users[0].uid === actualPlayer) {
-              state.scores.p1Score++;
-              session.users[1] === null
-                ? changeActualUser(stateGameId, null, session.game)
-                : changeActualUser(
-                    stateGameId,
-                    session.users[1].uid,
-                    session.game
-                  );
-            } else {
-              state.scores.p2Score++;
-              changeActualUser(stateGameId, session.users[0].uid, session.game);
-            }
-            // resetear el primer click
-            // TODO: es posible que esto deba hacerse desde cada lógica de juego
-            resetFirstCheck(stateGameId); // suscribirse a la promise, si es necesario
+        getNextUserInfo(stateGameId, actualPlayer).then(data => {
+          if (data.number === "one") state.scores.p1Score++;
+          else state.scores.p2Score++;
+          resetFirstCheck(stateGameId).then(() => {
+            changeActualUser(stateGameId, data.player, data.gameName);
           });
+        });
     });
 }
 
-function resetFirstCheck(stateGameId) {
+export function getNextUserInfo(stateGameId, actualPlayer) {
+  return new Promise(resolve => {
+    db.collection("session")
+      .where("stateGameId", "==", stateGameId)
+      .get()
+      .then(querySnapshot => {
+        let session = querySnapshot.docs[0].data();
+        if (session.users[0].uid === actualPlayer)
+          session.users[1] === null
+            ? resolve({ player: null, number: "one", gameName: session.game })
+            : resolve({
+                player: session.users[1].uid,
+                number: "one",
+                gameName: session.name
+              });
+        else
+          resolve({
+            player: session.users[0].uid,
+            number: "two",
+            gameName: session.name
+          });
+      });
+  });
+}
+
+export function resetFirstCheck(stateGameId) {
   return new Promise(resolve => {
     resolve(
       db
@@ -213,25 +237,29 @@ function resetFirstCheck(stateGameId) {
 
 export function updateGame(stateGameId, game) {
   return new Promise(resolve =>
-    resolve(
-      db
-        .collection("stateGame")
-        .doc(stateGameId)
-        .update({
-          game: game
-        })
-    )
+    db
+      .collection("stateGame")
+      .doc(stateGameId)
+      .update({
+        game: game
+      })
+      .then(updatedMtx => {
+        console.log("!!!!!!!  Acualizar !!!!!!!!!!!!");
+        resolve(updatedMtx);
+      })
   );
 }
 
 export function identifyGameWhenClick(stateGameId) {
   return new Promise(resolve =>
+    
     resolve(
       db
         .collection("session")
         .where("stateGameId", "==", stateGameId)
         .get()
-        .then(session => {
+        .then(querySnapshot => {
+          let session = querySnapshot.docs[0].data();
           if (session)
             switch (session.game) {
               case "Damas":
@@ -246,18 +274,16 @@ export function identifyGameWhenClick(stateGameId) {
   );
 }
 
-export function getDifficulty(stateGameId){
+export function getDifficulty(stateGameId) {
   return new Promise(r => {
-    db
-    .collection("session")
-    .where("stateGameId", "==", stateGameId)
-    .get()
-    .then(session => {
-      r(session.difficulty)
-    })
-  })
+    db.collection("session")
+      .where("stateGameId", "==", stateGameId)
+      .get()
+      .then(session => {
+        r(session.difficulty);
+      });
+  });
 }
-
 
 // función de probabilidad
 export function getProbability(difficulty) {

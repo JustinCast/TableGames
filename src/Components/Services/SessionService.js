@@ -26,8 +26,6 @@ class SessionService extends Service {
     
     userList.push(creatorUser);
     userList.push(actualUser);
-    
-    console.log(userList);
 
     GraphQLClient.mutate({
       variables: {
@@ -38,7 +36,8 @@ class SessionService extends Service {
           difficulty: session.difficulty,
           isMachine: session.isMachine,
           name: session.name,
-          gameSize: session.gameSize
+          gameSize: session.gameSize,
+          stateGameId: session.stateGameId
         }
       },
       mutation: gql`

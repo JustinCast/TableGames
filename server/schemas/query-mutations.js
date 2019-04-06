@@ -3,8 +3,9 @@ import {
   GraphQLObjectType,
   GraphQLList,
   GraphQLString,
-  GraphQLNonNull
-  
+  GraphQLNonNull,
+  GraphQLInt,
+  GraphQLSchema
 } from "graphql";
 
 import { fillDefaultCheck,isCheckerPlayer,isMovementValid,game } from "../logic/checkers";
@@ -101,12 +102,29 @@ const mutation = new GraphQLObjectType({
       },
       resolve: async (_, data) => {
         return new Promise(resolve => {
-          const sessionRef = db.collection("session").where("stateGameId","==",data.input.stateGameId);
-          sessionRef.get()
-          .then((docSnapshot) => {
-            if (docSnapshot.exists) {
-              sessionRef.update(data.input);
-            } else {
+          
+          if(data.input.users.length === 2 & data.input.users[1] !== null){
+            const sessionRef = db.collection("session").where("stateGameId","==",data.input.stateGameId);
+            sessionRef.get()
+            .then((docSnapshot) => {
+              if (docSnapshot.docs[0].exists & data.input.users[0].uid !== data.input.users[1].uid) {
+                db.collection("session").
+                doc(docSnapshot.docs[0].id).
+                update({
+                  difficulty: data.input.difficulty,
+                  game: data.input.game,
+                  gameSize: data.input.gameSize,
+                  isMachine: data.input.isMachine,
+                  name: data.input.name,
+                  sid: data.input.sid,
+                  stateGameId: data.input.stateGameId,
+                  users: data.input.users
+                }).then( () => {
+                  resolve(data.input);
+                });
+              }
+            })
+          }else {
               if (data.input.game === "Damas") {
                 // If game is chekers
                 let game = fillDefaultCheck(data.input.gameSize);
@@ -129,9 +147,6 @@ const mutation = new GraphQLObjectType({
               }
             }
           });
-
-
-        });
       }
     },
     savePlayer: {
@@ -143,7 +158,6 @@ const mutation = new GraphQLObjectType({
       },
       resolve: async (_, data) => {
         var docRef = db.collection("player").doc(data.input.email);
-
         db.collection("player")
           .doc(data.input.email)
           .get()
@@ -176,30 +190,34 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, data) => {
+        
         identifyGameWhenClick(data.input.stateGameId)
         .then(result => {
           if(!result)
             playMemory(
               data.input.stateGameId,
               data.input.player,
-              data.input.object
+              JSON.parse(data.input.object)
             );
           else {
-            if(isCheckerPlayer(data.input.stateGameId,data.input.player,data.input.object)){ // Corresponds to the current player ?
-              if(checkSelection(data.input.stateGameId,data.input.object)){ // Is the second click ?
-                if(isMovementValid( // Is a valid movement ?
-                  getChecker(data.input.stateGameId),
-                  data.input.object, 
-                  data.input.stateGameId,
-                  data.input.player)){
-                    saveStateGame(game,data.input.stateGameId);
-                    return data.input.stateGameId;
-                  }else return null
+            isCheckerPlayer(data.input.stateGameId,data.input.player,JSON.parse(data.input.object)).then( res => {
+              if(res){ 
+              checkSelection(data.input.stateGameId,JSON.parse(data.input.object)).then( res =>{ // Corresponds to the current player ?
+                  if(res){
+                    getChecker(data.input.stateGameId).then(checker => {
+                      isMovementValid( // Is a valid movement ?
+                        checker,
+                        JSON.parse(data.input.object), 
+                        data.input.stateGameId,
+                        data.input.player).then( () => {return data.input})
+                    })
+                    
+                  }
+                })
               }
-            }
+            })
           }
         })
-        
       }
     }
   }
