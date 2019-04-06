@@ -87,8 +87,6 @@ const RootQuery = new GraphQLObjectType({
   }
 });
 
-
-
 // TODO: DEFINE THE PLAYER INPUT MODEL
 const mutation = new GraphQLObjectType({
   name: "Mutation",
