@@ -259,7 +259,6 @@ export function updateFirstCheck(stateGameId, firstCheck) {
 }
 
 function saveNewScoreInDB(stateGameId, scores) {
-  console.log(scores);
   return new Promise(resolve =>
     db
       .collection("stateGame")
@@ -268,6 +267,10 @@ function saveNewScoreInDB(stateGameId, scores) {
         scores: scores
       })
   );
+}
+
+export function updateOwner(stateGameId, owner) {
+  
 }
 
 export function updateGame(stateGameId, game) {

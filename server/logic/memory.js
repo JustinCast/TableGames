@@ -17,6 +17,8 @@ import db from "../config/config";
 const extractedImgs = new Array();
 let gameList = new Array();
 
+const questionMark = "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/question.png?alt=media&token=1e80093e-5d48-4ad6-8b3b-4838fd5a86d7";
+
 function getImages(total) {
   return new Promise(r =>
     r(
@@ -44,7 +46,6 @@ function getImages(total) {
  */
 function extractImgs(data, size) {
   data.forEach(img => {
-    //console.log(extractedImgs)
     extractedImgs.push(img.src.tiny); //first img pair
     extractedImgs.push(img.src.tiny); //second img pair
   });
@@ -61,8 +62,7 @@ function extractImgs(data, size) {
 function setImgsToMemoryArray(array) {
   for (let i = 0; i < array.length; i++) {
     array[i].img = extractedImgs[i];
-    array[i].img2 =
-      "https://firebasestorage.googleapis.com/v0/b/tablegames-4feca.appspot.com/o/question.png?alt=media&token=1e80093e-5d48-4ad6-8b3b-4838fd5a86d7";
+    array[i].img2 = questionMark;
   }
 }
 
@@ -129,10 +129,16 @@ function compareCards(firstObjectClicked, secondObjectClicked) {
   return firstObjectClicked.img === secondObjectClicked.img;
 }
 
-function flipCards(stateGameId, state, img1, img2) {
+function flipCards(stateGameId, state, img1, img2, aux) {
   return new Promise(resolve => {
-    state.game[state.game.findIndex(e => e.img === img1)].img2 = img1;
-    state.game[state.game.findIndex(e => e.img === img2)].img2 = img2;
+    /*console.log(state.game[state.game.findIndex(e => e.img === img1)].img2);
+    console.log(state.game[state.game.findIndex(e => e.img === img1)].img);*/
+    state.game[state.game.findIndex(e => e.img === img1)].img2 = aux ? img1 : questionMark;
+    state.game[state.game.findIndex(e => e.img === img2)].img2 = aux ? img2: questionMark;
+    
+    state.game[state.game.findIndex(e => e.img === img1)].owner = !state.game[state.game.findIndex(e => e.img === img1)].owner;
+    state.game[state.game.findIndex(e => e.img === img2)].owner = !state.game[state.game.findIndex(e => e.img === img2)].owner;
+
     updateGame(stateGameId, state.game).then(() => resolve(true));
   });
 }
@@ -150,11 +156,16 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
       stateGameId,
       state,
       state.firstCheck.img,
-      secondObjectClicked.img
+      secondObjectClicked.img,
+      true
     ).then(() => {
       if (compareCards(state.firstCheck, secondObjectClicked)) {
         addScore(stateGameId, player);
-        console.log("IGUALES")
+        getNextUserInfo(stateGameId, player).then(data => {
+          resetFirstCheck(stateGameId).then(() => {
+            changeActualUser(stateGameId, data.player, data.gameName);
+          });
+        });
         // blockCards(stateGameId, secondObjectClicked.img).then(updatedMtx =>
         //   console.log
         //   // updateGame(stateGameId, updatedMtx).then(() => {
@@ -166,7 +177,8 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
           stateGameId,
           state,
           state.firstCheck.img,
-          secondObjectClicked.img
+          secondObjectClicked.img,
+          false
         ).then(() => {
           getNextUserInfo(stateGameId, player).then(data => {
             resetFirstCheck(stateGameId).then(() => {
@@ -205,6 +217,8 @@ function blockObjects(matrix, imgURL) {
 export function cpuPlayer(stateGameId, state) {
   getDifficulty(stateGameId).then(difficulty => {
     let randomLocation = Math.floor(Math.random() * state.game.length); // se escoge una carta random
+    while(state.game[randomLocation].owner)
+      randomLocation = Math.floor(Math.random() * state.game.length);
     state.firstCheck = state.game[randomLocation];
     if (getProbability(difficulty)) {
       let pair = state.game.find(e => e.img === state.firstCheck.img);
@@ -226,7 +240,7 @@ export function cpuPlayer(stateGameId, state) {
  * @param {*} randomLocation posición de la cual debe ser distinto el elemento obtenido
  */
 function getRandomElementFromArray(array, randomLocation) {
-  return array.filter(e => e.img !== array[randomLocation].img)[
+  return array.filter(e => e.img !== array[randomLocation].img && !e.owner)[
     Math.floor(Math.random() * array.length)
   ];
 }
