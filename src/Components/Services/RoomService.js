@@ -3,9 +3,9 @@ import { GraphQLClient } from "../../index";
 import gql from "graphql-tag";
 
 class RoomService extends Service {
-  constructor() {
-    super();
-    this.allSessions = [];
+
+  get getSessions(){
+    return this.allSessions;
   }
 
   get sessions() {
@@ -32,7 +32,7 @@ class RoomService extends Service {
           }
         `
     }).then(data => {
-      if (this.allSessions.length === 0) {
+      if (this.allSessions===undefined) {
         this.allSessions = data.data.sessions;
         this.$update();
       }
