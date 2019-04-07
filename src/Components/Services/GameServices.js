@@ -51,8 +51,7 @@ class GameService extends Service {
                 .collection("stateGame")
                 .doc(this.stateGameId + "")
                 .onSnapshot(function (doc) {
-                    resolve(
-                        doc.data());
+                    resolve(doc.data());
                 });
         });
     }

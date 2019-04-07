@@ -11,6 +11,7 @@ class WindowGame extends Component {
     users: this.props.location.state.users,
     stateGameId: this.props.location.state.stateGameId,
     gameName: this.props.location.state.gameName,
+    difficulty: this.props.location.state.difficulty,
     sizeBox: "20%",
     sizeElement: "20%"
   }
@@ -18,6 +19,15 @@ class WindowGame extends Component {
   componentDidMount() {
     this.services.GameService.setElement(this.state.stateGameId);
     //this.services.GameService.sizeBox(this.state.game.length);
+  }
+
+  getDifficulty() {
+    if (this.state.difficulty === 1)
+      return "Easy";
+    if (this.state.difficulty === 2)
+      return "Medium";
+    if (this.state.difficulty === 3)
+      return "Hard";
   }
 
   getSizeBox(boxSize) {
@@ -62,6 +72,10 @@ class WindowGame extends Component {
             <p>{this.state.users[0].name}</p>
             <p>Score <b>{this.state.score.p1Score}</b></p>
           </section>
+          <section>
+            <p>Dificultad <b>{this.getDifficulty()}</b> </p>
+          </section>
+
           <section>
             <p>Luis Carlos González Calderón</p>
             <p>Score <b>{this.state.score.p2Score}</b></p>
