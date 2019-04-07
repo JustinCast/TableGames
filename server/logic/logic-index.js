@@ -1,7 +1,7 @@
 // firestore instance
 import db from "../config/config";
 import { cpuPlayer } from "./memory";
-import { square_black } from "./checkers";
+import { square_black, machineLogicChecker } from "./checkers";
 import { check } from "graphql-anywhere";
 // Fill list logit game
 export function fillList(size) {
@@ -163,7 +163,7 @@ export function changeActualUser(stateGameId, user, gameName) {
               if (gameName === "Memory" && user === null)
                 cpuPlayer(stateGameId, state);
               else {
-                // llamar a damas
+                machineLogicChecker(stateGameId);
               }
             });
         })
@@ -177,7 +177,7 @@ export function getChecker(stateGameId) {
       .doc(stateGameId)
       .get()
       .then(checker => {
-        r(checker.firstCheck);
+        r(checker.data().firstCheck);
       });
   });
 }

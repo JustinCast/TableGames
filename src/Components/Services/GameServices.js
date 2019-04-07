@@ -10,19 +10,6 @@ import firebaseApp from '../Services/FirebaseService';
 
 class GameService extends Service {
 
-    get matrix() {
-        return new Promise(resolve => {
-            firebaseApp.firebase_.
-                firestore()
-                .collection("stateGame")
-                .doc("hpGwIgBb5iHlJTxKk4dH")
-                .get()
-                .then(game => {
-                    resolve(game.data())
-                })
-        });
-    }
-
     sentClick(stateGameId, actualUser, click) {
         GraphQLClient.mutate({
             variables: {
@@ -40,7 +27,7 @@ class GameService extends Service {
         }
       `
         }).then(data => {
-            if (data != null) {
+            if (data !== null) {
                 //TODO: retorna algo
                 console.log(data);
             }
@@ -64,21 +51,10 @@ class GameService extends Service {
                 .collection("stateGame")
                 .doc(this.stateGameId + "")
                 .onSnapshot(function (doc) {
-                    resolve(
-                        doc.data());
+                    resolve(doc.data());
                 });
         });
     }
-
-    /*get sizeBox(size){
-       switch (size) {
-           case 16:
-               
-               return 8;
-           case 36:
-               return 8;
-           default:
-               break;*/
 }
 
 GameService.publicName = 'GameService';

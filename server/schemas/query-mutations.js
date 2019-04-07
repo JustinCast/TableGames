@@ -87,8 +87,6 @@ const RootQuery = new GraphQLObjectType({
   }
 });
 
-
-
 // TODO: DEFINE THE PLAYER INPUT MODEL
 const mutation = new GraphQLObjectType({
   name: "Mutation",
@@ -205,6 +203,7 @@ const mutation = new GraphQLObjectType({
               checkSelection(data.input.stateGameId,JSON.parse(data.input.object)).then( res =>{ // Corresponds to the current player ?
                   if(res){
                     getChecker(data.input.stateGameId).then(checker => {
+<<<<<<< HEAD
         
                       if(isMovementValid( // Is a valid movement ?
                         checker,
@@ -213,17 +212,18 @@ const mutation = new GraphQLObjectType({
                         data.input.player)){
                           //saveStateGame(game,data.input.stateGameId);
                         }
+=======
+                      isMovementValid( // Is a valid movement ?
+                        checker,
+                        JSON.parse(data.input.object), 
+                        data.input.stateGameId,
+                        data.input.player).then( () => {return data.input})
+>>>>>>> luis_dev
                     })
                     
                   }
                 })
               }
-              //if() console.log("hola")
-              /*if(checkSelection(data.input.stateGameId,JSON.parse(data.input.object)) === true){ // Is the second click ?
-                console.log("Es ficha del jugador actual");
-                /*
-            }*/
-            
             })
           }
         })

@@ -1,3 +1,7 @@
 [0329/230404.623:ERROR:process_reader_win.cc(151)] SuspendThread: Acceso denegado. (0x5)
 [0329/230404.624:ERROR:exception_snapshot_win.cc(98)] thread ID 10396 not found in process
 [0329/230404.625:ERROR:scoped_process_suspend.cc(40)] NtResumeProcess: Se intentó obtener acceso a un proceso que está cerrándose. (0xc000010a)
+[0406/144241.849:ERROR:process_reader_win.cc(151)] SuspendThread: Acceso denegado. (0x5)
+[0406/144241.849:ERROR:process_reader_win.cc(151)] SuspendThread: Acceso denegado. (0x5)
+[0406/144241.849:ERROR:process_reader_win.cc(151)] SuspendThread: Acceso denegado. (0x5)
+[0406/144241.849:ERROR:exception_snapshot_win.cc(98)] thread ID 22508 not found in process
