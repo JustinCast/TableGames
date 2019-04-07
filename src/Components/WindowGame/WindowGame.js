@@ -22,7 +22,7 @@ class WindowGame extends Component {
 
   getSizeBox(boxSize) {
     if (boxSize === 25) //5*5
-      return "39%";
+      return "43%";
     if (boxSize === 36) //6*6
       return "43%";
     if (boxSize === 49) //7*7

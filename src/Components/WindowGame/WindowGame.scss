@@ -91,12 +91,15 @@
 
 #game-card>div{
     cursor: pointer;
-    background-color: white;
     padding: 0px;
 }
 
 p{
     color: white;
+}
+
+img{
+    border-radius: 5px;
 }
 
 #chat-button{
