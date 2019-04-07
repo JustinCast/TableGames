@@ -71,7 +71,7 @@ class WindowGame extends Component {
   };
 
   setField(e) {
-    this.setState({message  : e.target.value });
+    this.setState({message  : e.target.value });    
   }
 
   render() {
@@ -137,12 +137,11 @@ class WindowGame extends Component {
                 label="Write a message"
                 onChange={(e)=>this.setField(e)}
               />
-              <Button id="button-send" onClick={() => { console.log(this.state.message) }} >Send </Button>
+              <Button id="button-send" onClick={() => {this.services.GameService.sendMessage(this.state.message)}} >Send </Button>
             </div>
             <Button onClick={this.handleClose} color="primary">Close </Button>
           </DialogActions>
         </Dialog>
-
       </div>
     );
   }

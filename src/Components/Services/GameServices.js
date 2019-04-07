@@ -55,6 +55,16 @@ class GameService extends Service {
                 });
         });
     }
+
+    sendMessage(text){
+        console.log(JSON.parse(localStorage.getItem('actualUser')).name+ text);
+    }
+
+    get messages(){
+        return new Promise(resolve=>{
+            resolve([{name:"luis",text:"lk jshkfa akjhdkjfa kjhasjkfh jkas fj akjshfkjhasjkh asdfjhkas kjhdsfjha kj kjhaskjf jkhkjasdfh jhasdfjkh jbasfkjbajksbgkjag"},{name:"pepe",text:"hola"},{name:"luis",text:"que?"},{name:"luis",text:"lk jshkfa akjhdkjfa kjhasjkfh jkas fj akjshfkjhasjkh asdfjhkas kjhdsfjha kj kjhaskjf jkhkjasdfh jhasdfjkh jbasfkjbajksbgkjag"},{name:"pepe",text:"hola"},{name:"luis",text:"que?"}])
+        })
+    }
 }
 
 GameService.publicName = 'GameService';
