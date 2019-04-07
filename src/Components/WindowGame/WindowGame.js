@@ -2,6 +2,14 @@ import React, { Component } from 'react';
 import './WindowGame.scss'
 import Button from '@material-ui/core/Button';
 import { injector } from 'react-services-injector';
+import { Link } from 'react-router-dom';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
+import Message from '../Message/Message'
 
 
 class WindowGame extends Component {
@@ -12,13 +20,15 @@ class WindowGame extends Component {
     stateGameId: this.props.location.state.stateGameId,
     gameName: this.props.location.state.gameName,
     difficulty: this.props.location.state.difficulty,
-    sizeBox: "20%",
-    sizeElement: "20%"
+    sizeBox: "80%",
+    sizeElement: "",
+    open: false,
+    scroll: 'paper',
+    message:""
   }
 
   componentDidMount() {
     this.services.GameService.setElement(this.state.stateGameId);
-    //this.services.GameService.sizeBox(this.state.game.length);
   }
 
   getDifficulty() {
@@ -52,6 +62,18 @@ class WindowGame extends Component {
       return "4.8vw";
   }
 
+  handleClickOpen = scroll => () => {
+    this.setState({ open: true, scroll });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+
+  setField(e) {
+    this.setState({message  : e.target.value });
+  }
+
   render() {
     if (this.services.GameService.getElement !== undefined) {
       this.services.GameService.newMatrix.then(data =>
@@ -75,7 +97,6 @@ class WindowGame extends Component {
           <section>
             <p>Dificultad <b>{this.getDifficulty()}</b> </p>
           </section>
-
           <section>
             <p>Luis Carlos González Calderón</p>
             <p>Score <b>{this.state.score.p2Score}</b></p>
@@ -95,8 +116,32 @@ class WindowGame extends Component {
           ) : (<h2>Loading game</h2>)
           }
         </div>
+        <Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>
 
-        <Button id="chat-button" onClick={() => console.log("Hola munndo")}>Chat</Button>
+
+        <Dialog
+          open={this.state.open}
+          onClose={this.handleClose}
+          scroll={this.state.scroll}
+          aria-labelledby="scroll-dialog-title"
+        >
+          <DialogTitle id="scroll-dialog-title">Chat</DialogTitle>
+          <DialogContent>
+            <Message />
+          </DialogContent>
+          <DialogActions>
+            <div className="write-massage">
+              <TextField
+                name="message"
+                id="message"
+                label="Write a message"
+                onChange={(e)=>this.setField(e)}
+              />
+              <Button id="button-send" onClick={() => { console.log(this.state.message) }} >Send </Button>
+            </div>
+            <Button onClick={this.handleClose} color="primary">Close </Button>
+          </DialogActions>
+        </Dialog>
 
       </div>
     );
