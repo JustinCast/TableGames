@@ -9,18 +9,6 @@ import gql from "graphql-tag";
 import firebaseApp from '../Services/FirebaseService';
 
 class GameService extends Service {
-    get matrix() {
-        return new Promise(resolve => {
-            firebaseApp.firebase_
-                .firestore()
-                .collection("stateGame")
-                .doc("hpGwIgBb5iHlJTxKk4dH")
-                .get()
-                .then(game => {
-                    resolve(game.data())
-                })
-        });
-    }
 
     sentClick(stateGameId, actualUser, click) {
         GraphQLClient.mutate({
@@ -70,22 +58,26 @@ class GameService extends Service {
     }
 
 
-    sizeBox(size) {
-        this.currentSize="";
-        if (size === 25) //5*5
-            this.currentSize = "44%";
-        if (size === 36) //6*6
-            this.currentSize = "45%";
-        if (size === 89) //7*7
-            this.currentSize = "43%";
-        if (size === 64) //8*8
-            this.currentSize = "39%";
+    /*set sizeBox(size) {
+        this.currentSize = size;
+        console.log(this.currentSize);
     }
 
 
     get getSizeBox() {
-        return this.currentSize;
-    }
+        this.elemet="";
+        if (this.currentSize === 25) //5*5
+            this.element = "44%";
+        if (this.currentSize === 36) //6*6
+            this.element = "45%";
+        if (this.currentSize === 89) //7*7
+            this.element = "43%";
+        if (this.currentSize === 64) //8*8
+            this.element = "39%";
+
+
+        return this.element;
+    }*/
 
 
 }

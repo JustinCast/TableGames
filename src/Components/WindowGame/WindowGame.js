@@ -10,27 +10,59 @@ class WindowGame extends Component {
     score: {},
     users: this.props.location.state.users,
     stateGameId: this.props.location.state.stateGameId,
-    gameName: this.props.location.state.gameName
+    gameName: this.props.location.state.gameName,
+    sizeBox: "20%",
+    sizeElement: "20%"
   }
 
   componentDidMount() {
     this.services.GameService.setElement(this.state.stateGameId);
+    //this.services.GameService.sizeBox(this.state.game.length);
   }
 
+  getSizeBox(boxSize) {
+    if (boxSize === 25) //5*5
+      return "39%";
+    if (boxSize === 36) //6*6
+      return "43%";
+    if (boxSize === 49) //7*7
+      return "45%";
+    if (boxSize === 64) //8*8
+      return "44%";
+  }
+
+  getSizeElement(elementSize) {
+    if (elementSize === 25) //5*5
+      return "7vw";
+    if (elementSize === 36) //6*6
+      return "6.5vw";
+    if (elementSize === 49) //7*7
+      return "5.6vw";
+    if (elementSize === 64) //8*8
+      return "4.8vw";
+  }
 
   render() {
     if (this.services.GameService.getElement !== undefined) {
       this.services.GameService.newMatrix.then(data =>
         this.setState({
           game: data.game,
-          score: data.scores
+          score: data.scores,
+          sizeBox: this.getSizeBox(data.game.length),
+          sizeElement: this.getSizeElement(data.game.length)
         })
       );
     }
 
-    const sizeBox = "44%";
-    const sizeElement = "4.8vw";
-    
+    // this.services.GameService.sizeBox(this.state.game.length);
+
+    //console.log(this.GameService.getSizeBox);
+    /* if(this.GameService.getSizeBox!== undefined){
+       this.services.GameService.sizeBox(this.state.game.length);
+       console.log(this.GameService.getSizeBox);
+       console.log("asignado");
+     }*/
+
     return (
       <div id="main-card">
         <p>{this.state.gameName}</p>
@@ -45,14 +77,14 @@ class WindowGame extends Component {
           </section>
         </div>
 
-        <div style={{ width: sizeBox }} id="game-card" className="shadow rounded" >
+        <div style={{ width: this.state.sizeBox }} id="game-card" className="shadow rounded" >
           {this.state.game.length > 0 ? (
             Object.keys(this.state.game).map(key => (
-              <div style={{ width: sizeElement, height: sizeElement }} key={key} 
-              onClick={()=> {
-                this.services.GameService.sentClick(this.state.stateGameId,JSON.parse(localStorage.getItem("actualUser")).uid,this.state.game[key])
-              }
-              }>
+              <div style={{ width: this.state.sizeElement, height: this.state.sizeElement }} key={key}
+                onClick={() => {
+                  this.services.GameService.sentClick(this.state.stateGameId, JSON.parse(localStorage.getItem("actualUser")).uid, this.state.game[key])
+                }
+                }>
                 <img alt="Loading" src={this.state.game[key].img} style={{ width: "4.3vw", height: "4.3vw" }}></img>
               </div>)
             )
@@ -60,8 +92,8 @@ class WindowGame extends Component {
           }
         </div>
 
-        <Button id="chat-button" onClick={()=> console.log("Hola munndo")}>Chat</Button>   
-          
+        <Button id="chat-button" onClick={() => console.log("Hola munndo")}>Chat</Button>
+
       </div>
     );
   }
