@@ -167,6 +167,7 @@ export function changeActualUser(stateGameId, user, gameName) {
               }
             });
         })
+        .catch(error => console.log(`Error al actualizar el juego: ${error}`))
     );
   });
 }
@@ -281,8 +282,8 @@ export function updateGame(stateGameId, game) {
       .update({
         game: game
       })
-      .then(updatedMtx => {
-        resolve(updatedMtx);
+      .then(() => {
+        resolve(true);
       })
   );
 }

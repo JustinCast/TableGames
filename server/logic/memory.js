@@ -129,18 +129,18 @@ function compareCards(firstObjectClicked, secondObjectClicked) {
   return firstObjectClicked.img === secondObjectClicked.img;
 }
 
-function flipCards(stateGameId, state, img1, img2, aux) {
+function flipCards(stateGameId, state, firstCheck, secondObjectClicked, aux) {
   return new Promise(resolve => {
-    if(aux){
-      state.game.filter(e => e.img === img1).forEach(e => e.img2 = img1);
-      state.game.filter(e => e.img === img1).forEach(e => e.owner = true);
-      /*state.game[state.game.findIndex(e => e.img === img1)].img2 = img1;
-      state.game[state.game.findIndex(e => e.img === img2)].img2 = img2;
-      
-      state.game[state.game.findIndex(e => e.img === img1)].owner = true;
-      state.game[state.game.findIndex(e => e.img === img2)].owner = true;*/
-    }
-    resolve(updateGame(stateGameId, state.game));
+    state.game[state.game.findIndex(e => e.x === firstCheck.x && e.y === firstCheck.y)].img2 = firstCheck.img;
+    state.game[state.game.findIndex(e => e.x === firstCheck.x && e.y === firstCheck.y)].owner = firstCheck.owner;
+    resolve(updateGame(stateGameId, state.game)
+    .then(() => {
+      state.game[state.game.findIndex(e => e.x === secondObjectClicked.x && e.y === secondObjectClicked.y)].img2 = secondObjectClicked.img;
+      state.game[state.game.findIndex(e => e.x === secondObjectClicked.x && e.y === secondObjectClicked.y)].owner = secondObjectClicked.owner;
+      updateGame(stateGameId, state.game)
+      .then(() => resolve(true));
+    })
+    .catch(error => console.log(`Error en flipCards al actualizar el juego ${error}`)));
 
   });
 }
@@ -153,17 +153,16 @@ function flipCards(stateGameId, state, img1, img2, aux) {
  * @param {*} player jugador
  */
 function handleComparation(stateGameId, state, secondObjectClicked, player) {
-  return new Promise(resolve => {
-    console.log(`${player}: ${state.firstCheck.img}`);
-    console.log(`${player}: ${secondObjectClicked.img}`);
+  return new Promise(() => {
     if (compareCards(state.firstCheck, secondObjectClicked)) {
       addScore(stateGameId, player);
+      state.firstCheck.owner = true;
+      secondObjectClicked.owner = true;
       flipCards(
         stateGameId,
         state,
-        state.firstCheck.img,
-        secondObjectClicked.img,
-        true
+        state.firstCheck,
+        secondObjectClicked
       ).then(() => {
         getNextUserInfo(stateGameId, player).then(data => {
           resetFirstCheck(stateGameId).then(() => {
@@ -175,13 +174,21 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
       flipCards(
         stateGameId,
         state,
-        state.firstCheck.img,
-        secondObjectClicked.img,
-        false
+        state.firstCheck,
+        secondObjectClicked
       ).then(() => {
-        getNextUserInfo(stateGameId, player).then(data => {
-          resetFirstCheck(stateGameId).then(() => {
-            changeActualUser(stateGameId, data.player, data.gameName);
+        state.firstCheck.img = questionMark;
+        secondObjectClicked.img = questionMark;
+        flipCards(
+          stateGameId,
+          state,
+          state.firstCheck,
+          secondObjectClicked
+        ).then(() => {
+          getNextUserInfo(stateGameId, player).then(data => {
+            resetFirstCheck(stateGameId).then(() => {
+              changeActualUser(stateGameId, data.player, data.gameName);
+            });
           });
         });
       });
@@ -215,8 +222,11 @@ function blockObjects(matrix, imgURL) {
 export function cpuPlayer(stateGameId, state) {
   getDifficulty(stateGameId).then(difficulty => {
     let randomLocation = Math.floor(Math.random() * state.game.length); // se escoge una carta random
-    while(state.game[randomLocation].owner)
+    console.log(randomLocation);
+    while(state.game[randomLocation].owner){
       randomLocation = Math.floor(Math.random() * state.game.length);
+      console.log(randomLocation)
+    }
     state.firstCheck = state.game[randomLocation];
     if (getProbability(difficulty)) {
       let pair = state.game.find(e => e.img === state.firstCheck.img);
