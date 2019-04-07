@@ -33,7 +33,7 @@ class WindowGame extends Component {
 
   getSizeElement(elementSize) {
     if (elementSize === 25) //5*5
-      return "7vw";
+      return "7.5vw";
     if (elementSize === 36) //6*6
       return "6.5vw";
     if (elementSize === 49) //7*7
@@ -54,15 +54,6 @@ class WindowGame extends Component {
       );
     }
 
-    // this.services.GameService.sizeBox(this.state.game.length);
-
-    //console.log(this.GameService.getSizeBox);
-    /* if(this.GameService.getSizeBox!== undefined){
-       this.services.GameService.sizeBox(this.state.game.length);
-       console.log(this.GameService.getSizeBox);
-       console.log("asignado");
-     }*/
-
     return (
       <div id="main-card">
         <p>{this.state.gameName}</p>
@@ -76,7 +67,6 @@ class WindowGame extends Component {
             <p>Score <b>{this.state.score.p2Score}</b></p>
           </section>
         </div>
-
         <div style={{ width: this.state.sizeBox }} id="game-card" className="shadow rounded" >
           {this.state.game.length > 0 ? (
             Object.keys(this.state.game).map(key => (
@@ -85,7 +75,7 @@ class WindowGame extends Component {
                   this.services.GameService.sentClick(this.state.stateGameId, JSON.parse(localStorage.getItem("actualUser")).uid, this.state.game[key])
                 }
                 }>
-                <img alt="Loading" src={this.state.game[key].img} style={{ width: "4.3vw", height: "4.3vw" }}></img>
+                <img alt="Loading" src={this.state.game[key].img} style={{ width: this.state.sizeElement, height: this.state.sizeElement }}></img>
               </div>)
             )
           ) : (<h2>Loading game</h2>)

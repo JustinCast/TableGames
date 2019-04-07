@@ -56,30 +56,6 @@ class GameService extends Service {
                 });
         });
     }
-
-
-    /*set sizeBox(size) {
-        this.currentSize = size;
-        console.log(this.currentSize);
-    }
-
-
-    get getSizeBox() {
-        this.elemet="";
-        if (this.currentSize === 25) //5*5
-            this.element = "44%";
-        if (this.currentSize === 36) //6*6
-            this.element = "45%";
-        if (this.currentSize === 89) //7*7
-            this.element = "43%";
-        if (this.currentSize === 64) //8*8
-            this.element = "39%";
-
-
-        return this.element;
-    }*/
-
-
 }
 
 GameService.publicName = 'GameService';
