@@ -6,7 +6,6 @@ import {
 } from "../../index";
 import gql from "graphql-tag";
 
-import firebaseApp from '../Services/FirebaseService';
 
 class GameService extends Service {
 

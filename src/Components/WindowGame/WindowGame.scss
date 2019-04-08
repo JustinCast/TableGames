@@ -85,12 +85,13 @@
     border-radius: 3px;
 }
 
+
 #game-card>div:hover{
     cursor: pointer;
+    //box-shadow: 0 0 1em rgb(119, 107, 38);
 }
 
 #game-card>div{
-    cursor: pointer;
     padding: 0px;
 }
 

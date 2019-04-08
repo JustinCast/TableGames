@@ -1,7 +1,7 @@
 import { Service } from 'react-services-injector';
 import { GraphQLClient } from "../../index";
 import gql from "graphql-tag";
-import { List } from '@material-ui/core';
+
 
 class RoomService extends Service {
 
