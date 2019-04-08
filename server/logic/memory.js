@@ -14,7 +14,7 @@ import {
 // https://api.pexels.com/v1/curated?per_page=15&page=1
 // https://api.pexels.com/v1/search?query=people&per_page=2
 import db from "../config/config";
-const extractedImgs = new Array();
+let extractedImgs = new Array();
 let gameList = new Array();
 
 const questionMark =
@@ -35,7 +35,7 @@ function getImages(total) {
             resolve(extractImgs(data.data.photos, total))
           );
         })
-        .catch(e => console.log(e))
+        .catch(e => console.log(`ERROR GETTING IMAGES: ${e}`))
     )
   );
 }
@@ -46,6 +46,7 @@ function getImages(total) {
  * @param {*} size size of the matrix
  */
 function extractImgs(data, size) {
+  extractedImgs = [];
   console.log(`IMGS FROM API: ${data.length}`);
   data.forEach(img => {
     extractedImgs.push(img.src.tiny); //first img pair
@@ -102,12 +103,12 @@ export async function memoryInit(size) {
           };
           return game;
         })
-        .catch(e => console.log(e))
+        .catch(e => console.log(`ERROR INITING MEMORY: ${e}`))
     )
   );
 }
 
-export function playMemory(stateGameId, player, object) {
+export function playMemory(stateGameId, object) {
   db.collection("stateGame")
     .doc(stateGameId)
     //.where("actualPlayer", "==", player)
@@ -122,7 +123,7 @@ export function playMemory(stateGameId, player, object) {
         }
       }
     })
-    .catch(err => console.log(err));
+    .catch(err => console.log(`ERROR PLAYING MEMORY : ${err}`));
 }
 
 /**
@@ -134,8 +135,9 @@ function compareCards(firstObjectClicked, secondObjectClicked) {
   return firstObjectClicked.img === secondObjectClicked.img;
 }
 
-function flipCards(stateGameId, state, firstCheck, secondObjectClicked, aux) {
+function flipCards(stateGameId, state, firstCheck, secondObjectClicked) {
   return new Promise(resolve => {
+    let aux = state;
     state.game[
       state.game.findIndex(e => e.x === firstCheck.x && e.y === firstCheck.y)
     ].img2 = firstCheck.img;
@@ -145,19 +147,20 @@ function flipCards(stateGameId, state, firstCheck, secondObjectClicked, aux) {
     resolve(
       updateGame(stateGameId, state.game)
         .then(() => {
-          state.game[
-            state.game.findIndex(
+          aux.game[
+            aux.game.findIndex(
               e =>
                 e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
             )
           ].img2 = secondObjectClicked.img;
-          state.game[
-            state.game.findIndex(
+          aux.game[
+            aux.game.findIndex(
               e =>
                 e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
             )
           ].owner = secondObjectClicked.owner;
-          updateGame(stateGameId, state.game).then(() => resolve(true));
+          updateGame(stateGameId, aux.game).then(() => resolve(true))
+          .catch(error => console.log(`INNER ERROR ON SECOND GAME UPDATE ${error}`));
         })
         .catch(error =>
           console.log(`Error en flipCards al actualizar el juego ${error}`)
@@ -189,6 +192,7 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
         }
       );
     } else {
+      let aux = state;
       flipCards(stateGameId, state, state.firstCheck, secondObjectClicked).then(
         () => {
           let img1 = state.firstCheck.img;
@@ -197,8 +201,8 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
           secondObjectClicked.img = questionMark;
           flipCards(
             stateGameId,
-            state,
-            state.firstCheck,
+            aux,
+            aux.firstCheck,
             secondObjectClicked
           ).then(() => {
             state.firstCheck.img = img1;
@@ -221,7 +225,7 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
  * @param {*} state estado de juego de la sesión
  */
 export function cpuPlayer(stateGameId, state) {
-  //test(state.game);
+  test(state.game);
   getDifficulty(stateGameId).then(difficulty => {
     let randomLocation = Math.floor(Math.random() * state.game.length); // se escoge una carta random
     while (state.game[randomLocation].owner) {
@@ -231,7 +235,7 @@ export function cpuPlayer(stateGameId, state) {
     if (getProbability(difficulty)) {
       let pair = state.game[state.game.findIndex(e => JSON.stringify(e) !== JSON.stringify(state.firstCheck) && e.img === state.firstCheck.img)];
       handleComparation(stateGameId, state, pair, null)
-      .catch(error => console.log(error));
+      //.catch(error => console.log(error));
     } else {
       handleComparation(
         stateGameId,
@@ -259,20 +263,22 @@ function getRandomElementFromArray(array, randomLocation) {
 
 // test code
 
-/*function test(game) {
+function test(game) {
   let aux = [];
   game.forEach(e => {
     if(!aux.includes(e)){
       let elements = game.filter(o => o.img === e.img);
       if(elements.length === 2){
-        console.log(`EL ELEMENTO ${JSON.stringify(elements[0])} \n tiene pareja`);
+        console.log(`EL ELEMENTO ${elements[0].x}, Y:${elements[0].y} \n tiene pareja`);
         aux.push(elements[0]);
         aux.push(elements[1]);
       }
       else{
-        console.log(`EL ELEMENTO ${JSON.stringify(elements[0])} \n NO tiene pareja`);
+        console.log(`EL ELEMENTO X: ${elements[0].x}, Y:${elements[0].y} \n NO tiene pareja`);
         aux.push(elements[0]);
       }
     }
   });
-}*/
+
+  console.log("\n\n##################################################################################");
+}

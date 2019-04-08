@@ -194,7 +194,6 @@ const mutation = new GraphQLObjectType({
           if(!result)
             playMemory(
               data.input.stateGameId,
-              data.input.player,
               JSON.parse(data.input.object)
             );
           else {

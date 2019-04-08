@@ -2,12 +2,12 @@
 import firebase from 'firebase';
 
 var config = {
-  apiKey: "AIzaSyDYv8JgWgmX18LautVwl2fwkHAo0oqt5BU",
-  authDomain: "tablegames-4feca.firebaseapp.com",
-  databaseURL: "https://tablegames-4feca.firebaseio.com",
-  projectId: "tablegames-4feca",
-  storageBucket: "tablegames-4feca.appspot.com",
-  messagingSenderId: "1024787207709"
+  apiKey: "AIzaSyBUDHajC_WsEn0u3skyDuQ_XPehC61o-lY",
+  authDomain: "fir-auth-react-64f8d.firebaseapp.com",
+  databaseURL: "https://fir-auth-react-64f8d.firebaseio.com",
+  projectId: "fir-auth-react-64f8d",
+  storageBucket: "fir-auth-react-64f8d.appspot.com",
+  messagingSenderId: "460343751130"
 };
 firebase.initializeApp(config);
 

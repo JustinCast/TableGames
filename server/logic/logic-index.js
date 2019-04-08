@@ -90,7 +90,7 @@ export function saveStateGame(game, token) {
             return docRef.id;
           })
           .catch(function(error) {
-            console.log("Error adding document: ", error);
+            console.log(`Error adding document: ${error}`);
           })
       )
     );
@@ -106,7 +106,7 @@ export function saveStateGame(game, token) {
             return docRef.id;
           })
           .catch(function(error) {
-            console.log("Error adding document: ", error);
+            console.log(`Error adding document: ${error}`);
           })
       )
     );
@@ -123,7 +123,7 @@ export function saveMemoryInitialGameState(gameData, token) {
             return docRef.id;
           })
           .catch(function(error) {
-            console.log("Error adding document: ", error);
+            console.log(`Error adding document: ${error}`);
           })
       )
     );
@@ -138,7 +138,7 @@ export function saveMemoryInitialGameState(gameData, token) {
             return docRef.id;
           })
           .catch(function(error) {
-            console.log("Error adding document: ", error);
+            console.log(`Error adding document: ${error}`);
           })
       )
     );
@@ -186,7 +186,7 @@ export function addScore(stateGameId, actualPlayer) {
     .doc(stateGameId)
     .get()
     .then(data => {
-      if (data) {
+      if (data.data()) {
         let state = data.data();
         getNextUserInfo(stateGameId, actualPlayer).then(data => {
           if (data.number === "one") {
@@ -194,6 +194,8 @@ export function addScore(stateGameId, actualPlayer) {
             saveNewScoreInDB(stateGameId, state.scores);
           }
           else{
+            if(actualPlayer !== null)
+              console.log(JSON.stringify(state));
             state.scores.p2Score++;
             saveNewScoreInDB(stateGameId, state.scores);
           }
@@ -219,13 +221,13 @@ export function getNextUserInfo(stateGameId, actualPlayer) {
             : resolve({
                 player: session.users[1].uid,
                 number: "one",
-                gameName: session.name
+                gameName: session.game
               });
         else
           resolve({
             player: session.users[0].uid,
             number: "two",
-            gameName: session.name
+            gameName: session.game
           });
       });
   });
