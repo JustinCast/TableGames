@@ -90,7 +90,7 @@ export function saveStateGame(game, token) {
             return docRef.id;
           })
           .catch(function(error) {
-            console.error("Error adding document: ", error);
+            console.log("Error adding document: ", error);
           })
       )
     );
@@ -106,7 +106,7 @@ export function saveStateGame(game, token) {
             return docRef.id;
           })
           .catch(function(error) {
-            console.error("Error adding document: ", error);
+            console.log("Error adding document: ", error);
           })
       )
     );
@@ -123,7 +123,7 @@ export function saveMemoryInitialGameState(gameData, token) {
             return docRef.id;
           })
           .catch(function(error) {
-            console.error("Error adding document: ", error);
+            console.log("Error adding document: ", error);
           })
       )
     );
@@ -138,7 +138,7 @@ export function saveMemoryInitialGameState(gameData, token) {
             return docRef.id;
           })
           .catch(function(error) {
-            console.error("Error adding document: ", error);
+            console.log("Error adding document: ", error);
           })
       )
     );
@@ -255,7 +255,7 @@ export function updateFirstCheck(stateGameId, firstCheck) {
       .then(() => {
         resolve(true);
       })
-      .catch(err => console.log)
+      .catch(err => console.log(err))
   );
 }
 
