@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './WindowGame.scss'
 import Button from '@material-ui/core/Button';
 import { injector } from 'react-services-injector';
-
+import firebaseApp from '../Services/FirebaseService';
 
 class WindowGame extends Component {
   state = {
@@ -15,19 +15,25 @@ class WindowGame extends Component {
 
   componentDidMount() {
     this.services.GameService.setElement(this.state.stateGameId);
+
+    this.getData();
   }
 
+   getData = () =>{
+    firebaseApp.firebase_
+                .firestore()
+                .collection("stateGame")
+                .doc(this.state.stateGameId)
+                .onSnapshot((doc) =>{
+                  this.setState({
+                    game: doc.data().game,
+                    score: doc.data().scores
+                  })
+                });
+  }
 
   render() {
-    if (this.services.GameService.getElement !== undefined) {
-      this.services.GameService.newMatrix.then(data =>
-        this.setState({
-          game: data.game,
-          score: data.scores
-        })
-      );
-    }
-
+    
     const sizeBox = "44%";
     const sizeElement = "4.8vw";
     
