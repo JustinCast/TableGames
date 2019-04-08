@@ -2,7 +2,6 @@
 import db from "../config/config";
 import { cpuPlayer } from "./memory";
 import { square_black, machineLogicChecker } from "./checkers";
-import { check } from "graphql-anywhere";
 // Fill list logit game
 export function fillList(size) {
   let array = [];
@@ -147,6 +146,7 @@ export function saveMemoryInitialGameState(gameData, token) {
 
 export function changeActualUser(stateGameId, user, gameName) {
   return new Promise(resolve => {
+    console.log(user);
     resolve(
       db
         .collection("stateGame")
@@ -163,7 +163,7 @@ export function changeActualUser(stateGameId, user, gameName) {
               let state = data.data();
               if (gameName === "Memory" && user === null)
                 cpuPlayer(stateGameId, state);
-              else {
+              else if(gameName === "Damas" && user === null){
                 machineLogicChecker(stateGameId);
               }
             });
@@ -185,18 +185,36 @@ export function addScore(stateGameId, actualPlayer) {
   db.collection("stateGame")
     .doc(stateGameId)
     .get()
-    .then(state => {
-      if (state)
+    .then(data => {
+      if (data) {
+        let state = data.data();
         getNextUserInfo(stateGameId, actualPlayer).then(data => {
-          if (data.number === "one") state.scores.p1Score++;
-          else state.scores.p2Score++;
+          if (data.number === "one") {
+            state.scores.p1Score++;
+            saveNewScoreInDB(stateGameId, state.scores);
+          }
+          else{
+            state.scores.p2Score++;
+            saveNewScoreInDB(stateGameId, state.scores);
+          }
           resetFirstCheck(stateGameId).then(() => {
             changeActualUser(stateGameId, data.player, data.gameName);
           });
         });
-    });
+      }
+    })
+    .catch(err => console.log(err));
 }
-
+function saveNewScoreInDB(stateGameId, scores) {
+  return new Promise(resolve =>
+    db
+      .collection("stateGame")
+      .doc(stateGameId)
+      .update({
+        scores: scores
+      })
+  );
+}
 export function getNextUserInfo(stateGameId, actualPlayer) {
   return new Promise(resolve => {
     db.collection("session")
@@ -244,7 +262,6 @@ export function updateGame(stateGameId, game) {
         game: game
       })
       .then(updatedMtx => {
-        console.log("!!!!!!!  Acualizar !!!!!!!!!!!!");
         resolve(updatedMtx);
       })
   );
@@ -280,7 +297,7 @@ export function getDifficulty(stateGameId) {
       .where("stateGameId", "==", stateGameId)
       .get()
       .then(session => {
-        r(session.difficulty);
+        r(session.docs[0].data().difficulty);
       });
   });
 }
