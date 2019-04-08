@@ -9,7 +9,7 @@ const CONFIG = {
   projectId: "fir-auth-react-64f8d",
   storageBucket: "fir-auth-react-64f8d.appspot.com",
   messagingSenderId: "460343751130"
-};
+  };
 
 // Inicial firebase
 export default firebase.initializeApp(CONFIG);

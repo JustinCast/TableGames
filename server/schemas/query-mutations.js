@@ -103,7 +103,7 @@ const mutation = new GraphQLObjectType({
             const sessionRef = db.collection("session").where("stateGameId","==",data.input.stateGameId);
             sessionRef.get()
             .then((docSnapshot) => {
-              if (docSnapshot.docs[0].exists & data.input.users[0].uid !== data.input.users[1].uid) {
+              if (docSnapshot.docs[0].exists) {
                 db.collection("session").
                 doc(docSnapshot.docs[0].id).
                 update({
@@ -192,7 +192,6 @@ const mutation = new GraphQLObjectType({
           if(!result)
             playMemory(
               data.input.stateGameId,
-              data.input.player,
               JSON.parse(data.input.object)
             );
           else {
@@ -201,11 +200,14 @@ const mutation = new GraphQLObjectType({
               checkSelection(data.input.stateGameId,JSON.parse(data.input.object)).then( res =>{ // Corresponds to the current player ?
                   if(res){
                     getChecker(data.input.stateGameId).then(checker => {
-                      isMovementValid( // Is a valid movement ?
+        
+                      if(isMovementValid( // Is a valid movement ?
                         checker,
                         JSON.parse(data.input.object), 
                         data.input.stateGameId,
-                        data.input.player).then( () => {return data.input})
+                        data.input.player)){
+                          //saveStateGame(game,data.input.stateGameId);
+                        }
                     })
                     
                   }

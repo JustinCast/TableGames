@@ -59,20 +59,19 @@ export function checkSelection(stateGameId, obj) {
         if (obj.owner === false) {
           db.collection("stateGame")
             .doc(stateGameId)
-            .update({ firstCheck: obj });   
-          r(false)
-        } else if(obj.owner === true){
+            .update({ firstCheck: obj });
+          r(false);
+        } else if (obj.owner === true) {
           db.collection("stateGame")
             .doc(stateGameId)
             .update({ firstCheck: obj });
-          r(false)
-        }else if(obj.img === square_black){
-          if(data.firstCheck !== null) r(true)
-          else r(false)
-        }else{
+          r(false);
+        } else if (obj.img === square_black) {
+          if (data.firstCheck !== null) r(true);
+          else r(false);
+        } else {
           r(false);
         }
-        
       });
   });
 }
@@ -90,7 +89,7 @@ export function saveStateGame(game, token) {
             return docRef.id;
           })
           .catch(function(error) {
-            console.error("Error adding document: ", error);
+            console.log(`Error adding document: ${error}`);
           })
       )
     );
@@ -106,7 +105,7 @@ export function saveStateGame(game, token) {
             return docRef.id;
           })
           .catch(function(error) {
-            console.error("Error adding document: ", error);
+            console.log(`Error adding document: ${error}`);
           })
       )
     );
@@ -123,7 +122,7 @@ export function saveMemoryInitialGameState(gameData, token) {
             return docRef.id;
           })
           .catch(function(error) {
-            console.error("Error adding document: ", error);
+            console.log(`Error adding document: ${error}`);
           })
       )
     );
@@ -138,7 +137,7 @@ export function saveMemoryInitialGameState(gameData, token) {
             return docRef.id;
           })
           .catch(function(error) {
-            console.error("Error adding document: ", error);
+            console.log(`Error adding document: ${error}`);
           })
       )
     );
@@ -168,6 +167,7 @@ export function changeActualUser(stateGameId, user, gameName) {
               }
             });
         })
+        .catch(error => console.log(`Error al actualizar el juego: ${error}`))
     );
   });
 }
@@ -186,7 +186,7 @@ export function addScore(stateGameId, actualPlayer) {
     .doc(stateGameId)
     .get()
     .then(data => {
-      if (data) {
+      if (data.data()) {
         let state = data.data();
         getNextUserInfo(stateGameId, actualPlayer).then(data => {
           if (data.number === "one") {
@@ -254,13 +254,13 @@ export function getNextUserInfo(stateGameId, actualPlayer) {
             : resolve({
                 player: session.users[1].uid,
                 number: "one",
-                gameName: session.name
+                gameName: session.game
               });
         else
           resolve({
             player: session.users[0].uid,
             number: "two",
-            gameName: session.name
+            gameName: session.game
           });
       });
   });
@@ -279,6 +279,36 @@ export function resetFirstCheck(stateGameId) {
   });
 }
 
+export function updateFirstCheck(stateGameId, firstCheck) {
+  return new Promise(resolve =>
+    db
+      .collection("stateGame")
+      .doc(stateGameId)
+      .update({
+        firstCheck: firstCheck
+      })
+      .then(() => {
+        resolve(true);
+      })
+      .catch(err => console.log(err))
+  );
+}
+
+function saveNewScoreInDB(stateGameId, scores) {
+  return new Promise(resolve =>
+    db
+      .collection("stateGame")
+      .doc(stateGameId)
+      .update({
+        scores: scores
+      })
+  );
+}
+
+export function updateOwner(stateGameId, owner) {
+  
+}
+
 export function updateGame(stateGameId, game) {
   return new Promise(resolve =>
     db
@@ -287,15 +317,14 @@ export function updateGame(stateGameId, game) {
       .update({
         game: game
       })
-      .then(updatedMtx => {
-        resolve(updatedMtx);
+      .then(() => {
+        resolve(true);
       })
   );
 }
 
 export function identifyGameWhenClick(stateGameId) {
   return new Promise(resolve =>
-    
     resolve(
       db
         .collection("session")
