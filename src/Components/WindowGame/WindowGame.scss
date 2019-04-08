@@ -61,14 +61,14 @@
 @media screen and (min-width: 601px) {
     #players>section p{
         text-align: center; 
-        width: 20vw;
+        width: 15vw;
     }
 }
 
 @media screen and (max-width: 700px) {
     #players>section p{
         text-align: center; 
-        width: 45vw;
+        width: 30vw;
     }
 }
 
@@ -83,23 +83,23 @@
 #game-card>div{
     margin: 0.5%;
     border-radius: 3px;
-    background-color: white;
 }
 
-#game-card>div:active{
-    background-color: white;
-}
 #game-card>div:hover{
-    background-color: white;
     cursor: pointer;
 }
 
-#game-card>#disabled-button{
-    background-color: white;
+#game-card>div{
+    cursor: pointer;
+    padding: 0px;
 }
 
 p{
     color: white;
+}
+
+img{
+    border-radius: 5px;
 }
 
 #chat-button{
@@ -108,4 +108,15 @@ p{
     top: 85%;
     right: 8%;
     color: white;
+}
+
+//About chat 
+
+.write-massage{
+    width: 70%;
+    padding-right: 6%;
+}
+
+#button-send{
+    margin: 4%;
 }

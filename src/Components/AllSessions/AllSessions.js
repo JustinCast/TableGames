@@ -7,19 +7,21 @@ import { Link } from 'react-router-dom';
 import { injector } from 'react-services-injector';
 
 class AllSessions extends Component {
-    state = {}
+    state = {
+    }
+    
     render() {
         const { RoomService } = this.services;
+        
         return (
             <div className="container">
                 <div className="card main-card">
                     <div className="card-body">
                     <h5 className="card-title">Game sessions</h5>
-                        {RoomService.sessions.length > 0?(
-                            Object.keys(RoomService.sessions).map(key => (<Session key={key} session={RoomService.sessions[key]} />))
-                        ) : (<h2>There aren't sessions yet</h2>)
-                        
+                        {
+                        RoomService.sessions.length > 0 ?(Object.keys(RoomService.sessions).map(key => (<Session key={key} session={RoomService.sessions[key]} />))):(<h3>There aren't sessions yet</h3>)
                         }
+
                     </div>
                 </div>
                 <div className="element">

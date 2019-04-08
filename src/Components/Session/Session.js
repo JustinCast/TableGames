@@ -10,7 +10,7 @@ import { injector } from 'react-services-injector';
 class Session extends Component {
     render() {
 
-        const {game,name,gameSize,stateGameId, users} = this.props.session;
+        const {game,name,gameSize,stateGameId, users, difficulty} = this.props.session;
         
         return (
             <div className="container-card">
@@ -35,8 +35,8 @@ class Session extends Component {
                                 </div>  
                             </div>
                             <div className="button" >
-                            <Link to={{ pathname: '/windowGame', state: {stateGameId: stateGameId, users: users, gameName: game}}}>
-                                <Button onClick={()=>{this.services.SessionService.addUser(this.props.session)}} >Ir al juego</Button>
+                            <Link to={{ pathname: '/windowGame', state: {stateGameId: stateGameId, users: users, gameName: game, difficulty: difficulty}}}>
+                                <Button /*onClick={()=>{this.services.SessionService.addUser(this.props.session)}} */>Ir al juego</Button>
                             </Link>
                             </div>
                         </div>

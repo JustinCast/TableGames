@@ -1,12 +1,15 @@
 import { Service } from 'react-services-injector';
 import { GraphQLClient } from "../../index";
 import gql from "graphql-tag";
+import { List } from '@material-ui/core';
 
 class RoomService extends Service {
-  constructor() {
+
+  constructor(){
     super();
-    this.allSessions = [];
+    this.allSessions=[];
   }
+
 
   get sessions() {
     GraphQLClient.query({
@@ -32,15 +35,16 @@ class RoomService extends Service {
           }
         `
     }).then(data => {
-      if (this.allSessions.length === 0) {
+      console.log();
+      if (this.allSessions.length === 0 && data.data.sessions.length> 0) {
         this.allSessions = data.data.sessions;
         this.$update();
       }
     }
     );
-
     return this.allSessions;
   }
+
 }
 
 RoomService.publicName = 'RoomService';
