@@ -187,7 +187,7 @@ export function addScore(stateGameId, actualPlayer) {
             state.scores.p1Score++;
             saveNewScoreInDB(stateGameId, state.scores);
             if (data.gameName === "Damas"){
-              //checkWonCheckers(state.game, false, stateGameId);
+              checkWonCheckers(state.game, false, stateGameId);
             }else{
               //TODO: verificar si ganó en memoria
             }
@@ -196,7 +196,7 @@ export function addScore(stateGameId, actualPlayer) {
             state.scores.p2Score++;
             saveNewScoreInDB(stateGameId, state.scores);
             if (data.gameName === "Damas"){
-              //checkWonCheckers(state.game, true, stateGameId);
+              checkWonCheckers(state.game, true, stateGameId);
             }else{
               //TODO: verificar si ganó en memoria
             }
@@ -212,17 +212,19 @@ export function addScore(stateGameId, actualPlayer) {
 
 function checkWonCheckers(game, player, stateGameId){
   if(player) // Player 2
-    list = game.filter(e => e.owner === false).slice()
+  {
+    let list = game.filter(e => e.owner === false).slice()
     if(list.length === 0) 
       db.collection("stateGame")
       .doc(stateGameId)
       .update({wonGame : "!!! Felicidades al jugador 2, Ganó !!!"})
-  else // Player 1
-    list2 = game.filter(e => e.owner === true).slice()
+  }else{ // Player 1
+    let list2 = game.filter(e => e.owner === true).slice()
     if(list2.length === 0) 
       db.collection("stateGame")
       .doc(stateGameId)
       .update({wonGame : "!!! Felicidades al jugador 1, Ganó !!!"})
+  }
 }
 
 function saveNewScoreInDB(stateGameId, scores) {
