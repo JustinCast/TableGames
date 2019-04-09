@@ -36,7 +36,7 @@ class Session extends Component {
                             </div>
                             <div className="button" >
                             <Link to={{ pathname: '/windowGame', state: {stateGameId: stateGameId, users: users, gameName: game, difficulty: difficulty}}}>
-                                <Button /*onClick={()=>{this.services.SessionService.addUser(this.props.session)}} */>Ir al juego</Button>
+                                <Button onClick={()=>{this.services.SessionService.addUser(this.props.session)}}>Ir al juego</Button>
                             </Link>
                             </div>
                         </div>
