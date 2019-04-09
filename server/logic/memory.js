@@ -24,12 +24,16 @@ function getImages(total) {
   return new Promise(r =>
     r(
       axios
-        .get(`https://api.pexels.com/v1/curated?per_page=${(total * total) / 2}&page=1`, {
-          headers: {
-            Authorization:
-              "563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a"
+        .get(
+          `https://api.pexels.com/v1/curated?per_page=${(total * total) /
+            2}&page=1`,
+          {
+            headers: {
+              Authorization:
+                "563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a"
+            }
           }
-        })
+        )
         .then(data => {
           return new Promise(resolve =>
             resolve(extractImgs(data.data.photos, total))
@@ -63,8 +67,8 @@ function extractImgs(data, size) {
  * @param {*} array logic array created from logic-index
  */
 function setImgsToMemoryArray(array) {
-  console.log(`ARRAY LENGHT: ${array.length}`)
-  console.log(`IMGS LENGHT: ${extractedImgs.length}`)
+  console.log(`ARRAY LENGHT: ${array.length}`);
+  console.log(`IMGS LENGHT: ${extractedImgs.length}`);
   for (let i = 0; i < array.length; i++) {
     array[i].img = extractedImgs[i];
     array[i].img2 = questionMark;
@@ -138,35 +142,48 @@ function compareCards(firstObjectClicked, secondObjectClicked) {
 
 function flipCards(stateGameId, state, firstCheck, secondObjectClicked) {
   return new Promise(resolve => {
-    let aux = state;
     state.game[
       state.game.findIndex(e => e.x === firstCheck.x && e.y === firstCheck.y)
     ].img2 = firstCheck.img;
     state.game[
       state.game.findIndex(e => e.x === firstCheck.x && e.y === firstCheck.y)
     ].owner = firstCheck.owner;
-    resolve(
-      updateGame(stateGameId, state.game)
-        .then(() => {
-          aux.game[
-            aux.game.findIndex(
-              e =>
-                e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
-            )
-          ].img2 = secondObjectClicked.img;
-          aux.game[
-            aux.game.findIndex(
-              e =>
-                e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
-            )
-          ].owner = secondObjectClicked.owner;
-          updateGame(stateGameId, aux.game).then(() => resolve(true))
-          .catch(error => console.log(`INNER ERROR ON SECOND GAME UPDATE ${error}`));
-        })
-        .catch(error =>
-          console.log(`Error en flipCards al actualizar el juego ${error}`)
-        )
-    );
+
+    updateGame(stateGameId, state.game)
+      .then(() => {
+        state.game[
+          state.game.findIndex(
+            e => e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
+          )
+        ].img2 = secondObjectClicked.img;
+        state.game[
+          state.game.findIndex(
+            e => e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
+          )
+        ].owner = secondObjectClicked.owner;
+        updateGame(stateGameId, state.game)
+          .then(() => {
+            resolve(true);
+          })
+          .catch(error =>
+            console.log(`INNER ERROR ON SECOND GAME UPDATE ${error}`)
+          );
+      })
+      .catch(error =>
+        console.log(`Error en flipCards al actualizar el juego ${error}`)
+      );
+  });
+}
+
+function flipCard(stateGameId, state, object) {
+  return new Promise(resolve => {
+    state.game[
+      state.game.findIndex(e => e.x === object.x && e.y === object.y)
+    ].img2 = object.img;
+
+    updateGame(stateGameId, state.game).then(() => {
+      resolve(true);
+    });
   });
 }
 
@@ -183,39 +200,60 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
       addScore(stateGameId, player);
       state.firstCheck.owner = true;
       secondObjectClicked.owner = true;
-      flipCards(stateGameId, state, state.firstCheck, secondObjectClicked).then(
-        () => {
+      flipCards(
+        stateGameId,
+        state,
+        state.firstCheck,
+        secondObjectClicked
+      ).then(() => {
+        getNextUserInfo(stateGameId, player).then(data => {
+          resetFirstCheck(stateGameId).then(() => {
+            changeActualUser(stateGameId, data.player, data.gameName);
+          });
+        });
+      });
+    } else {
+      /*let img1 = state.firstCheck.img;
+          let img2 = secondObjectClicked.img;*/
+      /*state.firstCheck.img = img1;
+      secondObjectClicked.img = img2;*/
+
+      let s = {
+        img: questionMark,
+        img2: state.firstCheck.img2,
+        owner: state.firstCheck.owner,
+        x: state.firstCheck.x,
+        y: state.firstCheck.y
+      };
+      let b = {
+        img: questionMark,
+        img2: secondObjectClicked.img2,
+        owner: secondObjectClicked.owner,
+        x: secondObjectClicked.x,
+        y: secondObjectClicked.y
+      };
+
+      console.log(JSON.stringify(secondObjectClicked));
+
+      flipCards(
+        stateGameId,
+        state,
+        state.firstCheck,
+        secondObjectClicked
+      ).then(() => {
+        flipCards(
+          stateGameId,
+          state,
+          s,
+          b
+        ).then(() => {
           getNextUserInfo(stateGameId, player).then(data => {
             resetFirstCheck(stateGameId).then(() => {
               changeActualUser(stateGameId, data.player, data.gameName);
             });
           });
-        }
-      );
-    } else {
-      let aux = state;
-      flipCards(stateGameId, state, state.firstCheck, secondObjectClicked).then(
-        () => {
-          let img1 = state.firstCheck.img;
-          let img2 = secondObjectClicked.img;
-          state.firstCheck.img = questionMark;
-          secondObjectClicked.img = questionMark;
-          flipCards(
-            stateGameId,
-            aux,
-            aux.firstCheck,
-            secondObjectClicked
-          ).then(() => {
-            state.firstCheck.img = img1;
-            secondObjectClicked.img = img2;
-            getNextUserInfo(stateGameId, player).then(data => {
-              resetFirstCheck(stateGameId).then(() => {
-                changeActualUser(stateGameId, data.player, data.gameName);
-              });
-            });
-          });
-        }
-      );
+        });
+      });
     }
   });
 }
@@ -226,7 +264,7 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
  * @param {*} state estado de juego de la sesión
  */
 export function cpuPlayer(stateGameId, state) {
-  test(state.game);
+  //test(state.game);
   getDifficulty(stateGameId).then(difficulty => {
     let randomLocation = Math.floor(Math.random() * state.game.length); // se escoge una carta random
     while (state.game[randomLocation].owner) {
@@ -234,8 +272,15 @@ export function cpuPlayer(stateGameId, state) {
     }
     state.firstCheck = state.game[randomLocation];
     if (getProbability(difficulty)) {
-      let pair = state.game[state.game.findIndex(e => JSON.stringify(e) !== JSON.stringify(state.firstCheck) && e.img === state.firstCheck.img)];
-      handleComparation(stateGameId, state, pair, null)
+      let pair =
+        state.game[
+          state.game.findIndex(
+            e =>
+              JSON.stringify(e) !== JSON.stringify(state.firstCheck) &&
+              e.img === state.firstCheck.img
+          )
+        ];
+      handleComparation(stateGameId, state, pair, null);
       //.catch(error => console.log(error));
     } else {
       handleComparation(
@@ -261,25 +306,31 @@ function getRandomElementFromArray(array, randomLocation) {
   return filteredArray[Math.floor(Math.random() * filteredArray.length)];
 }
 
-
 // test code
 
 function test(game) {
   let aux = [];
   game.forEach(e => {
-    if(!aux.includes(e)){
+    if (!aux.includes(e)) {
       let elements = game.filter(o => o.img === e.img);
-      if(elements.length === 2){
-        console.log(`EL ELEMENTO ${elements[0].x}, Y:${elements[0].y} \n tiene pareja`);
+      if (elements.length === 2) {
+        console.log(
+          `EL ELEMENTO ${elements[0].x}, Y:${elements[0].y} \n tiene pareja`
+        );
         aux.push(elements[0]);
         aux.push(elements[1]);
-      }
-      else{
-        console.log(`EL ELEMENTO X: ${elements[0].x}, Y:${elements[0].y} \n NO tiene pareja`);
+      } else {
+        console.log(
+          `EL ELEMENTO X: ${elements[0].x}, Y:${
+            elements[0].y
+          } \n NO tiene pareja`
+        );
         aux.push(elements[0]);
       }
     }
   });
 
-  console.log("\n\n##################################################################################");
+  console.log(
+    "\n\n##################################################################################"
+  );
 }
