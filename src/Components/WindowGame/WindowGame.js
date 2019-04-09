@@ -30,23 +30,19 @@ class WindowGame extends Component {
     this.getData();
   }
 
-  
-
-
    getData = () =>{
     firebaseApp.firebase_
-      .firestore()
-      .collection("stateGame")
-      .doc(this.state.stateGameId)
-      .onSnapshot((doc) =>{
-        this.setState({
-          game: doc.data().game,
-          score: doc.data().scores,
-          stateGameId : doc.data().stateGameId,
-          sizeBox: this.getSizeBox(doc.data().game.length),
-          sizeElement: this.getSizeElement(doc.data().game.length)
-        })
-      });
+                .firestore()
+                .collection("stateGame")
+                .doc(this.state.stateGameId)
+                .onSnapshot((doc) =>{
+                  this.setState({
+                    game: doc.data().game,
+                    score: doc.data().scores,
+                    sizeBox: this.getSizeBox(doc.data().game.length),
+                    sizeElement: this.getSizeElement(doc.data().game.length)
+                  })
+                });
   }
   getDifficulty() {
     if (this.state.difficulty === 1)
@@ -88,6 +84,9 @@ class WindowGame extends Component {
   }
   render() {
     
+    //const sizeBox = "44%";
+    //const sizeElement = "4.8vw";
+    
     return (
       <div id="main-card">
         <p>{this.state.gameName}</p>
@@ -119,7 +118,6 @@ class WindowGame extends Component {
           }
         </div>
         <Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>
-
 
         <Dialog
           open={this.state.open}
