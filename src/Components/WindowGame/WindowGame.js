@@ -23,11 +23,36 @@ class WindowGame extends Component {
     sizeElement: "",
     open: false,
     scroll: 'paper',
-    message:""
+    message:"",
+    canShow:true
   }
 
   componentDidMount() {
     this.getData();
+    this.getUsers();
+  }
+
+  getUsers(){
+    firebaseApp.firebase_
+      .firestore()
+      .collection("session")
+      .where("stateGameId", "==", this.state.stateGameId+"")
+      .onSnapshot((querySnapshot)=> {
+          querySnapshot.forEach((doc)=>{
+            if(doc.data().users[1]!==undefined){
+              this.setState({
+                canShow: true
+              })
+              console.log(doc.data().users[1])
+              console.log("hay jugadoR ");
+            }else{
+             this.setState({
+                canShow: false
+              })
+              console.log("NO hay jugador ");
+            }
+          });
+      });
   }
 
    getData = () =>{
@@ -44,6 +69,7 @@ class WindowGame extends Component {
                   })
                 });
   }
+
   getDifficulty() {
     if (this.state.difficulty === 1)
       return "Easy";
@@ -83,10 +109,6 @@ class WindowGame extends Component {
     this.setState({message  : e.target.value });    
   }
   render() {
-    
-    //const sizeBox = "44%";
-    //const sizeElement = "4.8vw";
-    
     return (
       <div id="main-card">
         <p>{this.state.gameName}</p>
@@ -104,7 +126,7 @@ class WindowGame extends Component {
           </section>
         </div>
         <div style={{ width: this.state.sizeBox }} id="game-card" className="shadow rounded" >
-          {this.state.game.length > 0 ? (
+          {(this.state.game.length > 0 && this.state.canShow===true) ?(
             Object.keys(this.state.game).map(key => (
               <div style={{ width: this.state.sizeElement, height: this.state.sizeElement }} key={key}
                 onClick={() => {
