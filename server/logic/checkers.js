@@ -131,25 +131,22 @@ function getSelectedChecker(filterCheckers, data, flag) {
         }
       })
     }
+    let list = []
     filterCheckers.forEach(check => {
       if (check.img == redCrown_token) {
         let aux = data.game.filter(e => (oneMovementUp(e, check) | oneMovementDown(e, check)) & e.owner === null).slice()
         if (aux.length > 0)
-          resolve({
-            nextMovement: aux[getRandomNumber(aux.length)],
-            checker: check
-          })
+          list.push({nextMovement: aux[getRandomNumber(aux.length)],checker: check});
       } else {
         let aux = data.game.filter(e => oneMovementUp(e, check) & e.owner === null).slice()
         if (aux.length > 0) {
-          resolve({
-            nextMovement: aux[getRandomNumber(aux.length)],
-            checker: check
-          })
+          list.push({nextMovement: aux[getRandomNumber(aux.length)], checker: check});
         }
       }
     })
-
+    resolve(
+      list[getRandomNumber(list.length)]
+    )
   })
 }
 
