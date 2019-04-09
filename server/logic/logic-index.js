@@ -49,30 +49,24 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
 }
 
 // Check if is the first or the second selection
-export function checkSelection(stateGameId, obj) {
+export function checkSelection(stateGameId, obj,data) {
   return new Promise(r => {
-    db.collection("stateGame")
-      .doc(stateGameId)
-      .get()
-      .then(querySnapshot => {
-        let data = querySnapshot.data();
-        if (obj.owner === false) {
-          db.collection("stateGame")
-            .doc(stateGameId)
-            .update({ firstCheck: obj });
-          r(false);
-        } else if (obj.owner === true) {
-          db.collection("stateGame")
-            .doc(stateGameId)
-            .update({ firstCheck: obj });
-          r(false);
-        } else if (obj.img === square_black) {
-          if (data.firstCheck !== null) r(true);
-          else r(false);
-        } else {
-          r(false);
-        }
-      });
+    if (obj.owner === false) {
+      db.collection("stateGame")
+        .doc(stateGameId)
+        .update({ firstCheck: obj });
+      r(false);
+    } else if (obj.owner === true) {
+      db.collection("stateGame")
+        .doc(stateGameId)
+        .update({ firstCheck: obj });
+      r(false);
+    } else if (obj.img === square_black) {
+      if (data.firstCheck !== null) r(true);
+      else r(false);
+    } else {
+      r(false);
+    }
   });
 }
 
@@ -145,7 +139,6 @@ export function saveMemoryInitialGameState(gameData, token) {
 
 export function changeActualUser(stateGameId, user, gameName) {
   return new Promise(resolve => {
-    console.log(user);
     resolve(
       db
         .collection("stateGame")
@@ -158,6 +151,7 @@ export function changeActualUser(stateGameId, user, gameName) {
             .doc(stateGameId)
             .get()
             .then(data => {
+
               // aqui se llama el jugador automático para cada juego
               let state = data.data();
               if (gameName === "Memory" && user === null)
@@ -224,8 +218,8 @@ function checkWonCheckers(game, player, stateGameId){
       .doc(stateGameId)
       .update({wonGame : "!!! Felicidades al jugador 2, Ganó !!!"})
   else // Player 1
-    list = game.filter(e => e.owner === true).slice()
-    if(list.length === 0) 
+    list2 = game.filter(e => e.owner === true).slice()
+    if(list2.length === 0) 
       db.collection("stateGame")
       .doc(stateGameId)
       .update({wonGame : "!!! Felicidades al jugador 1, Ganó !!!"})

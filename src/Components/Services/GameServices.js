@@ -6,9 +6,18 @@ import {
 } from "../../index";
 import gql from "graphql-tag";
 
-import firebaseApp from '../Services/FirebaseService';
 
 class GameService extends Service {
+
+    sendMessage(text){
+        console.log(JSON.parse(localStorage.getItem('actualUser')).name+ text);
+    }
+
+    get messages(){
+        return new Promise(resolve=>{
+            resolve([{name:"luis",text:"lk jshkfa akjhdkjfa kjhasjkfh jkas fj akjshfkjhasjkh asdfjhkas kjhdsfjha kj kjhaskjf jkhkjasdfh jhasdfjkh jbasfkjbajksbgkjag"},{name:"pepe",text:"hola"},{name:"luis",text:"que?"},{name:"luis",text:"lk jshkfa akjhdkjfa kjhasjkfh jkas fj akjshfkjhasjkh asdfjhkas kjhdsfjha kj kjhaskjf jkhkjasdfh jhasdfjkh jbasfkjbajksbgkjag"},{name:"pepe",text:"hola"},{name:"luis",text:"que?"}])
+        })
+    }
 
     sentClick(stateGameId, actualUser, click) {
         GraphQLClient.mutate({
@@ -35,26 +44,7 @@ class GameService extends Service {
             console.log(error);
         });
     }
-
-    setElement(element) {
-        this.stateGameId = element;
-    }
-
-    get getElement() {
-        return this.stateGameId;
-    }
-
-    get newMatrix() {
-        return new Promise(resolve => {
-            firebaseApp.firebase_
-                .firestore()
-                .collection("stateGame")
-                .doc(this.stateGameId + "")
-                .onSnapshot(function (doc) {
-                    resolve(doc.data());
-                });
-        });
-    }
+    
 }
 
 GameService.publicName = 'GameService';
