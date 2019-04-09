@@ -208,7 +208,6 @@ const mutation = new GraphQLObjectType({
                           //saveStateGame(game,data.input.stateGameId);
                         }
                     })
-                    
                   }
                 })
               }
