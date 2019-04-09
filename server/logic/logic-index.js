@@ -49,30 +49,24 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
 }
 
 // Check if is the first or the second selection
-export function checkSelection(stateGameId, obj) {
+export function checkSelection(stateGameId, obj,data) {
   return new Promise(r => {
-    db.collection("stateGame")
-      .doc(stateGameId)
-      .get()
-      .then(querySnapshot => {
-        let data = querySnapshot.data();
-        if (obj.owner === false) {
-          db.collection("stateGame")
-            .doc(stateGameId)
-            .update({ firstCheck: obj });
-          r(false);
-        } else if (obj.owner === true) {
-          db.collection("stateGame")
-            .doc(stateGameId)
-            .update({ firstCheck: obj });
-          r(false);
-        } else if (obj.img === square_black) {
-          if (data.firstCheck !== null) r(true);
-          else r(false);
-        } else {
-          r(false);
-        }
-      });
+    if (obj.owner === false) {
+      db.collection("stateGame")
+        .doc(stateGameId)
+        .update({ firstCheck: obj });
+      r(false);
+    } else if (obj.owner === true) {
+      db.collection("stateGame")
+        .doc(stateGameId)
+        .update({ firstCheck: obj });
+      r(false);
+    } else if (obj.img === square_black) {
+      if (data.firstCheck !== null) r(true);
+      else r(false);
+    } else {
+      r(false);
+    }
   });
 }
 
