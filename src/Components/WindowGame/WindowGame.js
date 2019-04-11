@@ -141,11 +141,11 @@ class WindowGame extends Component {
 
 
     return (
-      <div id="main-card">
+      <div >
         {this.state.canShow === true ? (
-          <div>
+          <div id="main-card">
             <p>{this.state.gameName}</p>
-            <div id="players"> 
+            <div id="players">
               <section>
                 <p>{this.state.users[0].name}</p>
                 <p>Score <b>{this.state.score.p1Score}</b></p>
@@ -175,7 +175,7 @@ class WindowGame extends Component {
             <Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>
           </div>
 
-        ) : (<h1>Esperando que el jugador dos se conecte</h1>)
+        ) : (<h1 id="Loading">Waiting for the other player</h1>)
 
         }
 
