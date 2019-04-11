@@ -15,59 +15,88 @@ class WindowGame extends Component {
   state = {
     game: [],
     score: {},
-    users: this.props.location.state.users,
-    stateGameId: this.props.location.state.stateGameId,
+    users: [],//this.props.location.state.users,
+    stateGameId: "",//localStorage.getItem("stateGameId"), //this.props.location.state.stateGameId,
     gameName: this.props.location.state.gameName,
-    difficulty: this.props.location.state.difficulty,
+    difficulty: "", //this.props.location.state.difficulty,
     sizeBox: "80%",
     sizeElement: "",
     open: false,
     scroll: 'paper',
-    message:"",
-    canShow:true
+    message: "",
+    canShow: false
   }
 
   componentDidMount() {
-    this.getData();
-    this.getUsers();
+    this.getStateGame();
   }
 
-  getUsers(){
+
+  getStateGame() {
+    console.log(this.state.gameName)
+
     firebaseApp.firebase_
       .firestore()
       .collection("session")
-      .where("stateGameId", "==", this.state.stateGameId+"")
-      .onSnapshot((querySnapshot)=> {
-          querySnapshot.forEach((doc)=>{
-            if(doc.data().users[1]!==undefined){
-              this.setState({
-                canShow: true
-              })
-              console.log(doc.data().users[1])
-              console.log("hay jugadoR ");
-            }else{
-             this.setState({
-                canShow: false
-              })
-              console.log("NO hay jugador ");
-            }
-          });
+      .where("name", "==", this.state.gameName)
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          console.log(doc.data());
+          if (doc.data().users[1] !== undefined || doc.data().users[1] === null) {
+            this.setState({
+              canShow: true,
+              users: doc.data().users,
+              stateGameId: doc.data().stateGameId,
+              difficulty: doc.data().difficulty
+            })
+            this.getData()
+            console.log("hay jugadoR ");
+          } else {
+            this.setState({
+              canShow: false
+            })
+            console.log("NO hay jugador ");
+          }
+        })
       });
   }
 
-   getData = () =>{
+  /*getUsers() {
     firebaseApp.firebase_
-                .firestore()
-                .collection("stateGame")
-                .doc(this.state.stateGameId)
-                .onSnapshot((doc) =>{
-                  this.setState({
-                    game: doc.data().game,
-                    score: doc.data().scores,
-                    sizeBox: this.getSizeBox(doc.data().game.length),
-                    sizeElement: this.getSizeElement(doc.data().game.length)
-                  })
-                });
+      .firestore()
+      .collection("session")
+      .where("stateGameId", "==", this.state.stateGameId)
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          if (doc.data().users[1] !== undefined || doc.data().users[1] === null) {
+            this.setState({
+              canShow: true
+            })
+            console.log("hay jugadoR ");
+          } else {
+            this.setState({
+              canShow: false
+            })
+            console.log("NO hay jugador ");
+          }
+        });
+      });
+  }*/
+
+  getData() {
+    console.log(this.state.stateGameId + " en get data ")
+    firebaseApp.firebase_
+      .firestore()
+      .collection("stateGame")
+      .doc(this.state.stateGameId)
+      .onSnapshot((doc) => {
+        this.setState({
+          game: doc.data().game,
+          score: doc.data().scores,
+          sizeBox: this.getSizeBox(doc.data().game.length),
+          sizeElement: this.getSizeElement(doc.data().game.length)
+        })
+      });
   }
 
   getDifficulty() {
@@ -85,7 +114,7 @@ class WindowGame extends Component {
     if (boxSize === 36) //6*6
       return "49%";
     if (boxSize === 64) //8*8 
-      return "44%";
+      return "45%";
   }
 
   getSizeElement(elementSize) {
@@ -106,40 +135,50 @@ class WindowGame extends Component {
   };
 
   setField(e) {
-    this.setState({message  : e.target.value });    
+    this.setState({ message: e.target.value });
   }
   render() {
+
+
     return (
       <div id="main-card">
-        <p>{this.state.gameName}</p>
-        <div id="players">
-          <section>
-            <p>{this.state.users[0].name}</p>
-            <p>Score <b>{this.state.score.p1Score}</b></p>
-          </section>
-          <section>
-            <p>Dificultad <b>{this.getDifficulty()}</b> </p>
-          </section>
-          <section>
-            <p>Luis Carlos González Calderón</p>
-            <p>Score <b>{this.state.score.p2Score}</b></p>
-          </section>
-        </div>
-        <div style={{ width: this.state.sizeBox }} id="game-card" className="shadow rounded" >
-          {(this.state.game.length > 0 && this.state.canShow===true) ?(
-            Object.keys(this.state.game).map(key => (
-              <div style={{ width: this.state.sizeElement, height: this.state.sizeElement }} key={key}
-                onClick={() => {
-                  this.services.GameService.sentClick(this.state.stateGameId, JSON.parse(localStorage.getItem("actualUser")).uid, this.state.game[key])
-                }
-                }>
-                <img alt="Loading" src={this.state.game[key].img} style={{ width: this.state.sizeElement, height: this.state.sizeElement }}></img>
-              </div>)
-            )
-          ) : (<h2>Loading game</h2>)
-          }
-        </div>
-        <Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>
+        {this.state.canShow === true ? (
+          <div>
+            <p>{this.state.gameName}</p>
+            <div id="players"> 
+              <section>
+                <p>{this.state.users[0].name}</p>
+                <p>Score <b>{this.state.score.p1Score}</b></p>
+              </section>
+              <section>
+                <p>Dificultad <b>{this.getDifficulty()}</b> </p>
+              </section>
+              <section>
+                <p>Luis Carlos González Calderón</p>
+                <p>Score <b>{this.state.score.p2Score}</b></p>
+              </section>
+            </div>
+            <div style={{ width: this.state.sizeBox }} id="game-card" className="shadow rounded" >
+              {this.state.game.length > 0 ? (
+                Object.keys(this.state.game).map(key => (
+                  <div style={{ width: this.state.sizeElement, height: this.state.sizeElement }} key={key}
+                    onClick={() => {
+                      this.services.GameService.sentClick(this.state.stateGameId, JSON.parse(localStorage.getItem("actualUser")).uid, this.state.game[key])
+                    }
+                    }>
+                    <img alt="Loading" src={this.state.game[key].img} style={{ width: this.state.sizeElement, height: this.state.sizeElement }}></img>
+                  </div>)
+                )
+              ) : (<h2>Loading game</h2>)
+              }
+            </div>
+            <Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>
+          </div>
+
+        ) : (<h1>Esperando que el jugador dos se conecte</h1>)
+
+        }
+
 
         <Dialog
           open={this.state.open}
@@ -157,9 +196,9 @@ class WindowGame extends Component {
                 name="message"
                 id="message"
                 label="Write a message"
-                onChange={(e)=>this.setField(e)}
+                onChange={(e) => this.setField(e)}
               />
-              <Button id="button-send" onClick={() => {this.services.GameService.sendMessage(this.state.message)}} >Send </Button>
+              <Button id="button-send" onClick={() => { this.services.GameService.sendMessage(this.state.message) }} >Send </Button>
             </div>
             <Button onClick={this.handleClose} color="primary">Close </Button>
           </DialogActions>
