@@ -8,7 +8,6 @@ const {
   GraphQLBoolean
 } = require("graphql");
 import { PlayerType, PlayerInputType } from "./player";
-
 // GraphQL schema
 const SessionType = new GraphQLObjectType({
   name: "SessionType",
