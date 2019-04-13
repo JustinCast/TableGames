@@ -109,21 +109,42 @@ class WindowGame extends Component {
   }
 
   getSizeBox(boxSize) {
-    if (boxSize === 16) //4*4
-      return "46%";
-    if (boxSize === 36) //6*6
-      return "49%";
-    if (boxSize === 64) //8*8 
-      return "45%";
+    if (window.innerHeight > 640 && window.innerWidth > 360) {
+      if (boxSize === 16) //4*4
+        return "46%";
+      if (boxSize === 36) //6*6
+        return "49%";
+      if (boxSize === 64) //8*8 
+        return "45%";
+    }
+    if (window.innerHeight <= 640 && window.innerWidth <= 360) {
+      if (boxSize === 16) //4*4
+        return "96%";
+      if (boxSize === 36) //6*6
+        return "96%";
+      if (boxSize === 64) //8*8 
+        return "96%";
+    }
+
   }
 
   getSizeElement(elementSize) {
-    if (elementSize === 16) //4*4
-      return "10vw";
-    if (elementSize === 36) //6*6
-      return "6.5vw";
-    if (elementSize === 64) //8*8
-      return "4.8vw";
+    if (window.innerHeight > 640 && window.innerWidth > 360) {
+      if (elementSize === 16) //4*4
+        return "10vw";
+      if (elementSize === 36) //6*6
+        return "6.5vw";
+      if (elementSize === 64) //8*8
+        return "4.8vw";
+    }
+    if (window.innerHeight <= 640 && window.innerWidth <= 360) {
+      if (elementSize === 16) //4*4
+        return "22vw";
+      if (elementSize === 36) //6*6
+        return "14vw";
+      if (elementSize === 64) //8*8
+        return "10vw";
+    }
   }
 
   handleClickOpen = scroll => () => {
@@ -148,7 +169,7 @@ class WindowGame extends Component {
             <div id="players">
               <section>
                 {this.state.actualPlayer === this.state.playerOneUid ?
-                  (<h3 style={{ color: "white" }}>{this.state.playerOne}</h3>) :
+                  (<b style={{ color: "white" }}>{this.state.playerOne}</b>) :
                   (<p>{this.state.playerOne}</p>)
                 }
                 <p>Score <b>{this.state.score.p1Score}</b></p>
@@ -157,8 +178,8 @@ class WindowGame extends Component {
                 <p>Dificultad <b>{this.getDifficulty()}</b> </p>
               </section>
               <section>
-                {this.state.actualPlayer === null?
-                  (<h3 style={{ color: "white" }}>{this.state.playerTwo}</h3>) :
+                {this.state.actualPlayer === null ?
+                  (<b style={{ color: "white" }}>{this.state.playerTwo}</b>) :
                   (<p>{this.state.playerTwo}</p>)
                 }
 
@@ -213,3 +234,5 @@ class WindowGame extends Component {
   }
 }
 export default injector.connect(WindowGame, { toRender: ['GameService'] });
+
+//this.handleClickOpen('paper')
