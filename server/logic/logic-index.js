@@ -239,16 +239,16 @@ function updateDataPlayerCheckers(stateGameId,player){
         let users = querySnapshot.docs[0].data().users;
         switch(player){
           case player === true: // Won player 2 
-            statisticsPlayerCheckers(users[1],users[0]);
+            updateStatistics(users[1],users[0]);
             break;
           case player === false:
-            statisticsPlayerCheckers(users[0],users[1]);
+            updateStatistics(users[0],users[1]);
             break;
         }
       })
 }
 
-function statisticsPlayerCheckers(playerWon,playerLost){ 
+export function updateStatistics(playerWon,playerLost){ 
   db
     .collection("player")
     .doc(playerWon.uid)

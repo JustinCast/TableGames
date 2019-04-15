@@ -8,7 +8,8 @@ import {
   getProbability,
   getNextUserInfo,
   resetFirstCheck,
-  updateFirstCheck
+  updateFirstCheck,
+  updateStatistics
 } from "./logic-index";
 import db from "../config/config";
 let extractedImgs = new Array();
@@ -192,13 +193,16 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
   return new Promise(() => {
     if (compareCards(state.firstCheck, secondObjectClicked)) {
       addScore(stateGameId, player);
-      if (checkIfGameEnded(state.game)){
+      let winner;
+      if (checkIfGameEnded(state.game)) {
         state.scores.p1Score > state.scores.p1Score
-          ? (state.wonGame = "El jugador 1 ha ganado el juego")
-          : (state.wonGame = "El jugador 2 ha ganado el juego");
+          ? ((state.wonGame = "El jugador 1 ha ganado el juego"),
+            (winner = true))
+          : ((state.wonGame = "El jugador 2 ha ganado el juego"),
+            (winner = false));
 
-        if(state.scores.p1Score === state.scores.p1Score)
-          state.wonGame = "Los jugadores han quedado empatados"
+        if (state.scores.p1Score === state.scores.p1Score)
+          state.wonGame = "Los jugadores han quedado empatados";
       }
       state.firstCheck.owner = true;
       secondObjectClicked.owner = true;
@@ -207,6 +211,7 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
           getNextUserInfo(stateGameId, player).then(data => {
             resetFirstCheck(stateGameId).then(() => {
               changeActualUser(stateGameId, data.player, data.gameName);
+              if (checkIfGameEnded(state.game)) endGame(stateGameId, winner);
             });
           });
         }
@@ -240,6 +245,18 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
       );
     }
   });
+}
+
+function endGame(stateGameId, winner) {
+  db.collection("session")
+    .where("stateGameId", "==", stateGameId)
+    .get()
+    .then(querySnapshot => {
+      let users = querySnapshot.docs[0].data().users;
+      winner === true
+        ? updateStatistics(users[0], users[1])
+        : updateStatistics(users[1], users[0]);
+    });
 }
 
 /**
