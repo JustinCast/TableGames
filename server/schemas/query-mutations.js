@@ -98,8 +98,8 @@ const mutation = new GraphQLObjectType({
       },
       resolve: async (_, data) => {
         return new Promise(resolve => {
-          
-          if(data.input.users.length === 2 & data.input.users[1] !== null){
+          if(data.input.users.length >1) resolve(data.input)
+          if(data.input.users.length < 2 & data.input.users[1] !== null){
             const sessionRef = db.collection("session").where("stateGameId","==",data.input.stateGameId);
             sessionRef.get()
             .then((docSnapshot) => {

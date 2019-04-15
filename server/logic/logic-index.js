@@ -187,7 +187,7 @@ export function addScore(stateGameId, actualPlayer) {
             state.scores.p1Score++;
             saveNewScoreInDB(stateGameId, state.scores);
             if (data.gameName === "Damas"){
-              //checkWonCheckers(state.game, false, stateGameId);
+              checkWonCheckers(state.game, false, stateGameId);
             }else{
               //TODO: verificar si ganó en memoria
             }
@@ -196,7 +196,7 @@ export function addScore(stateGameId, actualPlayer) {
             state.scores.p2Score++;
             saveNewScoreInDB(stateGameId, state.scores);
             if (data.gameName === "Damas"){
-              //checkWonCheckers(state.game, true, stateGameId);
+              checkWonCheckers(state.game, true, stateGameId);
             }else{
               //TODO: verificar si ganó en memoria
             }
@@ -212,19 +212,57 @@ export function addScore(stateGameId, actualPlayer) {
 
 function checkWonCheckers(game, player, stateGameId){
   if(player) // Player 2
-    list = game.filter(e => e.owner === false).slice()
-    if(list.length === 0) 
+  {
+    let list = game.filter(e => e.owner === false).slice()
+    if(list.length === 0){
       db.collection("stateGame")
       .doc(stateGameId)
       .update({wonGame : "!!! Felicidades al jugador 2, Ganó !!!"})
-  else // Player 1
-    list2 = game.filter(e => e.owner === true).slice()
-    if(list2.length === 0) 
+      updateDataPlayerCheckers(stateGameId,player); 
+    }
+  }else{ // Player 1
+    let list2 = game.filter(e => e.owner === true).slice()
+    if(list2.length === 0){
       db.collection("stateGame")
       .doc(stateGameId)
       .update({wonGame : "!!! Felicidades al jugador 1, Ganó !!!"})
+      updateDataPlayerCheckers(stateGameId,player);
+    }
+  }
 }
 
+function updateDataPlayerCheckers(stateGameId,player){
+  db.collection("session")
+      .where("stateGameId", "==", stateGameId)
+      .get()
+      .then(querySnapshot => {
+        let users = querySnapshot.docs[0].data().users;
+        switch(player){
+          case player === true: // Won player 2 
+            statisticsPlayerCheckers(users[1],users[0]);
+            break;
+          case player === false:
+            statisticsPlayerCheckers(users[0],users[1]);
+            break;
+        }
+      })
+}
+
+function statisticsPlayerCheckers(playerWon,playerLost){ 
+  db
+    .collection("player")
+    .doc(playerWon.uid)
+    .update({
+      wonGames: playerWon.wonGames+1
+    })
+  
+  db
+  .collection("player")
+  .doc(playerLost.uid)
+  .update({
+    lostGames: playerLost.lostGames+1
+  })
+}
 function saveNewScoreInDB(stateGameId, scores) {
   return new Promise(resolve =>
     db
