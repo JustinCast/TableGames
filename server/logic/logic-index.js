@@ -214,19 +214,55 @@ function checkWonCheckers(game, player, stateGameId){
   if(player) // Player 2
   {
     let list = game.filter(e => e.owner === false).slice()
-    if(list.length === 0) 
+    if(list.length === 0){
       db.collection("stateGame")
       .doc(stateGameId)
       .update({wonGame : "!!! Felicidades al jugador 2, Ganó !!!"})
+      updateDataPlayerCheckers(stateGameId,player); 
+    }
   }else{ // Player 1
     let list2 = game.filter(e => e.owner === true).slice()
-    if(list2.length === 0) 
+    if(list2.length === 0){
       db.collection("stateGame")
       .doc(stateGameId)
       .update({wonGame : "!!! Felicidades al jugador 1, Ganó !!!"})
+      updateDataPlayerCheckers(stateGameId,player);
+    }
   }
 }
 
+function updateDataPlayerCheckers(stateGameId,player){
+  db.collection("session")
+      .where("stateGameId", "==", stateGameId)
+      .get()
+      .then(querySnapshot => {
+        let users = querySnapshot.docs[0].data().users;
+        switch(player){
+          case player === true: // Won player 2 
+            statisticsPlayerCheckers(users[1],users[0]);
+            break;
+          case player === false:
+            statisticsPlayerCheckers(users[0],users[1]);
+            break;
+        }
+      })
+}
+
+function statisticsPlayerCheckers(playerWon,playerLost){ 
+  db
+    .collection("player")
+    .doc(playerWon.uid)
+    .update({
+      wonGames: playerWon.wonGames+1
+    })
+  
+  db
+  .collection("player")
+  .doc(playerLost.uid)
+  .update({
+    lostGames: playerLost.lostGames+1
+  })
+}
 function saveNewScoreInDB(stateGameId, scores) {
   return new Promise(resolve =>
     db
