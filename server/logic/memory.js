@@ -254,6 +254,7 @@ function endGame(stateGameId, winner) {
     .get()
     .then(querySnapshot => {
       let users = querySnapshot.docs[0].data().users;
+      console.log(users);
       winner === true
         ? updateStatistics(users[0], users[1])
         : updateStatistics(users[1], users[0]);
@@ -310,7 +311,7 @@ function getRandomElementFromArray(array, randomLocation) {
 }
 
 function checkIfGameEnded(game) {
-  return game.filter(e => e.owner === false).length > 0;
+  return game.filter(e => e.owner === false).length === 0;
 }
 
 // test code

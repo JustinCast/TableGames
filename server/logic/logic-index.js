@@ -248,7 +248,7 @@ function updateDataPlayerCheckers(stateGameId,player){
       })
 }
 
-export function updateStatistics(playerWon,playerLost){ 
+export function updateStatistics(playerWon, playerLost){ 
   db
     .collection("player")
     .doc(playerWon.uid)
