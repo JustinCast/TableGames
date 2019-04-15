@@ -263,6 +263,12 @@ export function updateStatistics(playerWon,playerLost){
     lostGames: playerLost.lostGames+1
   })
 }
+
+export function deleteSessionAndGameState(stateGameId) {
+  db.collection('stateGame').doc(stateGameId).delete();
+  db.collection('stateGame').where("stateGameId", "==", stateGameId).delete();
+}
+
 function saveNewScoreInDB(stateGameId, scores) {
   return new Promise(resolve =>
     db
