@@ -10,9 +10,6 @@ import {
   resetFirstCheck,
   updateFirstCheck
 } from "./logic-index";
-// 563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a
-// https://api.pexels.com/v1/curated?per_page=15&page=1
-// https://api.pexels.com/v1/search?query=people&per_page=2
 import db from "../config/config";
 let extractedImgs = new Array();
 let gameList = new Array();
@@ -51,7 +48,6 @@ function getImages(total) {
  */
 function extractImgs(data, size) {
   extractedImgs = [];
-  console.log(`IMGS FROM API: ${data.length}`);
   data.forEach(img => {
     extractedImgs.push(img.src.tiny); //first img pair
     extractedImgs.push(img.src.tiny); //second img pair
@@ -67,8 +63,6 @@ function extractImgs(data, size) {
  * @param {*} array logic array created from logic-index
  */
 function setImgsToMemoryArray(array) {
-  console.log(`ARRAY LENGHT: ${array.length}`);
-  console.log(`IMGS LENGHT: ${extractedImgs.length}`);
   for (let i = 0; i < array.length; i++) {
     array[i].img = extractedImgs[i];
     array[i].img2 = questionMark;
@@ -113,6 +107,11 @@ export async function memoryInit(size) {
   );
 }
 
+/**
+ * 
+ * @param {*} stateGameId identification of stateGame
+ * @param {*} object object clicked
+ */
 export function playMemory(stateGameId, object) {
   db.collection("stateGame")
     .doc(stateGameId)
@@ -140,6 +139,13 @@ function compareCards(firstObjectClicked, secondObjectClicked) {
   return firstObjectClicked.img === secondObjectClicked.img;
 }
 
+/**
+ * This method flips card when first and second objects were clicked
+ * @param {*} stateGameId identification of stateGame
+ * @param {*} state the state of the game
+ * @param {*} firstCheck first object clicked
+ * @param {*} secondObjectClicked 
+ */
 function flipCards(stateGameId, state, firstCheck, secondObjectClicked) {
   return new Promise(resolve => {
     state.game[
@@ -175,18 +181,6 @@ function flipCards(stateGameId, state, firstCheck, secondObjectClicked) {
   });
 }
 
-function flipCard(stateGameId, state, object) {
-  return new Promise(resolve => {
-    state.game[
-      state.game.findIndex(e => e.x === object.x && e.y === object.y)
-    ].img2 = object.img;
-
-    updateGame(stateGameId, state.game).then(() => {
-      resolve(true);
-    });
-  });
-}
-
 /**
  *
  * @param {*} stateGameId identificador del estado del juego
@@ -213,11 +207,6 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
         });
       });
     } else {
-      /*let img1 = state.firstCheck.img;
-          let img2 = secondObjectClicked.img;*/
-      /*state.firstCheck.img = img1;
-      secondObjectClicked.img = img2;*/
-
       let s = {
         img: questionMark,
         img2: state.firstCheck.img2,
@@ -232,8 +221,6 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
         x: secondObjectClicked.x,
         y: secondObjectClicked.y
       };
-
-      console.log(JSON.stringify(secondObjectClicked));
 
       flipCards(
         stateGameId,
