@@ -108,7 +108,7 @@ export async function memoryInit(size) {
 }
 
 /**
- * 
+ *
  * @param {*} stateGameId identification of stateGame
  * @param {*} object object clicked
  */
@@ -144,7 +144,7 @@ function compareCards(firstObjectClicked, secondObjectClicked) {
  * @param {*} stateGameId identification of stateGame
  * @param {*} state the state of the game
  * @param {*} firstCheck first object clicked
- * @param {*} secondObjectClicked 
+ * @param {*} secondObjectClicked
  */
 function flipCards(stateGameId, state, firstCheck, secondObjectClicked) {
   return new Promise(resolve => {
@@ -192,29 +192,34 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
   return new Promise(() => {
     if (compareCards(state.firstCheck, secondObjectClicked)) {
       addScore(stateGameId, player);
+      if (checkIfGameEnded(state.game)){
+        state.scores.p1Score > state.scores.p1Score
+          ? (state.wonGame = "El jugador 1 ha ganado el juego")
+          : (state.wonGame = "El jugador 2 ha ganado el juego");
+
+        if(state.scores.p1Score === state.scores.p1Score)
+          state.wonGame = "Los jugadores han quedado empatados"
+      }
       state.firstCheck.owner = true;
       secondObjectClicked.owner = true;
-      flipCards(
-        stateGameId,
-        state,
-        state.firstCheck,
-        secondObjectClicked
-      ).then(() => {
-        getNextUserInfo(stateGameId, player).then(data => {
-          resetFirstCheck(stateGameId).then(() => {
-            changeActualUser(stateGameId, data.player, data.gameName);
+      flipCards(stateGameId, state, state.firstCheck, secondObjectClicked).then(
+        () => {
+          getNextUserInfo(stateGameId, player).then(data => {
+            resetFirstCheck(stateGameId).then(() => {
+              changeActualUser(stateGameId, data.player, data.gameName);
+            });
           });
-        });
-      });
+        }
+      );
     } else {
-      let s = {
+      let first = {
         img: questionMark,
         img2: state.firstCheck.img2,
         owner: state.firstCheck.owner,
         x: state.firstCheck.x,
         y: state.firstCheck.y
       };
-      let b = {
+      let second = {
         img: questionMark,
         img2: secondObjectClicked.img2,
         owner: secondObjectClicked.owner,
@@ -222,25 +227,17 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
         y: secondObjectClicked.y
       };
 
-      flipCards(
-        stateGameId,
-        state,
-        state.firstCheck,
-        secondObjectClicked
-      ).then(() => {
-        flipCards(
-          stateGameId,
-          state,
-          s,
-          b
-        ).then(() => {
-          getNextUserInfo(stateGameId, player).then(data => {
-            resetFirstCheck(stateGameId).then(() => {
-              changeActualUser(stateGameId, data.player, data.gameName);
+      flipCards(stateGameId, state, state.firstCheck, secondObjectClicked).then(
+        () => {
+          flipCards(stateGameId, state, first, second).then(() => {
+            getNextUserInfo(stateGameId, player).then(data => {
+              resetFirstCheck(stateGameId).then(() => {
+                changeActualUser(stateGameId, data.player, data.gameName);
+              });
             });
           });
-        });
-      });
+        }
+      );
     }
   });
 }
@@ -291,6 +288,10 @@ function getRandomElementFromArray(array, randomLocation) {
   );
   //console.log(`FILTERED ARRAY: ${JSON.stringify(filteredArray)}`)
   return filteredArray[Math.floor(Math.random() * filteredArray.length)];
+}
+
+function checkIfGameEnded(game) {
+  return game.filter(e => e.owner === false).length > 0;
 }
 
 // test code
