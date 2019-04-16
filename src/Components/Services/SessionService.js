@@ -73,6 +73,7 @@ class SessionService extends Service {
     if (session.isMachine) {
       users.push(null);
     }
+    console.log(session);
     GraphQLClient.mutate({
       variables: {
         input: {

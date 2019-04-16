@@ -127,3 +127,24 @@ img{
     justify-content: center;
     margin: 4%;
 }
+
+.chat-container>div{
+    width: 50%;
+}
+
+
+#WonGame{
+    width: 40%;
+    background-color: white;
+    margin: 20% auto auto auto;
+    text-align: center;
+}
+
+#WonGame>h5{
+    margin: 5%;
+}
+
+#WonGame Button{
+    margin: 2%;
+    background-color: green;
+}
