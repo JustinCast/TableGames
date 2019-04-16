@@ -8,8 +8,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
-import Message from '../Message/Message'
-
+import { Link } from 'react-router-dom';
 
 class WindowGame extends Component {
   state = {
@@ -28,17 +27,33 @@ class WindowGame extends Component {
     playerTwo: "",
     playerOneUid: "",
     playerTwoUid: "",
-    actualPlayer: {}
+    actualPlayer: {},
+    allMessages: []
   }
 
   componentDidMount() {
-    this.getStateGame();
+    this.getStateGame();  
   }
 
+  messages() {
+    if(this.state.stateGameId!==""){
+      console.log("pepe ingreso");
+      firebaseApp.firebase_
+        .firestore()
+        .collection("messages")
+        .doc(this.state.stateGameId)
+        .onSnapshot(doc=>{
+          if(doc.messages!== undefined){
+            this.setState({
+              allMessages: doc.data().messages
+            })
+          }
+        }
+      )
+    }
+  }
 
   getStateGame() {
-    console.log(this.state.gameName)
-
     firebaseApp.firebase_
       .firestore()
       .collection("session")
@@ -47,7 +62,6 @@ class WindowGame extends Component {
         querySnapshot.forEach((doc) => {
           console.log(doc.data());
           if (doc.data().users[1] !== undefined & doc.data().users[1] !== null) {
-            console.log("entroooooo donde no debía ");
             this.setState({
               canShow: true,
               playerOne: doc.data().users[0].name,
@@ -57,7 +71,8 @@ class WindowGame extends Component {
               stateGameId: doc.data().stateGameId,
               difficulty: doc.data().difficulty
             })
-            this.getData()
+            this.getData();
+            this.messages();
             console.log("hay jugadoR ");
           }
           if (doc.data().users[1] === null) {
@@ -70,7 +85,8 @@ class WindowGame extends Component {
               stateGameId: doc.data().stateGameId,
               difficulty: doc.data().difficulty
             })
-            this.getData()
+            this.getData();
+            this.messages();
             console.log("hay jugadoR ");
           } else {
             this.setState({
@@ -159,8 +175,6 @@ class WindowGame extends Component {
     this.setState({ message: e.target.value });
   }
   render() {
-
-
     return (
       <div >
         {this.state.canShow === true ? (
@@ -182,8 +196,7 @@ class WindowGame extends Component {
                   (<b style={{ color: "white" }}>{this.state.playerTwo}</b>) :
                   (<p>{this.state.playerTwo}</p>)
                 }
-
-                <p>Score <b>{this.state.score.p1Score}</b></p>
+                <p>Score <b>{this.state.score.p2Score}</b></p>
               </section>
             </div>
             <div style={{ width: this.state.sizeBox }} id="game-card" className="shadow rounded" >
@@ -200,11 +213,13 @@ class WindowGame extends Component {
               ) : (<h2>Loading game</h2>)
               }
             </div>
-            <Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>
+            {
+              this.state.playerTwo === "Robot" ? (<Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>):null
+            }
+            
           </div>
         ) : (<h1 id="Loading">Waiting for the other player</h1>)
         }
-
 
         <Dialog
           open={this.state.open}
@@ -214,7 +229,15 @@ class WindowGame extends Component {
         >
           <DialogTitle id="scroll-dialog-title">Chat</DialogTitle>
           <DialogContent>
-            <Message />
+            <div>
+              {Object.keys(this.state.allMessages).map(key => (
+                <div className="chat-container" key={key}>
+                  <h5>{this.state.allMessages[key].name}</h5>
+                  <p>{this.state.allMessages[key].text}</p>
+                  <hr></hr>
+                </div>
+              ))}
+            </div>
           </DialogContent>
           <DialogActions>
             <div className="write-massage">
@@ -224,7 +247,7 @@ class WindowGame extends Component {
                 label="Write a message"
                 onChange={(e) => this.setField(e)}
               />
-              <Button id="button-send" onClick={() => { this.services.GameService.sendMessage(this.state.message) }} >Send </Button>
+              <Button id="button-send" onClick={() => { this.services.GameService.sendMessage(this.state.message, this.state.stateGameId, this.state.allMessages) }}>Send </Button>
             </div>
             <Button onClick={this.handleClose} color="primary">Close </Button>
           </DialogActions>
@@ -234,5 +257,3 @@ class WindowGame extends Component {
   }
 }
 export default injector.connect(WindowGame, { toRender: ['GameService'] });
-
-//this.handleClickOpen('paper')

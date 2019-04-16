@@ -34,7 +34,7 @@ class RoomService extends Service {
             }
           }
         `
-    }).then(data => {
+    },).then(data => {
       console.log();
       if (this.allSessions.length === 0 && data.data.sessions.length> 0) {
         this.allSessions = data.data.sessions;

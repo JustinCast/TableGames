@@ -5,18 +5,26 @@ import {
     GraphQLClient
 } from "../../index";
 import gql from "graphql-tag";
-
+import firebaseApp from '../Services/FirebaseService';
 
 class GameService extends Service {
 
-    sendMessage(text){
-        console.log(JSON.parse(localStorage.getItem('actualUser')).name+ text);
-    }
+    sendMessage(text, paramStateGame, messages) {
+        if (text!=="") {
+            let allMessges = messages;
+            let message = {
+                name: JSON.parse(localStorage.getItem('actualUser')).name,
+                text: text
+            }
+            allMessges.push(message);
+            firebaseApp.firebase_
+                .firestore()
+                .collection("messages").doc(paramStateGame).set({
+                    messages: allMessges,
+                    stateGame: paramStateGame
 
-    get messages(){
-        return new Promise(resolve=>{
-            resolve([{name:"luis",text:"lk jshkfa akjhdkjfa kjhasjkfh jkas fj akjshfkjhasjkh asdfjhkas kjhdsfjha kj kjhaskjf jkhkjasdfh jhasdfjkh jbasfkjbajksbgkjag"},{name:"pepe",text:"hola"},{name:"luis",text:"que?"},{name:"luis",text:"lk jshkfa akjhdkjfa kjhasjkfh jkas fj akjshfkjhasjkh asdfjhkas kjhdsfjha kj kjhaskjf jkhkjasdfh jhasdfjkh jbasfkjbajksbgkjag"},{name:"pepe",text:"hola"},{name:"luis",text:"que?"}])
-        })
+                })
+        }
     }
 
     sentClick(stateGameId, actualUser, click) {
@@ -44,7 +52,7 @@ class GameService extends Service {
             console.log(error);
         });
     }
-    
+
 }
 
 GameService.publicName = 'GameService';
