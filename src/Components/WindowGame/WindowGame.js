@@ -28,28 +28,29 @@ class WindowGame extends Component {
     playerOneUid: "",
     playerTwoUid: "",
     actualPlayer: {},
-    allMessages: []
+    allMessages: [],
+    wonGame: null
   }
 
   componentDidMount() {
-    this.getStateGame();  
+    this.getStateGame();
   }
 
   messages() {
-    if(this.state.stateGameId!==""){
+    if (this.state.stateGameId !== "") {
       console.log("pepe ingreso");
       firebaseApp.firebase_
         .firestore()
         .collection("messages")
         .doc(this.state.stateGameId)
-        .onSnapshot(doc=>{
-          if(doc.messages!== undefined){
+        .onSnapshot(doc => {
+          if (doc.messages !== undefined) {
             this.setState({
               allMessages: doc.data().messages
             })
           }
         }
-      )
+        )
     }
   }
 
@@ -99,7 +100,6 @@ class WindowGame extends Component {
   }
 
   getData() {
-    console.log(this.state.stateGameId + " en get data ")
     firebaseApp.firebase_
       .firestore()
       .collection("stateGame")
@@ -110,7 +110,8 @@ class WindowGame extends Component {
           score: doc.data().scores,
           sizeBox: this.getSizeBox(doc.data().game.length),
           sizeElement: this.getSizeElement(doc.data().game.length),
-          actualPlayer: doc.data().actualPlayer
+          actualPlayer: doc.data().actualPlayer,
+          wonGame: doc.data().wonGame
         })
       });
   }
@@ -177,50 +178,60 @@ class WindowGame extends Component {
   render() {
     return (
       <div >
-        {this.state.canShow === true ? (
-          <div id="main-card">
-            <p>{this.state.gameName}</p>
-            <div id="players">
-              <section>
-                {this.state.actualPlayer === this.state.playerOneUid ?
-                  (<b style={{ color: "white" }}>{this.state.playerOne}</b>) :
-                  (<p>{this.state.playerOne}</p>)
-                }
-                <p>Score <b>{this.state.score.p1Score}</b></p>
-              </section>
-              <section>
-                <p>Dificultad <b>{this.getDifficulty()}</b> </p>
-              </section>
-              <section>
-                {this.state.actualPlayer === null ?
-                  (<b style={{ color: "white" }}>{this.state.playerTwo}</b>) :
-                  (<p>{this.state.playerTwo}</p>)
-                }
-                <p>Score <b>{this.state.score.p2Score}</b></p>
-              </section>
-            </div>
-            <div style={{ width: this.state.sizeBox }} id="game-card" className="shadow rounded" >
-              {this.state.game.length > 0 ? (
-                Object.keys(this.state.game).map(key => (
-                  <div style={{ width: this.state.sizeElement, height: this.state.sizeElement }} key={key}
-                    onClick={() => {
-                      this.services.GameService.sentClick(this.state.stateGameId, JSON.parse(localStorage.getItem("actualUser")).uid, this.state.game[key])
+        {this.state.wonGame === "null" ? (
+          <div>
+            {this.state.canShow === true ? (
+              <div id="main-card">
+                <p>{this.state.gameName}</p>
+                <div id="players">
+                  <section>
+                    {this.state.actualPlayer === this.state.playerOneUid ?
+                      (<b style={{ color: "white" }}>{this.state.playerOne}</b>) :
+                      (<p>{this.state.playerOne}</p>)
                     }
-                    }>
-                    <img alt="Loading" src={this.state.game[key].img} style={{ width: this.state.sizeElement, height: this.state.sizeElement }}></img>
-                  </div>)
-                )
-              ) : (<h2>Loading game</h2>)
-              }
-            </div>
-            {
-              this.state.playerTwo === "Robot" ? (<Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>):null
-            }
-            
-          </div>
-        ) : (<h1 id="Loading">Waiting for the other player</h1>)
-        }
+                    <p>Score <b>{this.state.score.p1Score}</b></p>
+                  </section>
+                  <section>
+                    <p>Dificultad <b>{this.getDifficulty()}</b> </p>
+                  </section>
+                  <section>
+                    {this.state.actualPlayer === null ?
+                      (<b style={{ color: "white" }}>{this.state.playerTwo}</b>) :
+                      (<p>{this.state.playerTwo}</p>)
+                    }
+                    <p>Score <b>{this.state.score.p2Score}</b></p>
+                  </section>
+                </div>
+                <div style={{ width: this.state.sizeBox }} id="game-card" className="shadow rounded" >
+                  {this.state.game.length > 0 ? (
+                    Object.keys(this.state.game).map(key => (
+                      <div style={{ width: this.state.sizeElement, height: this.state.sizeElement }} key={key}
+                        onClick={() => {
+                          this.services.GameService.sentClick(this.state.stateGameId, JSON.parse(localStorage.getItem("actualUser")).uid, this.state.game[key])
+                        }
+                        }>
+                        <img alt="Loading" src={this.state.game[key].img} style={{ width: this.state.sizeElement, height: this.state.sizeElement }}></img>
+                      </div>)
+                    )
+                  ) : (<h2>Loading game</h2>)
+                  }
+                </div>
+                {
+                  this.state.playerTwo === "Robot" ? (<Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>) : null
+                }
 
+              </div>
+            ) : (<h1 id="Loading">Waiting for the other player</h1>)
+            }
+          </div>
+        ) : (
+            <div id="WonGame">
+              <h5>{this.state.wonGame}</h5>
+              <Link to={{ pathname: '/' }}>
+                <Button onClick={() => { this.services.GameService.resetData(this.state.stateGameId)}}>Continue</Button>
+              </Link>
+            </div>
+          )}
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}

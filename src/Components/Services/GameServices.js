@@ -9,8 +9,17 @@ import firebaseApp from '../Services/FirebaseService';
 
 class GameService extends Service {
 
+    resetData(stateGame) {
+        firebaseApp.firebase_
+            .firestore().collection("messages").doc(stateGame).delete().then(function () {
+                console.log("Document successfully deleted!");
+            }).catch(function (error) {
+                console.error("Error removing document: ", error);
+            });
+    }
+
     sendMessage(text, paramStateGame, messages) {
-        if (text!=="") {
+        if (text !== "") {
             let allMessges = messages;
             let message = {
                 name: JSON.parse(localStorage.getItem('actualUser')).name,
