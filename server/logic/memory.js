@@ -255,7 +255,7 @@ function endGame(stateGameId, winner) {
     .then(querySnapshot => {
       let users = querySnapshot.docs[0].data().users;
       console.log(users);
-      winner === true
+      winner === true && users[1] !== null
         ? updateStatistics(users[0], users[1])
         : updateStatistics(users[1], users[0]);
       deleteSessionAndGameState(stateGameId);
