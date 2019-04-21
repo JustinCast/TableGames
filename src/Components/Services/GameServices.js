@@ -16,6 +16,9 @@ class GameService extends Service {
             }).catch(function (error) {
                 console.error("Error removing document: ", error);
             });
+        
+
+
     }
 
     sendMessage(text, paramStateGame, messages) {

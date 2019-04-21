@@ -41,17 +41,27 @@ class WindowGame extends Component {
       firebaseApp.firebase_
         .firestore()
         .collection("messages")
-        .doc(this.state.stateGameId)
-        .onSnapshot(doc => {
-          console.log(doc);
-        /*if (doc.messages !== undefined) {
-            console.log(doc.messages);
-            this.setState({
-              allMessages: doc.data().messages
-            })
-          }else{
-            console.log("no hay mensajes");
-          }*/
+        .where("stateGame", "==", this.state.stateGameId)
+        .onSnapshot((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            if (doc === undefined) {
+              console.log("Es undefined");
+            } else {
+              this.setState({
+                allMessages: doc.data().messages
+              })
+              console.log(doc.data()+"no esta undefined");
+            }
+
+          })
+          /*if (doc.messages !== undefined) {
+              console.log(doc.messages);
+              this.setState({
+                allMessages: doc.data().messages
+              })
+            }else{
+              console.log("no hay mensajes");
+            }*/
         }
         )
     }
@@ -93,7 +103,7 @@ class WindowGame extends Component {
             this.getData();
             this.messages();
             console.log("hay jugadoR ");
-          } 
+          }
         })
       });
   }
@@ -214,9 +224,9 @@ class WindowGame extends Component {
                     )
                   ) : (<h2>Loading game</h2>)
                   }
-                </div>  
+                </div>
                 {
-                  this.state.playerTwo === "Robot" ? (<Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>) : null
+                  this.state.playerTwo !== "Robot" ? (<Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>) : null
                 }
 
               </div>
@@ -227,7 +237,7 @@ class WindowGame extends Component {
             <div id="WonGame">
               <h5>{this.state.wonGame}</h5>
               <Link to={{ pathname: '/' }}>
-                <Button onClick={() => { this.services.GameService.resetData(this.state.stateGameId)}}>Continue</Button>
+                <Button onClick={() => { this.services.GameService.resetData(this.state.stateGameId) }}>Continue</Button>
               </Link>
             </div>
           )}
