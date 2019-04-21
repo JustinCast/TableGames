@@ -38,17 +38,20 @@ class WindowGame extends Component {
 
   messages() {
     if (this.state.stateGameId !== "") {
-      console.log("pepe ingreso");
       firebaseApp.firebase_
         .firestore()
         .collection("messages")
         .doc(this.state.stateGameId)
         .onSnapshot(doc => {
-          if (doc.messages !== undefined) {
+          console.log(doc);
+        /*if (doc.messages !== undefined) {
+            console.log(doc.messages);
             this.setState({
               allMessages: doc.data().messages
             })
-          }
+          }else{
+            console.log("no hay mensajes");
+          }*/
         }
         )
     }
@@ -62,7 +65,8 @@ class WindowGame extends Component {
       .onSnapshot((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           console.log(doc.data());
-          if (doc.data().users[1] !== undefined & doc.data().users[1] !== null) {
+          if (doc.data().users[1] !== undefined && doc.data().users[1] !== null) {
+            console.log("Acaba de ingresar ");
             this.setState({
               canShow: true,
               playerOne: doc.data().users[0].name,
@@ -89,12 +93,7 @@ class WindowGame extends Component {
             this.getData();
             this.messages();
             console.log("hay jugadoR ");
-          } else {
-            this.setState({
-              canShow: false
-            })
-            console.log("NO hay jugador ");
-          }
+          } 
         })
       });
   }
@@ -215,7 +214,7 @@ class WindowGame extends Component {
                     )
                   ) : (<h2>Loading game</h2>)
                   }
-                </div>
+                </div>  
                 {
                   this.state.playerTwo === "Robot" ? (<Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>) : null
                 }

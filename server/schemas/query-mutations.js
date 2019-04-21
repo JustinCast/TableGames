@@ -103,7 +103,7 @@ const mutation = new GraphQLObjectType({
             const sessionRef = db.collection("session").where("stateGameId","==",data.input.stateGameId);
             sessionRef.get()
             .then((docSnapshot) => {
-              if (docSnapshot.docs[0].exists & data.input.users[0].uid !== data.input.users[1].uid) {
+              if (docSnapshot.docs[0].exists & data.input.users[0].uid !== data.input.users[1].uid & docSnapshot.docs[0].users.length < 2) {
                 db.collection("session").
                 doc(docSnapshot.docs[0].id).
                 update({
