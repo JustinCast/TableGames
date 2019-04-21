@@ -195,7 +195,7 @@ class WindowGame extends Component {
                 <div id="players">
                   <section>
                     {this.state.actualPlayer === this.state.playerOneUid ?
-                      (<b style={{ color: "white" }}>{this.state.playerOne}</b>) :
+                      (<b style={{ color: "white" }}>{this.state.playerOne} - <b style={{ color: "blue" }}> (Azul) </b></b>) :
                       (<p>{this.state.playerOne}</p>)
                     }
                     <p>Score <b>{this.state.score.p1Score}</b></p>
@@ -204,8 +204,8 @@ class WindowGame extends Component {
                     <p>Dificultad <b>{this.getDifficulty()}</b> </p>
                   </section>
                   <section>
-                    {this.state.actualPlayer === null ?
-                      (<b style={{ color: "white" }}>{this.state.playerTwo}</b>) :
+                    {this.state.actualPlayer === null || this.state.actualPlayer === this.state.playerTwoUid ?
+                      (<b style={{ color: "white" }}>{this.state.playerTwo} - <b style={{ color: "red" }}> (Rojo) </b> </b>) :
                       (<p>{this.state.playerTwo}</p>)
                     }
                     <p>Score <b>{this.state.score.p2Score}</b></p>
@@ -219,7 +219,7 @@ class WindowGame extends Component {
                           this.services.GameService.sentClick(this.state.stateGameId, JSON.parse(localStorage.getItem("actualUser")).uid, this.state.game[key])
                         }
                         }>
-                        <img alt="Loading" src={this.state.game[key].img2} style={{ width: this.state.sizeElement, height: this.state.sizeElement }}></img>
+                        <img alt="Loading" src={this.state.game[key].img} style={{ width: this.state.sizeElement, height: this.state.sizeElement }}></img>
                       </div>)
                     )
                   ) : (<h2>Loading game</h2>)
