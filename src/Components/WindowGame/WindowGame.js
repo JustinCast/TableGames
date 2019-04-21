@@ -54,14 +54,6 @@ class WindowGame extends Component {
             }
 
           })
-          /*if (doc.messages !== undefined) {
-              console.log(doc.messages);
-              this.setState({
-                allMessages: doc.data().messages
-              })
-            }else{
-              console.log("no hay mensajes");
-            }*/
         }
         )
     }
