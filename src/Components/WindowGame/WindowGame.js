@@ -195,7 +195,7 @@ class WindowGame extends Component {
                 <div id="players">
                   <section>
                     {this.state.actualPlayer === this.state.playerOneUid ?
-                      (<b style={{ color: "white" }}>{this.state.playerOne} - <b style={{ color: "blue" }}> (Azul) </b></b>) :
+                      (<b style={{ color: "white" }}>{this.state.playerOne} - <b style={{ color: 'rgba(0,0,200,0.65)' }}> (Azul) </b></b>) :
                       (<p>{this.state.playerOne}</p>)
                     }
                     <p>Score <b>{this.state.score.p1Score}</b></p>
@@ -205,7 +205,7 @@ class WindowGame extends Component {
                   </section>
                   <section>
                     {this.state.actualPlayer === null || this.state.actualPlayer === this.state.playerTwoUid ?
-                      (<b style={{ color: "white" }}>{this.state.playerTwo} - <b style={{ color: "red" }}> (Rojo) </b> </b>) :
+                      (<b style={{ color: "white" }}>{this.state.playerTwo} - <b style={{ color: 'rgba(200,0,0,0.65)' }}> (Rojo) </b> </b>) :
                       (<p>{this.state.playerTwo}</p>)
                     }
                     <p>Score <b>{this.state.score.p2Score}</b></p>
@@ -230,7 +230,15 @@ class WindowGame extends Component {
                 }
 
               </div>
-            ) : (<h1 id="Loading">Waiting for the other player</h1>)
+            ) : (<div id="Loading">
+                  <h1>Waiting for the other player</h1> 
+                  <div class="sk-folding-cube">
+                    <div class="sk-cube1 sk-cube"></div>
+                    <div class="sk-cube2 sk-cube"></div>
+                    <div class="sk-cube4 sk-cube"></div>
+                    <div class="sk-cube3 sk-cube"></div>
+                  </div>
+                </div>)
             }
           </div>
         ) : (
