@@ -230,13 +230,14 @@ class WindowGame extends Component {
                 }
 
               </div>
-            ) : (<div id="Loading">
-                  <h1>Waiting for the other player</h1> 
-                  <div class="sk-folding-cube">
-                    <div class="sk-cube1 sk-cube"></div>
-                    <div class="sk-cube2 sk-cube"></div>
-                    <div class="sk-cube4 sk-cube"></div>
-                    <div class="sk-cube3 sk-cube"></div>
+            ) : (<div id="Loading" className="container text-center mt-5">
+                  <h1 className="text-white">Waiting for the second player</h1> 
+                  <hr/>
+                  <div className="sk-folding-cube mt-5">
+                    <div className="sk-cube1 sk-cube"></div>
+                    <div className="sk-cube2 sk-cube"></div>
+                    <div className="sk-cube4 sk-cube"></div>
+                    <div className="sk-cube3 sk-cube"></div>
                   </div>
                 </div>)
             }
