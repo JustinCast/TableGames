@@ -157,7 +157,8 @@ function flipCards(stateGameId, state, firstCheck, secondObjectClicked) {
       state.game.findIndex(e => e.x === firstCheck.x && e.y === firstCheck.y)
     ].owner = firstCheck.owner;
 
-    updateGame(stateGameId, state.game)
+    setTimeout(() => {
+      updateGame(stateGameId, state.game)
       .then(() => {
         state.game[
           state.game.findIndex(
@@ -180,6 +181,7 @@ function flipCards(stateGameId, state, firstCheck, secondObjectClicked) {
       .catch(error =>
         console.log(`Error en flipCards al actualizar el juego ${error}`)
       );
+    }, 1500);
   });
 }
 

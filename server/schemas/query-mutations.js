@@ -105,7 +105,8 @@ const mutation = new GraphQLObjectType({
         return new Promise(resolve => {
           if (
             (data.input.users.length === 2) &&
-            (data.input.users[1] !== null)
+            (data.input.users[1] !== null) && 
+            docSnapshot.docs[0].users.length < 2
           ) {
             const sessionRef = db
               .collection("session")
