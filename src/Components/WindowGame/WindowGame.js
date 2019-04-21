@@ -89,11 +89,6 @@ class WindowGame extends Component {
             this.getData();
             this.messages();
             console.log("hay jugadoR ");
-          } else {
-            this.setState({
-              canShow: false
-            })
-            console.log("NO hay jugador ");
           }
         })
       });

@@ -49,7 +49,7 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
 }
 
 // Check if is the first or the second selection
-export function checkSelection(stateGameId, obj,data) {
+export function checkSelection(stateGameId, obj, data) {
   return new Promise(r => {
     if (obj.owner === false) {
       db.collection("stateGame")
@@ -151,12 +151,11 @@ export function changeActualUser(stateGameId, user, gameName) {
             .doc(stateGameId)
             .get()
             .then(data => {
-
               // aqui se llama el jugador automático para cada juego
               let state = data.data();
               if (gameName === "Memory" && user === null)
                 cpuPlayer(stateGameId, state);
-              else if(gameName === "Damas" && user === null){
+              else if (gameName === "Damas" && user === null) {
                 machineLogicChecker(stateGameId);
               }
             });
@@ -186,18 +185,17 @@ export function addScore(stateGameId, actualPlayer) {
           if (data.number === "one") {
             state.scores.p1Score++;
             saveNewScoreInDB(stateGameId, state.scores);
-            if (data.gameName === "Damas"){
+            if (data.gameName === "Damas") {
               checkWonCheckers(state.game, false, stateGameId);
-            }else{
+            } else {
               //TODO: verificar si ganó en memoria
             }
-          }
-          else{
+          } else {
             state.scores.p2Score++;
             saveNewScoreInDB(stateGameId, state.scores);
-            if (data.gameName === "Damas"){
+            if (data.gameName === "Damas") {
               checkWonCheckers(state.game, true, stateGameId);
-            }else{
+            } else {
               //TODO: verificar si ganó en memoria
             }
           }
@@ -210,75 +208,71 @@ export function addScore(stateGameId, actualPlayer) {
     .catch(err => console.log(err));
 }
 
-function checkWonCheckers(game, player, stateGameId){
-  if(player) // Player 2
-  {
-    let list = game.filter(e => e.owner === false).slice()
-    if(list.length === 0){
+function checkWonCheckers(game, player, stateGameId) {
+  if (player) {
+    // Player 2
+    let list = game.filter(e => e.owner === false).slice();
+    if (list.length === 0) {
       db.collection("stateGame")
-      .doc(stateGameId)
-      .update({wonGame : "!!! Felicidades al jugador 2, Ganó !!!"})
-      updateDataPlayerCheckers(stateGameId,player); 
+        .doc(stateGameId)
+        .update({ wonGame: "!!! Felicidades al jugador 2, Ganó !!!" });
+      updateDataPlayerCheckers(stateGameId, player);
     }
-  }else{ // Player 1
-    let list2 = game.filter(e => e.owner === true).slice()
-    if(list2.length === 0){
+  } else {
+    // Player 1
+    let list2 = game.filter(e => e.owner === true).slice();
+    if (list2.length === 0) {
       db.collection("stateGame")
-      .doc(stateGameId)
-      .update({wonGame : "!!! Felicidades al jugador 1, Ganó !!!"})
-      updateDataPlayerCheckers(stateGameId,player);
+        .doc(stateGameId)
+        .update({ wonGame: "!!! Felicidades al jugador 1, Ganó !!!" });
+      updateDataPlayerCheckers(stateGameId, player);
     }
   }
 }
 
-function updateDataPlayerCheckers(stateGameId,player){
+function updateDataPlayerCheckers(stateGameId, player) {
   db.collection("session")
-      .where("stateGameId", "==", stateGameId)
-      .get()
-      .then(querySnapshot => {
-        let users = querySnapshot.docs[0].data().users;
-        switch(player){
-          case player === true: // Won player 2 
-            updateStatistics(users[1],users[0]);
-            break;
-          case player === false:
-            updateStatistics(users[0],users[1]);
-            break;
-        }
-      })
+    .where("stateGameId", "==", stateGameId)
+    .get()
+    .then(querySnapshot => {
+      let users = querySnapshot.docs[0].data().users;
+      switch (player) {
+        case player === true: // Won player 2
+          updateStatistics(users[1], users[0]);
+          break;
+        case player === false:
+          updateStatistics(users[0], users[1]);
+          break;
+      }
+    });
 }
 
-export function updateStatistics(playerWon, playerLost){ 
-  db
-    .collection("player")
-    .doc(playerWon.uid)
-    .update({
-      wonGames: playerWon.wonGames+1
-    })
-  
-  db
-  .collection("player")
-  .doc(playerLost.uid)
-  .update({
-    lostGames: playerLost.lostGames+1
-  })
-}
-
-export function deleteSessionAndGameState(stateGameId) {
-  db.collection('stateGame').doc(stateGameId).delete();
-  db.collection('stateGame').where("stateGameId", "==", stateGameId).delete();
-}
-
-function saveNewScoreInDB(stateGameId, scores) {
-  return new Promise(resolve =>
-    db
-      .collection("stateGame")
-      .doc(stateGameId)
+export function updateStatistics(playerWon, playerLost) {
+  if (playerWon !== null)
+    db.collection("player")
+      .doc(playerWon.uid)
       .update({
-        scores: scores
-      })
-  );
+        wonGames: playerWon.wonGames + 1
+      });
+  if (playerLost !== null)
+    db.collection("player")
+      .doc(playerLost.uid)
+      .update({
+        lostGames: playerLost.lostGames + 1
+      });
 }
+
+export function deleteSessionAndGameState(stateGameId, sessionId) {
+  db.collection("stateGame")
+    .doc(stateGameId)
+    .delete()
+    .catch(err => console.error(`ERROR ON DELETE STATEGAME ${err}`));
+  db.collection("session")
+    .doc(sessionId)
+    .delete()
+    .catch(err => console.error(`ERROR ON DELETE SESSION ${err}`));
+}
+
 export function getNextUserInfo(stateGameId, actualPlayer) {
   return new Promise(resolve => {
     db.collection("session")
@@ -333,7 +327,7 @@ export function updateFirstCheck(stateGameId, firstCheck) {
 }
 
 function saveNewScoreInDB(stateGameId, scores) {
-  return new Promise(resolve =>
+  return new Promise(() =>
     db
       .collection("stateGame")
       .doc(stateGameId)
@@ -343,9 +337,6 @@ function saveNewScoreInDB(stateGameId, scores) {
   );
 }
 
-export function updateOwner(stateGameId, owner) {
-  
-}
 
 export function updateGame(stateGameId, game) {
   return new Promise(resolve =>
