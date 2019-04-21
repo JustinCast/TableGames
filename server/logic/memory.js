@@ -9,8 +9,7 @@ import {
   getNextUserInfo,
   resetFirstCheck,
   updateFirstCheck,
-  updateStatistics,
-  deleteSessionAndGameState
+  updateStatistics
 } from "./logic-index";
 import db from "../config/config";
 let extractedImgs = new Array();
@@ -260,7 +259,6 @@ function endGame(stateGameId, winner) {
       winner === true && users[1] !== null
         ? updateStatistics(users[0], users[1])
         : updateStatistics(users[1], users[0]);
-      deleteSessionAndGameState(stateGameId, querySnapshot.docs[0].id);
     });
 }
 

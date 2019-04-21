@@ -16,6 +16,23 @@ class GameService extends Service {
             }).catch(function (error) {
                 console.error("Error removing document: ", error);
             });
+        firebaseApp.firebase_
+            .firestore().collection("stateGame").doc(stateGame).delete().then(function () {
+                console.log("Document successfully deleted!");
+            }).catch(function (error) {
+                console.error("Error removing document: ", error);
+            });
+        firebaseApp.firebase_
+            .firestore().collection("session").where("stateGameId", "==", stateGame)
+            .then(docSnapshot => {
+                firebaseApp.firebase_
+                    .firestore().collection("session").doc(docSnapshot.docs[0].id).delete().then(function () {
+                        console.log("Document successfully deleted!");
+                    }).catch(function (error) {
+                        console.error("Error removing document: ", error);
+                    });
+                
+            })
     }
 
     sendMessage(text, paramStateGame, messages) {

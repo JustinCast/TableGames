@@ -261,7 +261,6 @@ function updateDataPlayerCheckers(stateGameId, player) {
           updateStatistics(users[0], users[1]);
           break;
       }
-      deleteSessionAndGameState(stateGameId,querySnapshot.docs[0].id);
     });
 }
 
@@ -280,16 +279,6 @@ export function updateStatistics(playerWon, playerLost) {
       });
 }
 
-export function deleteSessionAndGameState(stateGameId, sessionId) {
-  db.collection("stateGame")
-    .doc(stateGameId)
-    .delete()
-    .catch(err => console.error(`ERROR ON DELETE STATEGAME ${err}`));
-  db.collection("session")
-    .doc(sessionId)
-    .delete()
-    .catch(err => console.error(`ERROR ON DELETE SESSION ${err}`));
-}
 
 export function getNextUserInfo(stateGameId, actualPlayer) {
   return new Promise(resolve => {

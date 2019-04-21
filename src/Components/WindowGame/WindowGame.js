@@ -227,7 +227,7 @@ class WindowGame extends Component {
             <div id="WonGame">
               <h5>{this.state.wonGame}</h5>
               <Link to={{ pathname: '/' }}>
-                <Button onClick={() => { this.services.GameService.resetData(this.state.stateGameId)}}>Continue</Button>
+                <Button onClick={() => { this.services.GameService.resetData(this.state.stateGameId,)}}>Continue</Button>
               </Link>
             </div>
           )}
