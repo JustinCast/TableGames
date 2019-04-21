@@ -210,12 +210,13 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
       secondObjectClicked.owner = true;
       flipCards(stateGameId, state, state.firstCheck, secondObjectClicked).then(
         () => {
-          getNextUserInfo(stateGameId, player).then(data => {
-            resetFirstCheck(stateGameId).then(() => {
-              changeActualUser(stateGameId, data.player, data.gameName);
-              if (checkIfGameEnded(state.game)) endGame(stateGameId, winner);
-            });
-          });
+          /*getNextUserInfo(stateGameId, player).then(data => {
+            // resetFirstCheck(stateGameId).then(() => {
+            //   changeActualUser(stateGameId, data.player, data.gameName);
+            //   if (checkIfGameEnded(state.game)) endGame(stateGameId, winner);
+            // });
+          });*/
+          if (checkIfGameEnded(state.game)) endGame(stateGameId, winner);
         }
       );
     } else {
