@@ -224,27 +224,29 @@ export function addScore(stateGameId, actualPlayer) {
 }
 
 function checkWonCheckers(game, player, stateGameId) {
-  if (player) {
-    // Player 2
-    let list = game.filter(e => e.owner === false).slice();
-    if (list.length === 0) {
-      db.collection("stateGame")
-        .doc(stateGameId)
-        .update({ wonGame: "!!! Felicidades al jugador 2, Ganó !!!" });
-      updateDataPlayerCheckers(stateGameId, player);
-      
+  return new Promise(r => {
+    if (player) {
+      // Player 2
+      let list = game.filter(e => e.owner === false).slice();
+      if (list.length === 0) {
+        db.collection("stateGame")
+          .doc(stateGameId)
+          .update({ wonGame: "!!! Felicidades al jugador 2, Ganó !!!" });
+        updateDataPlayerCheckers(stateGameId, player);
+        r(true);
+      }else r(false);
+    } else {
+      // Player 1
+      let list2 = game.filter(e => e.owner === true).slice();
+      if (list2.length === 0) {
+        db.collection("stateGame")
+          .doc(stateGameId)
+          .update({ wonGame: "!!! Felicidades al jugador 1, Ganó !!!" });
+        updateDataPlayerCheckers(stateGameId, player);
+        r(true);
+      } else r(false);
     }
-  } else {
-    // Player 1
-    let list2 = game.filter(e => e.owner === true).slice();
-    if (list2.length === 0) {
-      db.collection("stateGame")
-        .doc(stateGameId)
-        .update({ wonGame: "!!! Felicidades al jugador 1, Ganó !!!" });
-      updateDataPlayerCheckers(stateGameId, player);
-
-    }
-  }
+  })
 }
 
 function updateDataPlayerCheckers(stateGameId, player) {
