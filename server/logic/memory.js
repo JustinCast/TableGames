@@ -65,8 +65,8 @@ function extractImgs(data, size) {
  */
 function setImgsToMemoryArray(array) {
   for (let i = 0; i < array.length; i++) {
-    array[i].img = extractedImgs[i];
-    array[i].img2 = questionMark;
+    array[i].img = questionMark;
+    array[i].img2 = extractedImgs[i];
   }
 }
 
@@ -137,7 +137,7 @@ export function playMemory(stateGameId, object) {
  * @param {*} secondObjectClicked objeto obtenido con el segundo click
  */
 function compareCards(firstObjectClicked, secondObjectClicked) {
-  return firstObjectClicked.img === secondObjectClicked.img;
+  return firstObjectClicked.img2 === secondObjectClicked.img2;
 }
 
 /**
@@ -151,7 +151,7 @@ function flipCards(stateGameId, state, firstCheck, secondObjectClicked) {
   return new Promise(resolve => {
     state.game[
       state.game.findIndex(e => e.x === firstCheck.x && e.y === firstCheck.y)
-    ].img2 = firstCheck.img;
+    ].img = firstCheck.img2;
     state.game[
       state.game.findIndex(e => e.x === firstCheck.x && e.y === firstCheck.y)
     ].owner = firstCheck.owner;
@@ -163,7 +163,7 @@ function flipCards(stateGameId, state, firstCheck, secondObjectClicked) {
           state.game.findIndex(
             e => e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
           )
-        ].img2 = secondObjectClicked.img;
+        ].img = secondObjectClicked.img2;
         state.game[
           state.game.findIndex(
             e => e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
@@ -220,15 +220,15 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
       );
     } else {
       let first = {
-        img: questionMark,
-        img2: state.firstCheck.img2,
+        img2: questionMark,
+        img: state.firstCheck.img,
         owner: state.firstCheck.owner,
         x: state.firstCheck.x,
         y: state.firstCheck.y
       };
       let second = {
-        img: questionMark,
-        img2: secondObjectClicked.img2,
+        img2: questionMark,
+        img: secondObjectClicked.img,
         owner: secondObjectClicked.owner,
         x: secondObjectClicked.x,
         y: secondObjectClicked.y
@@ -281,7 +281,7 @@ export function cpuPlayer(stateGameId, state) {
           state.game.findIndex(
             e =>
               JSON.stringify(e) !== JSON.stringify(state.firstCheck) &&
-              e.img === state.firstCheck.img
+              e.img2 === state.firstCheck.img2
           )
         ];
       handleComparation(stateGameId, state, pair, null);
@@ -304,7 +304,7 @@ export function cpuPlayer(stateGameId, state) {
  */
 function getRandomElementFromArray(array, randomLocation) {
   let filteredArray = array.filter(
-    e => e.img !== array[randomLocation].img && !e.owner
+    e => e.img2 !== array[randomLocation].img2 && !e.owner
   );
   //console.log(`FILTERED ARRAY: ${JSON.stringify(filteredArray)}`)
   return filteredArray[Math.floor(Math.random() * filteredArray.length)];
@@ -320,7 +320,7 @@ function test(game) {
   let aux = [];
   game.forEach(e => {
     if (!aux.includes(e)) {
-      let elements = game.filter(o => o.img === e.img);
+      let elements = game.filter(o => o.img2 === e.img2);
       if (elements.length === 2) {
         console.log(
           `EL ELEMENTO ${elements[0].x}, Y:${elements[0].y} \n tiene pareja`
