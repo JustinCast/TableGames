@@ -185,23 +185,38 @@ export function addScore(stateGameId, actualPlayer) {
           if (data.number === "one") {
             state.scores.p1Score++;
             saveNewScoreInDB(stateGameId, state.scores);
-            if (data.gameName === "Damas") {
-              checkWonCheckers(state.game, false, stateGameId);
-            } else {
-              //TODO: verificar si ganó en memoria
-            }
-          } else {
-            state.scores.p2Score++;
-            saveNewScoreInDB(stateGameId, state.scores);
-            if (data.gameName === "Damas") {
-              checkWonCheckers(state.game, true, stateGameId);
-            } else {
-              //TODO: verificar si ganó en memoria
+            if (data.gameName === "Damas"){
+              checkWonCheckers(state.game, false, stateGameId).then(r => {
+                if(r === false){
+                  resetFirstCheck(stateGameId).then(() => {
+                    changeActualUser(stateGameId, data.player, data.gameName);
+                  });
+                }
+              });
+            }else{
+              resetFirstCheck(stateGameId).then(() => {
+                changeActualUser(stateGameId, data.player, data.gameName);
+              });
             }
           }
-          resetFirstCheck(stateGameId).then(() => {
-            changeActualUser(stateGameId, data.player, data.gameName);
-          });
+          else{
+            state.scores.p2Score++;
+            saveNewScoreInDB(stateGameId, state.scores);
+            if (data.gameName === "Damas"){
+              checkWonCheckers(state.game, true, stateGameId).then(r => {
+                if(r === false){
+                  resetFirstCheck(stateGameId).then(() => {
+                    changeActualUser(stateGameId, data.player, data.gameName);
+                  });
+                }
+              });
+            }else{
+              resetFirstCheck(stateGameId).then(() => {
+                changeActualUser(stateGameId, data.player, data.gameName);
+              });
+            }
+          }
+          
         });
       }
     })
@@ -217,6 +232,7 @@ function checkWonCheckers(game, player, stateGameId) {
         .doc(stateGameId)
         .update({ wonGame: "!!! Felicidades al jugador 2, Ganó !!!" });
       updateDataPlayerCheckers(stateGameId, player);
+      
     }
   } else {
     // Player 1
@@ -226,6 +242,7 @@ function checkWonCheckers(game, player, stateGameId) {
         .doc(stateGameId)
         .update({ wonGame: "!!! Felicidades al jugador 1, Ganó !!!" });
       updateDataPlayerCheckers(stateGameId, player);
+
     }
   }
 }
@@ -244,6 +261,7 @@ function updateDataPlayerCheckers(stateGameId, player) {
           updateStatistics(users[0], users[1]);
           break;
       }
+      deleteSessionAndGameState(stateGameId,querySnapshot.docs[0].id);
     });
 }
 

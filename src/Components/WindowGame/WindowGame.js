@@ -205,14 +205,14 @@ class WindowGame extends Component {
                           this.services.GameService.sentClick(this.state.stateGameId, JSON.parse(localStorage.getItem("actualUser")).uid, this.state.game[key])
                         }
                         }>
-                        <img alt="Loading" src={this.state.game[key].img2} style={{ width: this.state.sizeElement, height: this.state.sizeElement }}></img>
+                        <img alt="Loading" src={this.state.game[key].img} style={{ width: this.state.sizeElement, height: this.state.sizeElement }}></img>
                       </div>)
                     )
                   ) : (<h2>Loading game</h2>)
                   }
                 </div>
                 {
-                  this.state.playerTwo === "Robot" ? (<Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>) : null
+                  this.state.playerTwo !== "Robot" ? (<Button id="chat-button" onClick={this.handleClickOpen('paper')}>Chat</Button>) : null
                 }
 
               </div>
