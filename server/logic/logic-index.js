@@ -232,7 +232,7 @@ function checkWonCheckers(game, player, stateGameId) {
         db.collection("stateGame")
           .doc(stateGameId)
           .update({ wonGame: "!!! Felicidades al jugador 2, Ganó !!!" });
-        //updateDataPlayerCheckers(stateGameId, player);
+        updateDataPlayerCheckers(stateGameId, player);
         r(true);
       }else r(false);
     } else {
@@ -242,7 +242,7 @@ function checkWonCheckers(game, player, stateGameId) {
         db.collection("stateGame")
           .doc(stateGameId)
           .update({ wonGame: "!!! Felicidades al jugador 1, Ganó !!!" });
-        //updateDataPlayerCheckers(stateGameId, player);
+        updateDataPlayerCheckers(stateGameId, player);
         r(true);
       } else r(false);
     }
@@ -256,19 +256,17 @@ function updateDataPlayerCheckers(stateGameId, player) {
     .then(querySnapshot => {
       let users = querySnapshot.docs[0].data().users;
       switch (player) {
-        case player === true: // Won player 2
-          updateStatistics(users[1], users[0]);
+        case player === true: // Won player 1
+          updateStatistics(users[0],users[1]);
           break;
         case player === false:
-          updateStatistics(users[0], users[1]);
+          updateStatistics(users[1],users[0]);
           break;
       }
     });
 }
 
 export function updateStatistics(playerWon, playerLost) {
-  console.log(`WINNER: ${playerWon}`);
-  console.log(`LOSER: ${playerLost.uid}`);
   if (playerWon !== null)
     db.collection("player")
       .doc(playerWon.uid)

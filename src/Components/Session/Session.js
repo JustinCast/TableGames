@@ -9,7 +9,7 @@ import { injector } from 'react-services-injector';
 
 class Session extends Component {
     render() {
-        const { game, name, gameSize, stateGameId, users, difficulty } = this.props.session;
+        const { game, name, gameSize, users } = this.props.session;
         return (
             <div className="container-card">
                 <ExpansionPanel>
