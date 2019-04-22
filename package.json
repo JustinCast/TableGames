@@ -35,7 +35,7 @@
   "scripts": {
     "start": "npm run build && node server.js",
     "clean": "rm -rf build && mkdir build",
-    "build-babel": "babel -d server.js ./src -s",
+    "build-babel": "babel -d server.js",
     "heroku-postbuild": "npm run build",
     "ndm": "nodemon --exec babel-node server.js",
     "build": "npm run clean && npm run build-babel",
