@@ -90,6 +90,10 @@ export function machineLogicChecker(stateGameId) {
     getSelectedChecker(filterCheckers, data, true).then(result => {
       getDifficulty(stateGameId).then(dif => {
         if (getProbability(dif)) {
+          console.log("===============================================")
+          console.log(result.checker)
+          console.log(result.nextMovement)
+          console.log("===============================================")
           isMovementValid(result.checker, result.nextMovement, stateGameId, null);
         } else {
           getSelectedChecker(filterCheckers, data, false).then(result2 => {
@@ -106,8 +110,8 @@ function getSelectedChecker(filterCheckers, data, flag) {
     if (flag) {
       filterCheckers.forEach(check => {
         if (check.img == redCrown_token) {
-          data.game.filter(e => (oneMovementUp(e, check) | oneMovementDown(e, check)) & e.owner === false).forEach(r => {
-            let aux = data.game.filter(e => (oneMovementUp(e, r) | oneMovementDown(e, r)) & e.owner === null).slice()
+          data.game.filter(e => (oneMovementUp(e, check)) & e.owner === false).forEach(r => {
+            let aux = data.game.filter(e2 => (oneMovementUp(e2, r)) & e2.owner === null).slice()
             if (aux.length > 0) {
               flag = false;
               resolve({
@@ -116,6 +120,18 @@ function getSelectedChecker(filterCheckers, data, flag) {
               })
             }
           })
+
+          data.game.filter(e => (oneMovementDown(e, check)) & e.owner === false).forEach(r => {
+            let aux = data.game.filter(e2 => (oneMovementDown(e2, r)) & e2.owner === null).slice()
+            if (aux.length > 0) {
+              flag = false;
+              resolve({
+                nextMovement: aux[0],
+                checker: check
+              })
+            }
+          })
+
         } else {
           data.game.filter(e => oneMovementUp(e, check) & e.owner === false).forEach(r => {
             let aux = data.game.filter(e2 => oneMovementUp(e2, r) & e2.owner === null & e2.y !== check.y).slice()
