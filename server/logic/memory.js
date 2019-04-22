@@ -124,6 +124,7 @@ export function playMemory(stateGameId, object, player) {
         checkActualUser(player)
         .then(result => {
           if(result) {
+            console.log(result)
             if (state) {
               if (state.firstCheck === null) updateFirstCheck(stateGameId, object);
               else {

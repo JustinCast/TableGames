@@ -21,6 +21,7 @@
     "graphql-tools": "^4.0.4",
     "node-sass": "^4.11.0",
     "nodemon": "^1.18.10",
+    "path": "^0.12.7",
     "react": "^16.8.1",
     "react-apollo": "^2.4.1",
     "react-dom": "^16.8.1",
@@ -31,8 +32,9 @@
     "unsplash-js": "^5.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "ndm": "nodemon --exec babel-node ./server/server.js",
+    "start": "node server.js",
+    "heroku-postbuild": "npm run build",
+    "ndm": "nodemon --exec babel-node server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -50,6 +52,6 @@
     "@babel/core": "^7.3.3",
     "@babel/node": "^7.2.2",
     "@babel/preset-env": "^7.3.1",
-    "react-router-dom": "^4.3.1"
+    "react-router-dom": "4.3.1"
   }
 }

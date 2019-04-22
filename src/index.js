@@ -41,7 +41,7 @@ const errorLink = onError(({ graphQLErrors }) => {
 // });
 
 export const GraphQLClient = new ApolloClient({
-  link: ApolloLink.from([errorLink, new HttpLink({ uri: 'http://localhost:4000/root' })]),
+  link: ApolloLink.from([errorLink, new HttpLink({ uri: '/root' })]),
   cache: new InMemoryCache(),
   networkInterface: mockNetworkInterface,
 });
