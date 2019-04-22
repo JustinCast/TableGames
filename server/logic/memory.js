@@ -9,7 +9,8 @@ import {
   getNextUserInfo,
   resetFirstCheck,
   updateFirstCheck,
-  updateStatistics
+  updateStatistics,
+  updateWonGame
 } from "./logic-index";
 import db from "../config/config";
 let extractedImgs = new Array();
@@ -197,26 +198,26 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
       addScore(stateGameId, player);
       let winner;
       if (checkIfGameEnded(state.game)) {
-        state.scores.p1Score > state.scores.p1Score
+        state.scores.p1Score > state.scores.p2Score
           ? ((state.wonGame = "El jugador 1 ha ganado el juego"),
             (winner = true))
           : ((state.wonGame = "El jugador 2 ha ganado el juego"),
             (winner = false));
 
-        if (state.scores.p1Score === state.scores.p1Score)
+        if (state.scores.p1Score === state.scores.p2Score)
           state.wonGame = "Los jugadores han quedado empatados";
+        updateWonGame(stateGameId, state.wonGame);
       }
       state.firstCheck.owner = true;
       secondObjectClicked.owner = true;
       flipCards(stateGameId, state, state.firstCheck, secondObjectClicked).then(
         () => {
-          /*getNextUserInfo(stateGameId, player).then(data => {
-            // resetFirstCheck(stateGameId).then(() => {
-            //   changeActualUser(stateGameId, data.player, data.gameName);
-            //   if (checkIfGameEnded(state.game)) endGame(stateGameId, winner);
-            // });
-          });*/
-          if (checkIfGameEnded(state.game)) endGame(stateGameId, winner);
+          getNextUserInfo(stateGameId, player).then(data => {
+            resetFirstCheck(stateGameId).then(() => {
+              changeActualUser(stateGameId, data.player, data.gameName);
+              if (checkIfGameEnded(state.game)) endGame(stateGameId, winner);
+            });
+          });
         }
       );
     } else {
@@ -256,7 +257,6 @@ function endGame(stateGameId, winner) {
     .get()
     .then(querySnapshot => {
       let users = querySnapshot.docs[0].data().users;
-      console.log(users);
       winner === true && users[1] !== null
         ? updateStatistics(users[0], users[1])
         : updateStatistics(users[1], users[0]);

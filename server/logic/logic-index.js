@@ -267,18 +267,21 @@ function updateDataPlayerCheckers(stateGameId, player) {
 }
 
 export function updateStatistics(playerWon, playerLost) {
+  console.log(`WINNER: ${playerWon}`);
+  console.log(`LOSER: ${playerLost.uid}`);
   if (playerWon !== null)
     db.collection("player")
       .doc(playerWon.uid)
       .update({
         wonGames: playerWon.wonGames + 1
-      });
-  if (playerLost !== null)
+      })
+      .catch(err => console.log(`ERROR UPDATING THE STATISTICS: ${err}`));;
+  if (playerLost !== null){
     db.collection("player")
-      .doc(playerLost.uid)
-      .update({
-        lostGames: playerLost.lostGames + 1
-      });
+      .doc(playerLost.email)
+      .update({lostGames: playerLost.lostGames + 1})
+      .catch(err => console.log(`ERROR UPDATING THE STATISTICS: ${err}`));
+  }
 }
 
 
@@ -358,6 +361,22 @@ export function updateGame(stateGameId, game) {
       .then(() => {
         resolve(true);
       })
+      .catch(err => console.err(`ERROR UPDATING THE GAME ${err}`))
+  );
+}
+
+export function updateWonGame(stateGameId, wonGame) {
+  return new Promise(resolve =>
+    db
+      .collection("stateGame")
+      .doc(stateGameId)
+      .update({
+        wonGame: wonGame
+      })
+      .then(() => {
+        resolve(true);
+      })
+      .catch(err => console.err(`ERROR UPDATING THE wonGame ${err}`))
   );
 }
 
