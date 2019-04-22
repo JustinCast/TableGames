@@ -232,7 +232,7 @@ function checkWonCheckers(game, player, stateGameId) {
         db.collection("stateGame")
           .doc(stateGameId)
           .update({ wonGame: "!!! Felicidades al jugador 2, Ganó !!!" });
-        updateDataPlayerCheckers(stateGameId, player);
+        //updateDataPlayerCheckers(stateGameId, player);
         r(true);
       }else r(false);
     } else {
@@ -242,7 +242,7 @@ function checkWonCheckers(game, player, stateGameId) {
         db.collection("stateGame")
           .doc(stateGameId)
           .update({ wonGame: "!!! Felicidades al jugador 1, Ganó !!!" });
-        updateDataPlayerCheckers(stateGameId, player);
+        //updateDataPlayerCheckers(stateGameId, player);
         r(true);
       } else r(false);
     }
