@@ -67,7 +67,7 @@ class WindowGame extends Component {
       .onSnapshot((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           console.log(doc.data());
-          if (doc.data().users[1] !== undefined && doc.data().users[1] === null && doc.exists) {
+          if (doc.data().users[1] !== undefined && doc.data().users[1] !== null && doc.exists) {
             console.log("Acaba de ingresar ");
             this.setState({
               canShow: true,
@@ -82,7 +82,7 @@ class WindowGame extends Component {
             this.messages();
             console.log("hay jugadoR ");
           }
-          if (doc.data().users[1] === null) {
+          if (doc.data().users[1] === null && doc.exists) {
             this.setState({
               canShow: true,
               playerOne: doc.data().users[0].name,
@@ -180,7 +180,7 @@ class WindowGame extends Component {
   render() {
     return (
       <div >
-        {this.state.wonGame !== null ? (
+        {this.state.wonGame === null ? (
           <div>
             {this.state.canShow === true ? (
               <div id="main-card">
