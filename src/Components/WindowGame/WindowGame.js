@@ -179,7 +179,7 @@ class WindowGame extends Component {
   render() {
     return (
       <div >
-        {this.state.wonGame !== "null" ? (
+        {this.state.wonGame === null ? (
           <div>
             {this.state.canShow === true ? (
               <div id="main-card">
