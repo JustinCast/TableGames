@@ -35,16 +35,6 @@ app.get('*', (req, res) => {
 });
 
 
-/** GraphQL Websocket definition **/
-SubscriptionServer.create({
-  Schema,
-  execute,
-  subscribe,
-}, {
-  server: server,
-  path: '/root',
-}, );
-
 
 app.listen(port, () => {
   console.log(`Running server on ${port}`);
