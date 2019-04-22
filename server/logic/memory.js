@@ -123,6 +123,7 @@ export function playMemory(stateGameId, object) {
       if (state.firstCheck !== object){
         checkActualUser(state.actualPlayer)
         .then(result => {
+          console.log(result)
           if(result) {
             if (state) {
               if (state.firstCheck === null) updateFirstCheck(stateGameId, object);
@@ -310,7 +311,7 @@ function checkActualUser(actualPlayer) {
       .where("actualPlayer", "==", actualPlayer)
       .get()
       .then(querySnapshot => {
-        if(querySnapshot.docs[0].data())
+        if(querySnapshot)
           resolve(true)
         else
           resolve(false)
