@@ -54,7 +54,7 @@ function extractImgs(data, size) {
     extractedImgs.push(img.src.tiny); //first img pair
     extractedImgs.push(img.src.tiny); //second img pair
   });
-  gameList = fillList(size); // get the logic matrix created from logic-index
+  gameList = fillList(size); 
   shuffleArray(extractedImgs);
   setImgsToMemoryArray(gameList);
   return gameList;
