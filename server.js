@@ -1,7 +1,5 @@
 'use strict'
-import { SubscriptionServer } from 'subscriptions-transport-ws';
-import { Server } from 'http';
-import { execute, subscribe } from 'graphql';
+const Server = require('http');
 const express = require("express");
 const expressGraphQL = require("express-graphql");
 const path = require('path');
@@ -12,7 +10,7 @@ const port = process.env.port || 5000;
 import Schema from "./server/schemas/schema";
 
 const app = express();
-const server = Server(app);
+//const server = Server(app);
 
 app.use(cors());
 
