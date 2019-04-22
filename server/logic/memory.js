@@ -120,11 +120,18 @@ export function playMemory(stateGameId, object) {
     .get()
     .then(querySnapshot => {
       let state = querySnapshot.data();
-      if (state) {
-        if (state.firstCheck === null) updateFirstCheck(stateGameId, object);
-        else {
-          handleComparation(stateGameId, state, object, state.actualPlayer);
-        }
+      if (state.firstCheck !== object){
+        checkActualUser(state.actualPlayer)
+        .then(result => {
+          if(result) {
+            if (state) {
+              if (state.firstCheck === null) updateFirstCheck(stateGameId, object);
+              else {
+                handleComparation(stateGameId, state, object, state.actualPlayer);
+              }
+            }
+          }
+        })
       }
     })
     .catch(err => console.log(`ERROR PLAYING MEMORY : ${err}`));
@@ -157,28 +164,30 @@ function flipCards(stateGameId, state, firstCheck, secondObjectClicked) {
 
     setTimeout(() => {
       updateGame(stateGameId, state.game)
-      .then(() => {
-        state.game[
-          state.game.findIndex(
-            e => e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
-          )
-        ].img = secondObjectClicked.img2;
-        state.game[
-          state.game.findIndex(
-            e => e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
-          )
-        ].owner = secondObjectClicked.owner;
-        updateGame(stateGameId, state.game)
-          .then(() => {
-            resolve(true);
-          })
-          .catch(error =>
-            console.log(`INNER ERROR ON SECOND GAME UPDATE ${error}`)
-          );
-      })
-      .catch(error =>
-        console.log(`Error en flipCards al actualizar el juego ${error}`)
-      );
+        .then(() => {
+          state.game[
+            state.game.findIndex(
+              e =>
+                e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
+            )
+          ].img = secondObjectClicked.img2;
+          state.game[
+            state.game.findIndex(
+              e =>
+                e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
+            )
+          ].owner = secondObjectClicked.owner;
+          updateGame(stateGameId, state.game)
+            .then(() => {
+              resolve(true);
+            })
+            .catch(error =>
+              console.log(`INNER ERROR ON SECOND GAME UPDATE ${error}`)
+            );
+        })
+        .catch(error =>
+          console.log(`Error en flipCards al actualizar el juego ${error}`)
+        );
     }, 1500);
   });
 }
@@ -194,7 +203,6 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
   return new Promise(() => {
     if (compareCards(state.firstCheck, secondObjectClicked)) {
       addScore(stateGameId, player);
-      
       state.firstCheck.owner = true;
       secondObjectClicked.owner = true;
       flipCards(stateGameId, state, state.firstCheck, secondObjectClicked).then(
@@ -296,25 +304,37 @@ function getRandomElementFromArray(array, randomLocation) {
   return filteredArray[Math.floor(Math.random() * filteredArray.length)];
 }
 
+function checkActualUser(actualPlayer) {
+  return new Promise(resolve => {
+    db.collection("stateGameId")
+      .where("actualPlayer", "==", actualPlayer)
+      .get()
+      .then(querySnapshot => {
+        if(querySnapshot.docs[0].data())
+          resolve(true)
+        else
+          resolve(false)
+      });
+  });
+}
+
 function checkIfGameEnded(stateGameId) {
-  db
-    .collection("stateGame")
+  db.collection("stateGame")
     .doc(stateGameId)
     .get()
     .then(data => {
       let state = data.data();
-      if(state.game.filter(e => e.owner === false).length === 0){
+      if (state.game.filter(e => e.owner === false).length === 0) {
         let winner;
         state.scores.p1Score > state.scores.p2Score
           ? (updateWonGame(stateGameId, "El jugador 1 ha ganado el juego"),
             (winner = true))
           : (updateWonGame(stateGameId, "El jugador 2 ha ganado el juego"),
             (winner = false));
-      
+
         if (state.scores.p1Score === state.scores.p2Score)
           updateWonGame(stateGameId, "Los jugadores han quedado empatados");
         endGame(stateGameId, winner);
       }
     });
 }
-

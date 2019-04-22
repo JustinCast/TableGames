@@ -364,7 +364,6 @@ export function updateGame(stateGameId, game) {
 }
 
 export function updateWonGame(stateGameId, wonGame) {
-  console.log("ENTRÓ")
   return new Promise(resolve =>
     db
       .collection("stateGame")
