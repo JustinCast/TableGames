@@ -196,17 +196,7 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
   return new Promise(() => {
     if (compareCards(state.firstCheck, secondObjectClicked)) {
       addScore(stateGameId, player);
-      let winner;
-      if (checkIfGameEnded(state.game)) {
-        state.scores.p1Score > state.scores.p2Score
-          ? (updateWonGame(stateGameId, "El jugador 1 ha ganado el juego"),
-            (winner = true))
-          : (updateWonGame(stateGameId, "El jugador 2 ha ganado el juego"),
-            (winner = false));
-
-        if (state.scores.p1Score === state.scores.p2Score)
-          updateWonGame(stateGameId, "Los jugadores han quedado empatados");
-      }
+      
       state.firstCheck.owner = true;
       secondObjectClicked.owner = true;
       flipCards(stateGameId, state, state.firstCheck, secondObjectClicked).then(
@@ -214,7 +204,7 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
           getNextUserInfo(stateGameId, player).then(data => {
             resetFirstCheck(stateGameId).then(() => {
               changeActualUser(stateGameId, data.player, data.gameName);
-              if (checkIfGameEnded(state.game)) endGame(stateGameId, winner);
+              checkIfGameEnded(stateGameId);
             });
           });
         }
@@ -310,8 +300,26 @@ function getRandomElementFromArray(array, randomLocation) {
   return filteredArray[Math.floor(Math.random() * filteredArray.length)];
 }
 
-function checkIfGameEnded(game) {
-  return game.filter(e => e.owner === false).length === 0;
+function checkIfGameEnded(stateGameId) {
+  db
+    .collection("stateGame")
+    .doc(stateGameId)
+    .get()
+    .then(data => {
+      let state = data.data();
+      if(state.game.filter(e => e.owner === false).length === 0){
+        let winner;
+        state.scores.p1Score > state.scores.p2Score
+          ? (updateWonGame(stateGameId, "El jugador 1 ha ganado el juego"),
+            (winner = true))
+          : (updateWonGame(stateGameId, "El jugador 2 ha ganado el juego"),
+            (winner = false));
+      
+        if (state.scores.p1Score === state.scores.p2Score)
+          updateWonGame(stateGameId, "Los jugadores han quedado empatados");
+        endGame(stateGameId, winner);
+      }
+    });
 }
 
 // test code
