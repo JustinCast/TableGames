@@ -256,11 +256,11 @@ function updateDataPlayerCheckers(stateGameId, player) {
     .then(querySnapshot => {
       let users = querySnapshot.docs[0].data().users;
       switch (player) {
-        case player === true: // Won player 1
-          updateStatistics(users[0],users[1]);
+        case player === true: // Player 2
+          updateStatistics(users[1],users[0]);
           break;
         case player === false:
-          updateStatistics(users[1],users[0]);
+          updateStatistics(users[0],users[1]);
           break;
       }
     });
