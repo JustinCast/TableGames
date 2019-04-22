@@ -199,14 +199,13 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
       let winner;
       if (checkIfGameEnded(state.game)) {
         state.scores.p1Score > state.scores.p2Score
-          ? ((state.wonGame = "El jugador 1 ha ganado el juego"),
+          ? (updateWonGame(stateGameId, "El jugador 1 ha ganado el juego"),
             (winner = true))
-          : ((state.wonGame = "El jugador 2 ha ganado el juego"),
+          : (updateWonGame(stateGameId, "El jugador 2 ha ganado el juego"),
             (winner = false));
 
         if (state.scores.p1Score === state.scores.p2Score)
-          state.wonGame = "Los jugadores han quedado empatados";
-        updateWonGame(stateGameId, state.wonGame);
+          updateWonGame(stateGameId, "Los jugadores han quedado empatados");
       }
       state.firstCheck.owner = true;
       secondObjectClicked.owner = true;
