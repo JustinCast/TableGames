@@ -117,10 +117,8 @@ export async function memoryInit(size) {
 export function playMemory(stateGameId, object) {
   db.collection("stateGame")
     .doc(stateGameId)
-    //.where("actualPlayer", "==", player)
     .get()
     .then(querySnapshot => {
-      // TODO: recordar usar el where
       let state = querySnapshot.data();
       if (state) {
         if (state.firstCheck === null) updateFirstCheck(stateGameId, object);
@@ -275,7 +273,6 @@ export function cpuPlayer(stateGameId, state) {
           )
         ];
       handleComparation(stateGameId, state, pair, null);
-      //.catch(error => console.log(error));
     } else {
       handleComparation(
         stateGameId,
@@ -296,7 +293,6 @@ function getRandomElementFromArray(array, randomLocation) {
   let filteredArray = array.filter(
     e => e.img2 !== array[randomLocation].img2 && !e.owner
   );
-  //console.log(`FILTERED ARRAY: ${JSON.stringify(filteredArray)}`)
   return filteredArray[Math.floor(Math.random() * filteredArray.length)];
 }
 
@@ -322,31 +318,3 @@ function checkIfGameEnded(stateGameId) {
     });
 }
 
-// test code
-
-function test(game) {
-  let aux = [];
-  game.forEach(e => {
-    if (!aux.includes(e)) {
-      let elements = game.filter(o => o.img2 === e.img2);
-      if (elements.length === 2) {
-        console.log(
-          `EL ELEMENTO ${elements[0].x}, Y:${elements[0].y} \n tiene pareja`
-        );
-        aux.push(elements[0]);
-        aux.push(elements[1]);
-      } else {
-        console.log(
-          `EL ELEMENTO X: ${elements[0].x}, Y:${
-            elements[0].y
-          } \n NO tiene pareja`
-        );
-        aux.push(elements[0]);
-      }
-    }
-  });
-
-  console.log(
-    "\n\n##################################################################################"
-  );
-}

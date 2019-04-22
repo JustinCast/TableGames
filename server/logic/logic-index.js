@@ -269,7 +269,7 @@ function updateDataPlayerCheckers(stateGameId, player) {
 export function updateStatistics(playerWon, playerLost) {
   if (playerWon !== null)
     db.collection("player")
-      .doc(playerWon.uid)
+      .doc(playerWon.email)
       .update({
         wonGames: playerWon.wonGames + 1
       })
