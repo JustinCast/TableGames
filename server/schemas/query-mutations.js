@@ -6,7 +6,12 @@ import {
   GraphQLNonNull
 } from "graphql";
 
-import { fillDefaultCheck,isCheckerPlayer,isMovementValid,game } from "../logic/checkers";
+import {
+  fillDefaultCheck,
+  isCheckerPlayer,
+  isMovementValid,
+  game
+} from "../logic/checkers";
 import {
   saveMemoryInitialGameState,
   saveStateGame,
@@ -98,50 +103,57 @@ const mutation = new GraphQLObjectType({
       },
       resolve: async (_, data) => {
         return new Promise(resolve => {
-          if(data.input.users.length === 2 & data.input.users[1] !== null){
-            const sessionRef = db.collection("session").where("stateGameId","==",data.input.stateGameId);
-            sessionRef.get()
-            .then((docSnapshot) => {
-              if (docSnapshot.docs[0].exists & data.input.users[0].uid !== data.input.users[1].uid & docSnapshot.docs[0].users.length < 2) {
-                db.collection("session").
-                doc(docSnapshot.docs[0].id).
-                update({
-                  difficulty: data.input.difficulty,
-                  game: data.input.game,
-                  gameSize: data.input.gameSize,
-                  isMachine: data.input.isMachine,
-                  name: data.input.name,
-                  sid: data.input.sid,
-                  stateGameId: data.input.stateGameId,
-                  users: data.input.users
-                }).then( () => {
-                  resolve(data.input);
-                });
+          if (
+            (data.input.users.length === 2) &&
+            (data.input.users[1] !== null)
+          ) {
+            const sessionRef = db
+              .collection("session")
+              .where("stateGameId", "==", data.input.stateGameId);
+            sessionRef.get().then(docSnapshot => {
+              if (
+                docSnapshot.docs[0].exists &
+                (data.input.users[0].uid !== data.input.users[1].uid)
+              ) {
+                db.collection("session")
+                  .doc(docSnapshot.docs[0].id)
+                  .update({
+                    difficulty: data.input.difficulty,
+                    game: data.input.game,
+                    gameSize: data.input.gameSize,
+                    isMachine: data.input.isMachine,
+                    name: data.input.name,
+                    sid: data.input.sid,
+                    stateGameId: data.input.stateGameId,
+                    users: data.input.users
+                  })
+                  .then(() => {
+                    resolve(data.input);
+                  });
               }
-            })
-          }else {
-              if (data.input.game === "Damas") {
-                // If game is chekers
-                let game = fillDefaultCheck(data.input.gameSize);
-                game["actualPlayer"] = data.input.users[0].uid;
-                saveStateGame(game, undefined).then(ref => {
+            });
+          } else {
+            if (data.input.game === "Damas") {
+              // If game is chekers
+              let game = fillDefaultCheck(data.input.gameSize);
+              game["actualPlayer"] = data.input.users[0].uid;
+              saveStateGame(game, undefined).then(ref => {
+                data.input["stateGameId"] = ref;
+                db.collection("session").add(data.input);
+                resolve(data.input);
+              });
+            } else {
+              memoryInit(data.input.gameSize).then(gameData => {
+                gameData["actualPlayer"] = data.input.users[0].uid;
+                saveMemoryInitialGameState(gameData, undefined).then(ref => {
                   data.input["stateGameId"] = ref;
                   db.collection("session").add(data.input);
                   resolve(data.input);
                 });
-              } else {
-                memoryInit(data.input.gameSize).then(gameData => {
-                  gameData["actualPlayer"] = data.input.users[0].uid;
-                  saveMemoryInitialGameState(gameData, undefined).then(ref => {
-                    data.input["stateGameId"] = ref;
-                    db.collection("session").add(data.input);
-                    console.log(data.input);
-                    resolve(data.input);
-                  });
-                });
-              }
+              });
             }
-          });
+          }
+        });
       }
     },
     savePlayer: {
@@ -185,39 +197,46 @@ const mutation = new GraphQLObjectType({
         }
       },
       resolve: async (_, data) => {
-        
-        identifyGameWhenClick(data.input.stateGameId)
-        .then(result => {
-          if(!result)
-            playMemory(
-              data.input.stateGameId,
-              JSON.parse(data.input.object)
-            );
+        identifyGameWhenClick(data.input.stateGameId).then(result => {
+          if (!result)
+            playMemory(data.input.stateGameId, JSON.parse(data.input.object), data.input.player);
           else {
-            isCheckerPlayer(data.input.stateGameId,data.input.player,JSON.parse(data.input.object)).then( res => {
-              if(res.val){ 
-              checkSelection(data.input.stateGameId,JSON.parse(data.input.object),res.data).then( res2 =>{ // Corresponds to the current player ?
-                  if(res2){
+            isCheckerPlayer(
+              data.input.stateGameId,
+              data.input.player,
+              JSON.parse(data.input.object)
+            ).then(res => {
+              if (res.val) {
+                checkSelection(
+                  data.input.stateGameId,
+                  JSON.parse(data.input.object),
+                  res.data
+                ).then(res2 => {
+                  // Corresponds to the current player ?
+                  if (res2) {
                     getChecker(data.input.stateGameId).then(checker => {
-                      if(isMovementValid( // Is a valid movement ?
-                        checker,
-                        JSON.parse(data.input.object), 
-                        data.input.stateGameId,
-                        data.input.player)){
-                          //saveStateGame(game,data.input.stateGameId);
-                        }
-                    })
+                      if (
+                        isMovementValid(
+                          // Is a valid movement ?
+                          checker,
+                          JSON.parse(data.input.object),
+                          data.input.stateGameId,
+                          data.input.player
+                        )
+                      ) {
+                        //saveStateGame(game,data.input.stateGameId);
+                      }
+                    });
                   }
-                })
+                });
               }
-            })
+            });
           }
-        })
+        });
       }
     }
   }
 });
-
 
 // exporting RootQuery and mutations
 export { RootQuery, mutation };

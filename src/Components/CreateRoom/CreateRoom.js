@@ -1,39 +1,39 @@
 import React, { Component } from 'react';
 import './CreateRoom.scss';
-import {FormControl,Input,InputLabel,Select,MenuItem,Button } from '@material-ui/core';
+import { FormControl, Input, InputLabel, Select, MenuItem, Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
-
-import {injector} from 'react-services-injector';
+import { Link } from 'react-router-dom';
+import { injector } from 'react-services-injector';
 
 
 class CreateRoom extends Component {
     // State
     state = {
-        openSnack: false,  
+        openSnack: false,
         name: '',
-        game:'Damas',
-        gameSize:8,
-        difficulty:1,
+        game: 'Damas',
+        gameSize: 8,
+        difficulty: 1,
         isMachine: this.props.location.state.isMachine
     }
 
-   // Update Handle
+    // Update Handle
     handleChange = event => {
         this.setState({
-            [event.target.name]: event.target.value 
+            [event.target.name]: event.target.value
         });
     };
 
     submit = (values, pristineValues) => {
         // get all values and pristineValues on form submission
     }
-    
-    handleForm = () =>{
-        if(this.state.name.length <= 0){
+
+    handleForm = () => {
+        if (this.state.name.length <= 0) {
             this.setState({
                 openSnack: true
             })
-        }else{
+        } else {
             //TODO: Goto game
             let session = {
                 name: this.state.name,
@@ -43,7 +43,7 @@ class CreateRoom extends Component {
                 isMachine: this.state.isMachine
             }
             this.services.SessionService.createSession(session);
-            
+
         }
     }
 
@@ -52,88 +52,91 @@ class CreateRoom extends Component {
     };
 
     render() {
-        const { openSnack } = this.state; 
-        return ( 
+        const { openSnack } = this.state;
+        return (
             <div className="App container">
                 <div className="main-container shadow p-3 mb-5 rounded">
                     <h2 className="text-center text-white"> Create Room</h2>
-                    <hr/>
-                    <FormControl className="col mt-2"> 
+                    <hr />
+                    <FormControl className="col mt-2">
                         <InputLabel htmlFor="name">Name</InputLabel>
-                        <Input id="name" name="name" value={this.state.name} onChange={this.handleChange}/>
-                     </FormControl> 
-
-                    <FormControl className="col mt-4"> 
-                    <InputLabel htmlFor="game">Game</InputLabel>
-                    <Select
-                        value={this.state.game}
-                        onChange={this.handleChange}
-                        name="game"
-                        id="game"
-                    >
-                        <MenuItem value="Damas">Damas</MenuItem>
-                        <MenuItem value="Memory">Memory</MenuItem>
-                    </Select>
+                        <Input id="name" name="name" value={this.state.name} onChange={this.handleChange} />
                     </FormControl>
 
                     <FormControl className="col mt-4">
-                    <InputLabel htmlFor="gameSize">Size Game</InputLabel>
-                    {this.state.game === "Memory"?(
+                        <InputLabel htmlFor="game">Game</InputLabel>
                         <Select
-                        value={this.state.gameSize}
-                        onChange={this.handleChange}
-                        name="gameSize"
-                        id="gameSize"
+                            value={this.state.game}
+                            onChange={this.handleChange}
+                            name="game"
+                            id="game"
                         >
-                        <MenuItem value={8}>8 X 8</MenuItem>
-                        <MenuItem value={6}>6 X 6</MenuItem>
-                        <MenuItem value={4}>4 X 4</MenuItem>
+                            <MenuItem value="Damas">Damas</MenuItem>
+                            <MenuItem value="Memory">Memory</MenuItem>
                         </Select>
-                    ):(
-                        <Select
-                        value={this.state.gameSize}
-                        onChange={this.handleChange}
-                        name="gameSize"
-                        id="gameSize"
-                        >
-                        <MenuItem value={8}>8 X 8</MenuItem>
-                        </Select>
-                    )} 
-                    
                     </FormControl>
-                    {this.state.isMachine ?(
+
                     <FormControl className="col mt-4">
-                    <InputLabel htmlFor="difficulty">Difficulty</InputLabel>  
-                    <Select
-                        value={this.state.difficulty}
-                        onChange={this.handleChange}
-                        name="difficulty"
-                        id="difficulty"
-                    >
-                        <MenuItem value={1}>Fácil</MenuItem>
-                        <MenuItem value={2}>Medio</MenuItem>
-                        <MenuItem value={3}>Difícil</MenuItem>
-                    </Select>
+                        <InputLabel htmlFor="gameSize">Size Game</InputLabel>
+                        {this.state.game === "Memory" ? (
+                            <Select
+                                value={this.state.gameSize}
+                                onChange={this.handleChange}
+                                name="gameSize"
+                                id="gameSize"
+                            >
+                                <MenuItem value={8}>8 X 8</MenuItem>
+                                <MenuItem value={6}>6 X 6</MenuItem>
+                                <MenuItem value={4}>4 X 4</MenuItem>
+                            </Select>
+                        ) : (
+                                <Select
+                                    value={this.state.gameSize}
+                                    onChange={this.handleChange}
+                                    name="gameSize"
+                                    id="gameSize"
+                                >
+                                    <MenuItem value={8}>8 X 8</MenuItem>
+                                </Select>
+                            )}
+
                     </FormControl>
-                    ): null}
+                    {this.state.isMachine ? (
+                        <FormControl className="col mt-4">
+                            <InputLabel htmlFor="difficulty">Difficulty</InputLabel>
+                            <Select
+                                value={this.state.difficulty}
+                                onChange={this.handleChange}
+                                name="difficulty"
+                                id="difficulty"
+                            >
+                                <MenuItem value={1}>Fácil</MenuItem>
+                                <MenuItem value={2}>Medio</MenuItem>
+                                <MenuItem value={3}>Difícil</MenuItem>
+                            </Select>
+                        </FormControl>
+                    ) : null}
                     <div className="col mt-4 btn">
-                        <Button variant="contained" color="primary" onClick={this.handleForm}>
+                        <Link onClick={this.handleForm} to={{ pathname: '/windowGame',state: { gameName: this.state.name} }}>
+                        <Button variant="contained" color="primary">
                             Create
                         </Button>
-                    </div>
+                        </Link>
                 </div>
-                <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal:'center' }}
-                    open={openSnack}
-                    onClose={this.handleClose}
-                    ContentProps={{
-                        'aria-describedby': 'message-id',
-                    }}
-                    autoHideDuration={5000}
-                    message={<span id="message-id"><i className="fas fa-exclamation-triangle text-danger"></i> Name of session is empty <i className="fas fa-exclamation-triangle text-danger"></i></span>}
-                    />
             </div>
+            <Snackbar
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                open={openSnack}
+                onClose={this.handleClose}
+                ContentProps={{
+                    'aria-describedby': 'message-id',
+                }}
+                autoHideDuration={5000}
+                message={<span id="message-id"><i className="fas fa-exclamation-triangle text-danger"></i> Name of session is empty <i className="fas fa-exclamation-triangle text-danger"></i></span>}
+            />
+            </div >
         );
     }
 }
-export default injector.connect(CreateRoom, {toRender: ['SessionService']});
+export default injector.connect(CreateRoom, { toRender: ['SessionService'] });
+

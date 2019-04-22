@@ -8,11 +8,10 @@ import {
   getProbability,
   getNextUserInfo,
   resetFirstCheck,
-  updateFirstCheck
+  updateFirstCheck,
+  updateStatistics,
+  updateWonGame
 } from "./logic-index";
-// 563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a
-// https://api.pexels.com/v1/curated?per_page=15&page=1
-// https://api.pexels.com/v1/search?query=people&per_page=2
 import db from "../config/config";
 let extractedImgs = new Array();
 let gameList = new Array();
@@ -24,12 +23,16 @@ function getImages(total) {
   return new Promise(r =>
     r(
       axios
-        .get(`https://api.pexels.com/v1/curated?per_page=${(total * total) / 2}&page=1`, {
-          headers: {
-            Authorization:
-              "563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a"
+        .get(
+          `https://api.pexels.com/v1/curated?per_page=${(total * total) /
+            2}&page=1`,
+          {
+            headers: {
+              Authorization:
+                "563492ad6f91700001000001612c616fe761492fa5bcb3de87478a4a"
+            }
           }
-        })
+        )
         .then(data => {
           return new Promise(resolve =>
             resolve(extractImgs(data.data.photos, total))
@@ -47,12 +50,11 @@ function getImages(total) {
  */
 function extractImgs(data, size) {
   extractedImgs = [];
-  console.log(`IMGS FROM API: ${data.length}`);
   data.forEach(img => {
     extractedImgs.push(img.src.tiny); //first img pair
     extractedImgs.push(img.src.tiny); //second img pair
   });
-  gameList = fillList(size); // get the logic matrix created from logic-index
+  gameList = fillList(size); 
   shuffleArray(extractedImgs);
   setImgsToMemoryArray(gameList);
   return gameList;
@@ -63,11 +65,9 @@ function extractImgs(data, size) {
  * @param {*} array logic array created from logic-index
  */
 function setImgsToMemoryArray(array) {
-  console.log(`ARRAY LENGHT: ${array.length}`)
-  console.log(`IMGS LENGHT: ${extractedImgs.length}`)
   for (let i = 0; i < array.length; i++) {
-    array[i].img = extractedImgs[i];
-    array[i].img2 = questionMark;
+    array[i].img = questionMark;
+    array[i].img2 = extractedImgs[i];
   }
 }
 
@@ -109,19 +109,29 @@ export async function memoryInit(size) {
   );
 }
 
-export function playMemory(stateGameId, object) {
+/**
+ *
+ * @param {*} stateGameId identification of stateGame
+ * @param {*} object object clicked
+ */
+export function playMemory(stateGameId, object, player) {
   db.collection("stateGame")
     .doc(stateGameId)
-    //.where("actualPlayer", "==", player)
     .get()
     .then(querySnapshot => {
-      // TODO: recordar usar el where
       let state = querySnapshot.data();
-      if (state) {
-        if (state.firstCheck === null) updateFirstCheck(stateGameId, object);
-        else {
-          handleComparation(stateGameId, state, object, state.actualPlayer);
-        }
+      if (state.firstCheck !== object){
+        checkActualUser(player)
+        .then(result => {
+          if(result) {
+            if (state) {
+              if (state.firstCheck === null) updateFirstCheck(stateGameId, object);
+              else {
+                handleComparation(stateGameId, state, object, state.actualPlayer);
+              }
+            }
+          }
+        })
       }
     })
     .catch(err => console.log(`ERROR PLAYING MEMORY : ${err}`));
@@ -133,40 +143,52 @@ export function playMemory(stateGameId, object) {
  * @param {*} secondObjectClicked objeto obtenido con el segundo click
  */
 function compareCards(firstObjectClicked, secondObjectClicked) {
-  return firstObjectClicked.img === secondObjectClicked.img;
+  return firstObjectClicked.img2 === secondObjectClicked.img2;
 }
 
+/**
+ * This method flips card when first and second objects were clicked
+ * @param {*} stateGameId identification of stateGame
+ * @param {*} state the state of the game
+ * @param {*} firstCheck first object clicked
+ * @param {*} secondObjectClicked
+ */
 function flipCards(stateGameId, state, firstCheck, secondObjectClicked) {
   return new Promise(resolve => {
-    let aux = state;
     state.game[
       state.game.findIndex(e => e.x === firstCheck.x && e.y === firstCheck.y)
-    ].img2 = firstCheck.img;
+    ].img = firstCheck.img2;
     state.game[
       state.game.findIndex(e => e.x === firstCheck.x && e.y === firstCheck.y)
     ].owner = firstCheck.owner;
-    resolve(
+
+    setTimeout(() => {
       updateGame(stateGameId, state.game)
         .then(() => {
-          aux.game[
-            aux.game.findIndex(
+          state.game[
+            state.game.findIndex(
               e =>
                 e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
             )
-          ].img2 = secondObjectClicked.img;
-          aux.game[
-            aux.game.findIndex(
+          ].img = secondObjectClicked.img2;
+          state.game[
+            state.game.findIndex(
               e =>
                 e.x === secondObjectClicked.x && e.y === secondObjectClicked.y
             )
           ].owner = secondObjectClicked.owner;
-          updateGame(stateGameId, aux.game).then(() => resolve(true))
-          .catch(error => console.log(`INNER ERROR ON SECOND GAME UPDATE ${error}`));
+          updateGame(stateGameId, state.game)
+            .then(() => {
+              resolve(true);
+            })
+            .catch(error =>
+              console.log(`INNER ERROR ON SECOND GAME UPDATE ${error}`)
+            );
         })
         .catch(error =>
           console.log(`Error en flipCards al actualizar el juego ${error}`)
-        )
-    );
+        );
+    }, 1500);
   });
 }
 
@@ -188,26 +210,30 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
           getNextUserInfo(stateGameId, player).then(data => {
             resetFirstCheck(stateGameId).then(() => {
               changeActualUser(stateGameId, data.player, data.gameName);
+              checkIfGameEnded(stateGameId);
             });
           });
         }
       );
     } else {
-      let aux = state;
+      let first = {
+        img2: questionMark,
+        img: state.firstCheck.img,
+        owner: state.firstCheck.owner,
+        x: state.firstCheck.x,
+        y: state.firstCheck.y
+      };
+      let second = {
+        img2: questionMark,
+        img: secondObjectClicked.img,
+        owner: secondObjectClicked.owner,
+        x: secondObjectClicked.x,
+        y: secondObjectClicked.y
+      };
+
       flipCards(stateGameId, state, state.firstCheck, secondObjectClicked).then(
         () => {
-          let img1 = state.firstCheck.img;
-          let img2 = secondObjectClicked.img;
-          state.firstCheck.img = questionMark;
-          secondObjectClicked.img = questionMark;
-          flipCards(
-            stateGameId,
-            aux,
-            aux.firstCheck,
-            secondObjectClicked
-          ).then(() => {
-            state.firstCheck.img = img1;
-            secondObjectClicked.img = img2;
+          flipCards(stateGameId, state, first, second).then(() => {
             getNextUserInfo(stateGameId, player).then(data => {
               resetFirstCheck(stateGameId).then(() => {
                 changeActualUser(stateGameId, data.player, data.gameName);
@@ -220,13 +246,25 @@ function handleComparation(stateGameId, state, secondObjectClicked, player) {
   });
 }
 
+function endGame(stateGameId, winner) {
+  db.collection("session")
+    .where("stateGameId", "==", stateGameId)
+    .get()
+    .then(querySnapshot => {
+      let users = querySnapshot.docs[0].data().users;
+      winner === true && users[1] !== null
+        ? updateStatistics(users[0], users[1])
+        : updateStatistics(users[1], users[0]);
+    });
+}
+
 /**
  *
  * @param {*} stateGameId identificador del estado de juego de la sesión
  * @param {*} state estado de juego de la sesión
  */
 export function cpuPlayer(stateGameId, state) {
-  test(state.game);
+  //test(state.game);
   getDifficulty(stateGameId).then(difficulty => {
     let randomLocation = Math.floor(Math.random() * state.game.length); // se escoge una carta random
     while (state.game[randomLocation].owner) {
@@ -234,9 +272,15 @@ export function cpuPlayer(stateGameId, state) {
     }
     state.firstCheck = state.game[randomLocation];
     if (getProbability(difficulty)) {
-      let pair = state.game[state.game.findIndex(e => JSON.stringify(e) !== JSON.stringify(state.firstCheck) && e.img === state.firstCheck.img)];
-      handleComparation(stateGameId, state, pair, null)
-      //.catch(error => console.log(error));
+      let pair =
+        state.game[
+          state.game.findIndex(
+            e =>
+              JSON.stringify(e) !== JSON.stringify(state.firstCheck) &&
+              e.img2 === state.firstCheck.img2
+          )
+        ];
+      handleComparation(stateGameId, state, pair, null);
     } else {
       handleComparation(
         stateGameId,
@@ -255,31 +299,42 @@ export function cpuPlayer(stateGameId, state) {
  */
 function getRandomElementFromArray(array, randomLocation) {
   let filteredArray = array.filter(
-    e => e.img !== array[randomLocation].img && !e.owner
+    e => e.img2 !== array[randomLocation].img2 && !e.owner
   );
-  //console.log(`FILTERED ARRAY: ${JSON.stringify(filteredArray)}`)
   return filteredArray[Math.floor(Math.random() * filteredArray.length)];
 }
 
-
-// test code
-
-function test(game) {
-  let aux = [];
-  game.forEach(e => {
-    if(!aux.includes(e)){
-      let elements = game.filter(o => o.img === e.img);
-      if(elements.length === 2){
-        console.log(`EL ELEMENTO ${elements[0].x}, Y:${elements[0].y} \n tiene pareja`);
-        aux.push(elements[0]);
-        aux.push(elements[1]);
-      }
-      else{
-        console.log(`EL ELEMENTO X: ${elements[0].x}, Y:${elements[0].y} \n NO tiene pareja`);
-        aux.push(elements[0]);
-      }
-    }
+function checkActualUser(actualPlayer) {
+  return new Promise(resolve => {
+    db.collection("stateGame")
+      .where("actualPlayer", "==", actualPlayer)
+      .get()
+      .then(querySnapshot => {
+        if(querySnapshot.docs[0])
+          resolve(true)
+        else
+          resolve(false)
+      });
   });
+}
 
-  console.log("\n\n##################################################################################");
+function checkIfGameEnded(stateGameId) {
+  db.collection("stateGame")
+    .doc(stateGameId)
+    .get()
+    .then(data => {
+      let state = data.data();
+      if (state.game.filter(e => e.owner === false).length === 0) {
+        let winner;
+        state.scores.p1Score > state.scores.p2Score
+          ? (updateWonGame(stateGameId, "El jugador 1 ha ganado el juego"),
+            (winner = true))
+          : (updateWonGame(stateGameId, "El jugador 2 ha ganado el juego"),
+            (winner = false));
+
+        if (state.scores.p1Score === state.scores.p2Score)
+          updateWonGame(stateGameId, "Los jugadores han quedado empatados");
+        endGame(stateGameId, winner);
+      }
+    });
 }

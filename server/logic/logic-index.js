@@ -49,7 +49,7 @@ export function isCheckerPlayer(stateGameId, playerId, checker) {
 }
 
 // Check if is the first or the second selection
-export function checkSelection(stateGameId, obj,data) {
+export function checkSelection(stateGameId, obj, data) {
   return new Promise(r => {
     if (obj.owner === false) {
       db.collection("stateGame")
@@ -151,12 +151,11 @@ export function changeActualUser(stateGameId, user, gameName) {
             .doc(stateGameId)
             .get()
             .then(data => {
-
               // aqui se llama el jugador automático para cada juego
               let state = data.data();
               if (gameName === "Memory" && user === null)
                 cpuPlayer(stateGameId, state);
-              else if(gameName === "Damas" && user === null){
+              else if (gameName === "Damas" && user === null) {
                 machineLogicChecker(stateGameId);
               }
             });
@@ -187,92 +186,103 @@ export function addScore(stateGameId, actualPlayer) {
             state.scores.p1Score++;
             saveNewScoreInDB(stateGameId, state.scores);
             if (data.gameName === "Damas"){
-              checkWonCheckers(state.game, false, stateGameId);
+              checkWonCheckers(state.game, false, stateGameId).then(r => {
+                if(r === false){
+                  resetFirstCheck(stateGameId).then(() => {
+                    changeActualUser(stateGameId, data.player, data.gameName);
+                  });
+                }
+              });
             }else{
-              //TODO: verificar si ganó en memoria
+              resetFirstCheck(stateGameId).then(() => {
+                changeActualUser(stateGameId, data.player, data.gameName);
+              });
             }
           }
           else{
             state.scores.p2Score++;
             saveNewScoreInDB(stateGameId, state.scores);
             if (data.gameName === "Damas"){
-              checkWonCheckers(state.game, true, stateGameId);
+              checkWonCheckers(state.game, true, stateGameId).then(r => {
+                if(r === false){
+                  resetFirstCheck(stateGameId).then(() => {
+                    changeActualUser(stateGameId, data.player, data.gameName);
+                  });
+                }
+              });
             }else{
-              //TODO: verificar si ganó en memoria
+              resetFirstCheck(stateGameId).then(() => {
+                changeActualUser(stateGameId, data.player, data.gameName);
+              });
             }
           }
-          resetFirstCheck(stateGameId).then(() => {
-            changeActualUser(stateGameId, data.player, data.gameName);
-          });
+          
         });
       }
     })
     .catch(err => console.log(err));
 }
 
-function checkWonCheckers(game, player, stateGameId){
-  if(player) // Player 2
-  {
-    let list = game.filter(e => e.owner === false).slice()
-    if(list.length === 0){
-      db.collection("stateGame")
-      .doc(stateGameId)
-      .update({wonGame : "!!! Felicidades al jugador 2, Ganó !!!"})
-      updateDataPlayerCheckers(stateGameId,player); 
+function checkWonCheckers(game, player, stateGameId) {
+  return new Promise(r => {
+    if (player) {
+      // Player 2
+      let list = game.filter(e => e.owner === false).slice();
+      if (list.length === 0) {
+        db.collection("stateGame")
+          .doc(stateGameId)
+          .update({ wonGame: "!!! Felicidades al jugador 2, Ganó !!!" });
+        updateDataPlayerCheckers(stateGameId, player);
+        r(true);
+      }else r(false);
+    } else {
+      // Player 1
+      let list2 = game.filter(e => e.owner === true).slice();
+      if (list2.length === 0) {
+        db.collection("stateGame")
+          .doc(stateGameId)
+          .update({ wonGame: "!!! Felicidades al jugador 1, Ganó !!!" });
+        updateDataPlayerCheckers(stateGameId, player);
+        r(true);
+      } else r(false);
     }
-  }else{ // Player 1
-    let list2 = game.filter(e => e.owner === true).slice()
-    if(list2.length === 0){
-      db.collection("stateGame")
-      .doc(stateGameId)
-      .update({wonGame : "!!! Felicidades al jugador 1, Ganó !!!"})
-      updateDataPlayerCheckers(stateGameId,player);
-    }
+  })
+}
+
+function updateDataPlayerCheckers(stateGameId, player) {
+  db.collection("session")
+    .where("stateGameId", "==", stateGameId)
+    .get()
+    .then(querySnapshot => {
+      let users = querySnapshot.docs[0].data().users;
+      switch (player) {
+        case player === true: // Player 2
+          updateStatistics(users[1],users[0]);
+          break;
+        case player === false:
+          updateStatistics(users[0],users[1]);
+          break;
+      }
+    });
+}
+
+export function updateStatistics(playerWon, playerLost) {
+  if (playerWon !== null)
+    db.collection("player")
+      .doc(playerWon.email)
+      .update({
+        wonGames: playerWon.wonGames + 1
+      })
+      .catch(err => console.log(`ERROR UPDATING THE STATISTICS: ${err}`));;
+  if (playerLost !== null){
+    db.collection("player")
+      .doc(playerLost.email)
+      .update({lostGames: playerLost.lostGames + 1})
+      .catch(err => console.log(`ERROR UPDATING THE STATISTICS: ${err}`));
   }
 }
 
-function updateDataPlayerCheckers(stateGameId,player){
-  db.collection("session")
-      .where("stateGameId", "==", stateGameId)
-      .get()
-      .then(querySnapshot => {
-        let users = querySnapshot.docs[0].data().users;
-        switch(player){
-          case player === true: // Won player 2 
-            statisticsPlayerCheckers(users[1],users[0]);
-            break;
-          case player === false:
-            statisticsPlayerCheckers(users[0],users[1]);
-            break;
-        }
-      })
-}
 
-function statisticsPlayerCheckers(playerWon,playerLost){ 
-  db
-    .collection("player")
-    .doc(playerWon.uid)
-    .update({
-      wonGames: playerWon.wonGames+1
-    })
-  
-  db
-  .collection("player")
-  .doc(playerLost.uid)
-  .update({
-    lostGames: playerLost.lostGames+1
-  })
-}
-function saveNewScoreInDB(stateGameId, scores) {
-  return new Promise(resolve =>
-    db
-      .collection("stateGame")
-      .doc(stateGameId)
-      .update({
-        scores: scores
-      })
-  );
-}
 export function getNextUserInfo(stateGameId, actualPlayer) {
   return new Promise(resolve => {
     db.collection("session")
@@ -327,7 +337,7 @@ export function updateFirstCheck(stateGameId, firstCheck) {
 }
 
 function saveNewScoreInDB(stateGameId, scores) {
-  return new Promise(resolve =>
+  return new Promise(() =>
     db
       .collection("stateGame")
       .doc(stateGameId)
@@ -337,9 +347,6 @@ function saveNewScoreInDB(stateGameId, scores) {
   );
 }
 
-export function updateOwner(stateGameId, owner) {
-  
-}
 
 export function updateGame(stateGameId, game) {
   return new Promise(resolve =>
@@ -352,6 +359,22 @@ export function updateGame(stateGameId, game) {
       .then(() => {
         resolve(true);
       })
+      .catch(err => console.err(`ERROR UPDATING THE GAME ${err}`))
+  );
+}
+
+export function updateWonGame(stateGameId, wonGame) {
+  return new Promise(resolve =>
+    db
+      .collection("stateGame")
+      .doc(stateGameId)
+      .update({
+        wonGame: wonGame
+      })
+      .then(() => {
+        resolve(true);
+      })
+      .catch(err => console.err(`ERROR UPDATING THE wonGame ${err}`))
   );
 }
 

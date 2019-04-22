@@ -65,6 +65,7 @@ class SessionService extends Service {
       uid: JSON.parse(localStorage.getItem('actualUser')).uid
     }
     let users = [actualUser];
+
     if (session.isMachine) {
       users.push(null);
     }
@@ -88,7 +89,9 @@ class SessionService extends Service {
           }
         `
     }).then(data => {
+      
       localStorage.setItem('stateGameId', JSON.stringify(data.data.saveSession.stateGameId));
+      console.log(localStorage.getItem("stateGameId")+" despues de guardarlo el local ");
     })
       .catch(error => {
         console.log(error);
