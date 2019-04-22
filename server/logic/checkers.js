@@ -90,10 +90,6 @@ export function machineLogicChecker(stateGameId) {
     getSelectedChecker(filterCheckers, data, true).then(result => {
       getDifficulty(stateGameId).then(dif => {
         if (getProbability(dif)) {
-          console.log("===============================================")
-          console.log(result.checker)
-          console.log(result.nextMovement)
-          console.log("===============================================")
           isMovementValid(result.checker, result.nextMovement, stateGameId, null);
         } else {
           getSelectedChecker(filterCheckers, data, false).then(result2 => {
