@@ -10,6 +10,7 @@ import firebaseApp from '../Services/FirebaseService';
 class GameService extends Service {
 
     resetData(stateGame) {
+
         firebaseApp.firebase_
             .firestore().collection("messages").doc(stateGame).delete().then(function () {
                 console.log("Document successfully deleted!");
@@ -22,17 +23,26 @@ class GameService extends Service {
             }).catch(function (error) {
                 console.error("Error removing document: ", error);
             });
+            const sessionRef =firebaseApp.firebase_
+            .firestore()
+            .collection("session")
+            .where("stateGameId", "==", stateGame);
+          sessionRef.get().then(docSnapshot => {
+            this.deleteSession(docSnapshot.docs[0].id);
+          })
+          
+          
+        
+    }
+
+    deleteSession(id){
+        //console.log("Id: "+id);
         firebaseApp.firebase_
-            .firestore().collection("session").where("stateGameId", "==", stateGame)
-            .then(docSnapshot => {
-                firebaseApp.firebase_
-                    .firestore().collection("session").doc(docSnapshot.docs[0].id).delete().then(function () {
-                        console.log("Document successfully deleted!");
-                    }).catch(function (error) {
-                        console.error("Error removing document: ", error);
-                    });
-                
-            })
+            .firestore().collection("session").doc(id).delete().then(function () {
+                console.log("Document successfully deleted!");
+            }).catch(function (error) {
+                console.error("Error removing document: ", error);
+            });
     }
 
     sendMessage(text, paramStateGame, messages) {

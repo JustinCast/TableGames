@@ -67,7 +67,7 @@ class WindowGame extends Component {
       .onSnapshot((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           console.log(doc.data());
-          if (doc.data().users[1] !== undefined && doc.data().users[1] !== null) {
+          if (doc.data().users[1] !== undefined && doc.data().users[1] === null && doc.exists) {
             console.log("Acaba de ingresar ");
             this.setState({
               canShow: true,
@@ -106,14 +106,15 @@ class WindowGame extends Component {
       .collection("stateGame")
       .doc(this.state.stateGameId)
       .onSnapshot((doc) => {
-        this.setState({
-          game: doc.data().game,
-          score: doc.data().scores,
-          sizeBox: this.getSizeBox(doc.data().game.length),
-          sizeElement: this.getSizeElement(doc.data().game.length),
-          actualPlayer: doc.data().actualPlayer,
-          wonGame: doc.data().wonGame
-        })
+        if(doc.exists)
+          this.setState({
+            game: doc.data().game,
+            score: doc.data().scores,
+            sizeBox: this.getSizeBox(doc.data().game.length),
+            sizeElement: this.getSizeElement(doc.data().game.length),
+            actualPlayer: doc.data().actualPlayer,
+            wonGame: doc.data().wonGame
+          })
       });
   }
 
@@ -179,7 +180,7 @@ class WindowGame extends Component {
   render() {
     return (
       <div >
-        {this.state.wonGame !== "null" ? (
+        {this.state.wonGame !== null ? (
           <div>
             {this.state.canShow === true ? (
               <div id="main-card">
