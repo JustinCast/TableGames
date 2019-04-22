@@ -199,7 +199,7 @@ const mutation = new GraphQLObjectType({
       resolve: async (_, data) => {
         identifyGameWhenClick(data.input.stateGameId).then(result => {
           if (!result)
-            playMemory(data.input.stateGameId, JSON.parse(data.input.object));
+            playMemory(data.input.stateGameId, JSON.parse(data.input.object), data.input.player);
           else {
             isCheckerPlayer(
               data.input.stateGameId,

@@ -114,16 +114,15 @@ export async function memoryInit(size) {
  * @param {*} stateGameId identification of stateGame
  * @param {*} object object clicked
  */
-export function playMemory(stateGameId, object) {
+export function playMemory(stateGameId, object, player) {
   db.collection("stateGame")
     .doc(stateGameId)
     .get()
     .then(querySnapshot => {
       let state = querySnapshot.data();
       if (state.firstCheck !== object){
-        checkActualUser(state.actualPlayer)
+        checkActualUser(player)
         .then(result => {
-          console.log(result)
           if(result) {
             if (state) {
               if (state.firstCheck === null) updateFirstCheck(stateGameId, object);
@@ -307,11 +306,11 @@ function getRandomElementFromArray(array, randomLocation) {
 
 function checkActualUser(actualPlayer) {
   return new Promise(resolve => {
-    db.collection("stateGameId")
+    db.collection("stateGame")
       .where("actualPlayer", "==", actualPlayer)
       .get()
       .then(querySnapshot => {
-        if(querySnapshot)
+        if(querySnapshot.docs[0])
           resolve(true)
         else
           resolve(false)
