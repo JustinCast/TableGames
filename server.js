@@ -3,11 +3,11 @@ const Server = require('http');
 const express = require("express");
 const expressGraphQL = require("express-graphql");
 const path = require('path');
-import 'dotenv/config';
+//import 'dotenv/config';
 const cors = require('cors')
 const port = process.env.port || 5000;
 
-import Schema from "./server/schemas/schema";
+const Schema = require("./server/schemas/schema");
 
 const app = express();
 //const server = Server(app);
