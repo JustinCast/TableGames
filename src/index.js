@@ -31,9 +31,17 @@ const errorLink = onError(({ graphQLErrors }) => {
   if (graphQLErrors) graphQLErrors.map(({ message }) => console.log(message))
 })
 
+// Create WebSocket client
+// const WSClient = new SubscriptionClient(ws_uri, {
+//   reconnect: true,
+//   connectionParams: {
+//     // Connection parameters to pass some validations
+//     // on server side during first handshake
+//   }
+// });
 
 export const GraphQLClient = new ApolloClient({
-  link: ApolloLink.from([errorLink, new HttpLink({ uri: '/root' })]),
+  link: ApolloLink.from([errorLink, new HttpLink({ uri: 'http://localhost:4000/root' })]),
   cache: new InMemoryCache(),
   networkInterface: mockNetworkInterface,
 });
